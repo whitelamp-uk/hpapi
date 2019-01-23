@@ -2,7 +2,7 @@
     "folders":
     [
         {
-            "path": "~/hpapi/whitelamp-uk/hpapi-utility",
+            "path": "../",
             "file_include_patterns": ["LICENSE","*.EXAMPLE","*.md","*.php","*.sql"],
             "file_exclude_patterns": [".git*","*.sublime-*"]
         }

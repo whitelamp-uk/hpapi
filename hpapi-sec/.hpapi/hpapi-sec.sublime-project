@@ -2,12 +2,12 @@
     "folders":
     [
         {
-            "path": "~/hpapi/whitelamp-uk/hpapi-sec",
+            "path": "../",
             "file_include_patterns": ["LICENSE","*.EXAMPLE","*.md","*.php","*.sql"],
             "file_exclude_patterns": [".git*","*.sublime-*"]
         },
         {
-            "path": "~/hpapi/.hpapi-config/whitelamp-uk",
+            "path": "../../../.hpapi-config/whitelamp-uk",
             "file_include_patterns": ["hpapi-sec.*"],
             "folder_exclude_patterns": ["hpapi-dba-columns"]
         }
