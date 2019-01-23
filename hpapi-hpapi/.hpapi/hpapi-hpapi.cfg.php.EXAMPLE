@@ -43,7 +43,7 @@ define ( 'HPAPI_SSL_ENFORCE',               true                                
 
 
 // REQUEST SIZE
-define ( 'HPAPI_POST_BYTES_MAX',            1024                                                                                    );
+define ( 'HPAPI_POST_BYTES_MAX',            65536                                                                                   );
 
 
 // PASSWORD MANAGEMENT
