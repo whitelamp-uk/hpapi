@@ -1019,7 +1019,7 @@ class Hpapi {
             return true;
         }
         $e          = null;
-        if ($defn['pattern']=='object' && !is_object($value)) {
+        if ($defn['pattern']=='object' && !(is_object($value) || is_array($value))) {
             $e      = HPAPI_STR_VALID_PATTERN.' <'.$defn['expression'].'>';
         }
         elseif (strlen($defn['expression']) && !preg_match('<'.$defn['expression'].'>',$value)) {
