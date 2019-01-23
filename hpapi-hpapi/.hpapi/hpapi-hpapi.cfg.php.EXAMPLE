@@ -1,0 +1,77 @@
+<?php
+
+// DIAGNOSTIC
+define ( 'HPAPI_DIAGNOSTIC_EMAIL_REGEXP',   '^(sysadmin|orgadmin|test\.1)@no\.where$'                                               );
+// Under normal circumstances this should be null. It is an argument to new \DateTime() to fake data time eg. '@1534487400'
+define ( 'HPAPI_DIAGNOSTIC_FAKE_NOW',       null                                                                                    );
+
+
+// LOGGING
+define ( 'HPAPI_LOG_LAST_OUTPUT',           false                                                                                   );
+define ( 'HPAPI_LOG_LAST_FILE',             HPAPI_DIR_LOG.'/hpapi-last-output.log'                                                  );
+
+
+// BLACKLIST FILE
+define ('HPAPI_BLACKLIST_ARRAY',            HPAPI_DIR_LOG.'/hpapi-sec-blacklist.php.log'                                            );
+
+
+// REDIRECTION (LEAVE EMPTY TO NOT REDIRECT)
+define ( 'HPAPI_URL_HTML_HEADER',           './web.php'                                                                             );
+define ( 'HPAPI_URL_OTHER_HEADER',          ''                                                                                      );
+
+
+// INFORMATIONAL
+define ( 'HPAPI_META_DESCRIPTION',          'HTTP POST API for My Organisation'                                                     );
+
+
+// DATABASE MODELS
+define ( 'HPAPI_MODELS_PDO_DFN',            HPAPI_DIR_CONFIG.'/hpapi-pdo.dfn.json'                                                  );
+define ( 'HPAPI_MODELS_CFG',                HPAPI_DIR_CONFIG.'/hpapi-models.cfg.json'                                               );
+
+
+// HPAPI PRIVILEGES - HPAPI_PRIVILEGES_DYNAMIC is useful in development but slow in production
+define ( 'HPAPI_PRIVILEGES_DYNAMIC',        true                                                                                    );
+define ( 'HPAPI_PRIVILEGES_FILE',           HPAPI_DIR_CONFIG.'/hpapi-privileges.array.php'                                          );
+
+
+// CODE ERROR REPORTING
+define ( 'HPAPI_PHP_ERROR_LEVEL',           E_ALL                                                                                   );
+
+
+// SSL ENFORCEMENT
+define ( 'HPAPI_SSL_ENFORCE',               true                                                                                    );
+
+
+// REQUEST SIZE
+define ( 'HPAPI_POST_BYTES_MAX',            1024                                                                                    );
+
+
+// PASSWORD MANAGEMENT
+define ( 'HPAPI_HASH_COST',                 12                                                                                      );
+define ( 'HPAPI_HASH_ALGO',                 PASSWORD_BCRYPT                                                                         );
+
+
+// TOKEN MANAGEMENT
+// Length of token
+define ( 'HPAPI_TOKEN_BYTES',               64                                                                                      );
+// Duration of token
+define ( 'HPAPI_TOKEN_LIFE_MINS',           30                                                                                      );
+// Server stored expiry slightly longer than that reported to client
+define ( 'HPAPI_TOKEN_EXTRA_SECONDS',       60                                                                                      );
+// Extend token expiry on each request
+define ( 'HPAPI_TOKEN_LIFE_EXTEND',         true                                                                                    );
+
+
+// JSON DEPTH AND ENCODING OPTIONS (JSON_PRETTY_PRINT is handy for development)
+define ( 'HPAPI_JSON_DEPTH',                512                                                                                     );
+define ( 'HPAPI_JSON_OPTIONS',              JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_NUMERIC_CHECK                        );
+
+
+// APPLICATION CLASSES
+require_once HPAPI_DIR_HPAPI.'/whitelamp-uk/hpapi-hpapi/Hpapi/Hpapi.class.php';
+require_once HPAPI_DIR_HPAPI.'/whitelamp-uk/hpapi-hpapi/Hpapi/Db.class.php';
+
+
+// HPAPI SERVER HTTP HEADERS
+require_once HPAPI_DIR_CONFIG.'/hpapi-server.hdr.php';
+

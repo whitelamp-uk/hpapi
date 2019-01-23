@@ -1,0 +1,23 @@
+<?php
+
+/* Copyright 2018 Whitelamp http://www.whitelamp.com/ */
+
+// Legitimate requests could come from anywhere
+header ( 'Access-Control-Allow-Origin: *'                                                                                           );
+
+// Truly RESTful - no session, no cookie
+header ( 'Access-Control-Allow-Credentials: true'                                                                                   );
+
+// Only GET or POST will get a sensible answer
+header ( 'Access-Control-Allow-Methods: GET,POST'                                                                                   );
+header ( 'Access-Control-Request-Method: GET,POST'                                                                                  );
+
+// Request Content-Type is used to select JSON or XML request/response format
+header ( 'Access-Control-Allow-Headers: Accept,Accept-Language,Content-Language,Content-Type,X-Custom-Header'                       );
+
+// Minimal requirement for most clients
+header ( 'Access-Control-Expose-Headers: Cache-Control,Content-Language,Content-Type,Expires,Last-Modified,Pragma,Content-Length'   );
+
+// Chromium caps preflight response persistence at 10 minutes
+header ( 'Access-Control-Max-Age: 600');
+

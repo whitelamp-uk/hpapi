@@ -1,0 +1,50 @@
+{
+    "jobs" : {
+        "10s" : {
+            "scanSeconds" : 10,
+            "rules" : [
+                {
+                    "method": "req",
+                    "hits" : 10,
+                    "withinSeconds" : 10,
+                    "userLockSeconds" : 300
+                },
+                {
+                    "method": "iplim",
+                    "hits" : 1,
+                    "withinSeconds" : 10,
+                    "userLockSeconds" : 300
+                },
+                {
+                    "method": "auth",
+                    "hits" : 10,
+                    "withinSeconds" : 60,
+                    "userLockSeconds" : 86400
+                }
+            ]
+        },
+        "30s" : {
+            "scanSeconds" : 30,
+            "rules" : [
+                {
+                    "method": "req",
+                    "hits" : 30,
+                    "withinSeconds" : 30,
+                    "userLockSeconds" : 300
+                },
+                {
+                    "method": "key",
+                    "hits" : 1,
+                    "withinSeconds" : 60,
+                    "userLockSeconds" : 300
+                },
+                {
+                    "method": "pwd",
+                    "hits" : 10,
+                    "withinSeconds" : 60,
+                    "userLockSeconds" : 300
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,15 @@
+{
+    "folders":
+    [
+        {
+            "path": "~/hpapi/whitelamp-uk/hpapi-server",
+            "file_include_patterns": ["LICENSE","*.EXAMPLE","*.md","*.php","*.sql"],
+            "file_exclude_patterns": [".git*","*.sublime-*"]
+        },
+        {
+            "path": "~/hpapi/.hpapi-config",
+            "file_include_patterns": ["choices.cfg.html","hpapi-server.hdr.php","humans.txt"],
+            "folder_exclude_patterns": ["*"]
+        }
+    ]
+}

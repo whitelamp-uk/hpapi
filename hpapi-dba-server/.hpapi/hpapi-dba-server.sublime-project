@@ -1,0 +1,14 @@
+{
+    "folders":
+    [
+        {
+            "path": "~/hpapi/whitelamp-uk/hpapi-dba-server",
+            "file_include_patterns": ["LICENSE","*.EXAMPLE","*.md","*.php","*.sql"],
+            "file_exclude_patterns": [".git*","*.sublime-*"]
+        },
+        {
+            "path": "~/hpapi/.hpapi-config/whitelamp-uk/hpapi-dba-columns",
+            "file_include_patterns": ["*.json","*.php"]
+        }
+    ]
+}

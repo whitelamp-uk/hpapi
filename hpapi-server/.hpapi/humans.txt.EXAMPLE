@@ -1,0 +1,45 @@
+
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+
+    User admim:     User Admin Name
+    Site:           http://useradmin.site/
+    Contact:        http://useradmin.site/contact
+    Location:       User Admin Location
+
+    Editor:         Editor Name
+    Site:           http://editor.site/
+    Contact:        http://editor.site/contact
+    Location:       Editor Location
+
+    Maintainer:     Maintainer Name
+    Site:           http://maintainer.site/
+    Contact:        http://maintainer.site/contact
+    Location:       Maintainer Location
+
+    Developer:      Developer Name
+    Site:           http://developer.site/
+    Contact:        http://developer.site/contact
+    Location:       Developer Location
+
+    Creator:        Creator Name
+    Site:           http://creator.site/
+    Contact:        http://creator.site/contact
+    Location:       Creator Location
+
+# THANKS
+
+    Thanks go to:   http://thankee.name.site/contact
+
+# TECHNOLOGY COLOPHON
+
+    My code base
+    hpapi.io 1
+    ECMAScript 5 (JS) && PHP 7
+    Sqlines.com/online
+    MariaDB || MySQL || PostgreSQL
+    Apache HTTP Server
+    GNU/Linux
+

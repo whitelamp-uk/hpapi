@@ -1,0 +1,10 @@
+{
+    "folders":
+    [
+        {
+            "path": "~/hpapi/whitelamp-uk/hpapi-client",
+            "file_include_patterns": ["LICENSE","*.EXAMPLE","*.md","*.js"],
+            "file_exclude_patterns": [".git*","*.sublime-*"]
+        }
+    ]
+}
