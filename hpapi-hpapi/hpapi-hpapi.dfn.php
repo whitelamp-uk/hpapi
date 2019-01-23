@@ -70,7 +70,7 @@ define ( 'HPAPI_STR_METHOD_METHOD',         '039 400 Method property "method" wa
 // Configuration errors
 define ( 'HPAPI_STR_DB_CFG',                '041 500 DB configuration error - could not load database configuration'                );
 define ( 'HPAPI_STR_DB_DFN',                '042 500 DB configuration error - could not load PDO definition'                        );
-define ( 'HPAPI_STR_DB_DFN_DRV',            '043 500 DB configuration error - no PDO definition for driver specified by DSN'        );
+define ( 'HPAPI_STR_DB_DFN_DRV',            '043 500 DB configuration error - missing PDO driver definition'                        );
 define ( 'HPAPI_STR_DB_OBJ',                '044 500 Could not construct database object'                                           );
 define ( 'HPAPI_STR_DB_CONN',               '045 500 Could not connect to database'                                                 );
 define ( 'HPAPI_STR_PRIV_WRITE',            '046 500 Could not write privileges'                                                    );
