@@ -30,7 +30,7 @@ INSERT IGNORE INTO `hpapi_pattern` (`pattern`, `constraints`, `expression`, `inp
 ('datetime',	'HPAPI_PATTERN_DESC_DATETIME',	'^[0-9]{4}-[0-9]{2}-[0-9]{2}(\\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}$',	'datetime-local',	'',	0,	0,	'',	''),
 ('db-boolean',	'HPAPI_PATTERN_DESC_DB_BOOL',	'',	'checkbox',	'FILTER_VALIDATE_INT',	0,	0,	'0',	'1'),
 ('email',	'HPAPI_PATTERN_DESC_EMAIL',	'',	'email',	'FILTER_VALIDATE_EMAIL',	3,	254,	'',	''),
-('geo-coordinate',	'HPAPI_PATTERN_GEO_COORD',	'^-?[0-9]+(\\.[0-9])?$',	'text',	'',	0,	0,	'-360',	'360'),
+('geo-coordinate',	'HPAPI_PATTERN_GEO_COORD',	'^[-+]?([0-9]+\.?|\.[0-9])[0-9]*$',	'text',	'',	0,	0,	'-360',	'360'),
 ('hhmmss',	'HPAPI_PATTERN_DESC_HHMMSS',	'^[0-9]{6}$',	'text',	'',	0,	0,	'000000',	'235959'),
 ('int-11-pos-neg',	'HPAPI_PATTERN_DESC_INT_11_POS_NEG',	'',	'text',	'FILTER_VALIDATE_INT',	1,	11,	'',	''),
 ('int-11-positive',	'HPAPI_PATTERN_DESC_INT_11_POS',	'',	'text',	'FILTER_VALIDATE_INT',	1,	11,	'0',	''),
