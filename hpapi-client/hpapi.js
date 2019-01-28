@@ -195,10 +195,12 @@ export class Hpapi {
 
     tokenTOSet ( ) {
         this.tokenTOClear ();
-        console.log ('Now = '+Date.now());
-        console.log ('Then = '+(1000*this.tokenExpires));
-    var expireMs            = (1000*this.tokenExpires) - Date.now();
-        console.log ('Hpapi setting token timeout @'+expireMs);
+    var now                 = Date.now ();
+        console.log ('Now = '+(new Date(now).toISOString()));
+    var then                = 1000*this.tokenExpires;
+        console.log ('Then = '+(new Date(then).toISOString()));
+    var expireMs            = then - now;
+        console.log ('Hpapi setting token timeout '+expireMs+'ms');
         this.tokenTO = setTimeout (this.tokenPurge.bind(this),expireMs);
     }
 
