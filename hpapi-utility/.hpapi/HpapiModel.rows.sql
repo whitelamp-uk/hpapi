@@ -34,8 +34,8 @@ INSERT IGNORE INTO `hpapi_run` (`usergroup`, `vendor`, `package`, `class`, `meth
 
 INSERT IGNORE INTO `hpapi_spr` (`model`, `spr`, `notes`) VALUES
 ('HpapiModel',	'hpapiMyMethods',	'List of methods for a user UUID (authenticated or not).'),
-('HpapiModel',	'hpapiMyUsergroups',	'Usergroups for a user UUID.'),
-('HpapiModel',	'hpapiUUID',	'Return UUID');
+('HpapiModel',	'hpapiMyUsergroups',	'Usergroups for a given user ID.'),
+('HpapiModel',	'hpapiUUID',	'Return a new UUID');
 
 INSERT IGNORE INTO `hpapi_sprarg` (`model`, `spr`, `argument`, `name`, `empty_allowed`, `pattern`) VALUES
 ('HpapiModel',	'hpapiMyMethods',	1,	'User ID',	0,	'int-11-positive'),

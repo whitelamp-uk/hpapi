@@ -42,7 +42,7 @@ BEGIN
     `hpapi_usergroup`.`usergroup`
    ,`hpapi_usergroup`.`name` AS `name` 
    ,`hpapi_level`.`name` AS `securityLevel`
-   ,`level`.`notes` AS `securityNotes`
+   ,`hpapi_level`.`notes` AS `securityNotes`
   FROM `hpapi_usergroup`
   LEFT JOIN `hpapi_membership`
          ON `hpapi_membership`.`usergroup`=`hpapi_usergroup`.`usergroup`
