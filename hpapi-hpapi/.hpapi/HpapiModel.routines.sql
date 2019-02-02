@@ -59,6 +59,53 @@ BEGIN
 END$$
 
 
+DROP PROCEDURE IF EXISTS `hpapiGdprMethodArguments`$$
+CREATE PROCEDURE `hpapiGdprMethodArguments`(
+)
+BEGIN
+  SELECT
+    CONCAT(
+      `hpapi_method`.`vendor`
+     ,'/'
+     ,`hpapi_method`.`package`
+     ,'/'
+    ) AS `Package`
+   ,CONCAT(
+      `hpapi_method`.`class`
+     ,'::'
+     ,`hpapi_method`.`method`
+     ,'()'
+    ) AS `Method`
+   ,`hpapi_method`.`notes` AS `Method Notes`
+   ,`hpapi_methodarg`.`argument` AS `Arg Nr`
+   ,`hpapi_methodarg`.`name` AS `Arg Label`
+   ,IF(`hpapi_methodarg`.`empty_allowed`=0,'','Yes') AS `Compulsory`
+   ,`hpapi_methodarg`.`pattern` AS `Match Pattern`
+   ,`hpapi_pattern`.`constraints` AS `Pattern description constant`
+   ,`hpapi_pattern`.`expression` AS `Regular expression`
+   ,`hpapi_pattern`.`php_filter` AS `PHP validation filter`
+   ,`hpapi_pattern`.`length_minimum` AS `Min length`
+   ,`hpapi_pattern`.`length_maximum` AS `Max length`
+   ,`hpapi_pattern`.`value_minimum` AS `Min value`
+   ,`hpapi_pattern`.`value_maximum` AS `Max value`
+  FROM `hpapi_method`
+  JOIN `hpapi_methodarg`
+    ON `hpapi_methodarg`.`vendor`=`hpapi_method`.`vendor`
+   AND `hpapi_methodarg`.`package`=`hpapi_method`.`package`
+   AND `hpapi_methodarg`.`class`=`hpapi_method`.`class`
+   AND `hpapi_methodarg`.`method`=`hpapi_method`.`method`
+  JOIN `hpapi_pattern`
+    ON `hpapi_pattern`.`pattern`=`hpapi_methodarg`.`pattern`
+  ORDER BY
+    `hpapi_method`.`vendor`
+   ,`hpapi_method`.`package`
+   ,`hpapi_method`.`class`
+   ,`hpapi_method`.`method`
+   ,`hpapi_methodarg`.`argument`
+  ;
+END$$
+
+
 DROP PROCEDURE IF EXISTS `hpapiGdprMethods`$$
 CREATE PROCEDURE `hpapiGdprMethods`(
 )
@@ -118,6 +165,43 @@ BEGIN
 END$$
 
 
+DROP PROCEDURE IF EXISTS `hpapiGdprStoredProcedureArguments`$$
+CREATE PROCEDURE `hpapiGdprStoredProcedureArguments`(
+)
+BEGIN
+  SELECT
+    CONCAT(
+      `hpapi_spr`.`model`
+     ,'.'
+     ,`hpapi_spr`.`spr`
+     ,'()'
+    ) AS `Stored Procedure`
+   ,`hpapi_spr`.`notes` AS `Stored Procedure Notes`
+   ,`hpapi_sprarg`.`argument` AS `Arg Nr`
+   ,`hpapi_sprarg`.`name` AS `Arg Label`
+   ,IF(`hpapi_sprarg`.`empty_allowed`=0,'','Yes') AS `Compulsory`
+   ,`hpapi_sprarg`.`pattern` AS `Match Pattern`
+   ,`hpapi_pattern`.`constraints` AS `Pattern description constant`
+   ,`hpapi_pattern`.`expression` AS `Regular expression`
+   ,`hpapi_pattern`.`php_filter` AS `PHP validation filter`
+   ,`hpapi_pattern`.`length_minimum` AS `Min length`
+   ,`hpapi_pattern`.`length_maximum` AS `Max length`
+   ,`hpapi_pattern`.`value_minimum` AS `Min value`
+   ,`hpapi_pattern`.`value_maximum` AS `Max value`
+  FROM `hpapi_spr`
+  JOIN `hpapi_sprarg`
+    ON `hpapi_sprarg`.`model`=`hpapi_spr`.`model`
+   AND `hpapi_sprarg`.`spr`=`hpapi_spr`.`spr`
+  JOIN `hpapi_pattern`
+    ON `hpapi_pattern`.`pattern`=`hpapi_sprarg`.`pattern`
+  ORDER BY
+    `hpapi_spr`.`model`
+   ,`hpapi_spr`.`spr`
+   ,`hpapi_sprarg`.`argument`
+  ;
+END$$
+
+
 DROP PROCEDURE IF EXISTS `hpapiGdprStoredProcedures`$$
 CREATE PROCEDURE `hpapiGdprStoredProcedures`(
 )
@@ -162,6 +246,65 @@ BEGIN
    ,`hpapi_spr`.`spr`
   ORDER BY
     `hpapi_spr`.`model`
+   ,`hpapi_spr`.`spr`
+  ;
+END$$
+
+
+DROP PROCEDURE IF EXISTS `hpapiGdprUser`$$
+CREATE PROCEDURE `hpapiGdprUser`(
+  IN        `usr` VARCHAR(254) CHARSET ascii
+)
+BEGIN
+  SELECT
+      `hpapi_user`.`id` AS "User ID"
+     ,`hpapi_user`.`name` AS "Name"
+     ,`hpapi_user`.`email` AS "Email Address"
+   ,CONCAT(
+      `hpapi_spr`.`model`
+     ,'.'
+     ,`hpapi_spr`.`spr`
+     ,'()'
+    ) AS `Stored Procedure`
+   ,`hpapi_spr`.`notes` AS `Stored Procedure Notes`
+   ,`hpapi_usergroup`.`name` AS `User Group`
+   ,CONCAT(
+        `hpapi_method`.`class`
+       ,'::'
+       ,`hpapi_method`.`method`
+       ,'()'
+    ) AS `Methods`
+   ,`hpapi_method`.`notes` AS `Method Notes`
+  FROM `hpapi_user`
+  JOIN `hpapi_membership`
+    ON `hpapi_membership`.`user_id`=`hpapi_user`.`id`
+  JOIN `hpapi_usergroup`
+    ON `hpapi_usergroup`.`usergroup`=`hpapi_membership`.`usergroup`
+  JOIN `hpapi_run`
+    ON `hpapi_run`.`usergroup`=`hpapi_usergroup`.`usergroup`
+  JOIN `hpapi_method`
+    ON `hpapi_method`.`vendor`=`hpapi_run`.`vendor`
+   AND `hpapi_method`.`package`=`hpapi_run`.`package`
+   AND `hpapi_method`.`class`=`hpapi_run`.`class`
+   AND `hpapi_method`.`method`=`hpapi_run`.`method`
+  JOIN `hpapi_call`
+    ON `hpapi_call`.`vendor`=`hpapi_run`.`vendor`
+   AND `hpapi_call`.`package`=`hpapi_run`.`package`
+   AND `hpapi_call`.`class`=`hpapi_run`.`class`
+   AND `hpapi_call`.`method`=`hpapi_run`.`method`
+  JOIN `hpapi_spr`
+    ON `hpapi_spr`.`model`=`hpapi_call`.`model`
+   AND `hpapi_spr`.`spr`=`hpapi_call`.`spr`
+  WHERE `hpapi_user`.`id`=usr
+     OR `hpapi_user`.`email` LIKE CONCAT('%',usr,'%')
+     OR `hpapi_user`.`name` LIKE CONCAT('%',usr,'%')
+  ORDER BY
+    `hpapi_user`.`id`
+   ,`hpapi_method`.`vendor`
+   ,`hpapi_method`.`package`
+   ,`hpapi_method`.`class`
+   ,`hpapi_method`.`method`
+   ,`hpapi_spr`.`model`
    ,`hpapi_spr`.`spr`
   ;
 END$$
