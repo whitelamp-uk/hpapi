@@ -58,6 +58,53 @@ BEGIN
   ;
 END$$
 
+DROP PROCEDURE IF EXISTS `hpapiGdprStoredProcedures`$$
+CREATE PROCEDURE `hpapiGdprStoredProcedures`(
+)
+BEGIN
+  SELECT
+    CONCAT(
+      `hpapi_spr`.`model`
+     ,'.'
+     ,`hpapi_spr`.`spr`
+     ,'()'
+    ) AS `Stored Procedure`
+   ,`hpapi_spr`.`notes` AS `Stored Procedure Notes`
+   ,GROUP_CONCAT(
+      DISTINCT `hpapi_usergroup`.`name` SEPARATOR ','
+    ) AS `User groups`
+   ,GROUP_CONCAT(
+      CONCAT(
+        `hpapi_method`.`class`
+       ,'::'
+       ,`hpapi_method`.`method`
+       ,'()'
+      ) SEPARATOR ','
+    ) AS `Methods`
+  FROM `hpapi_usergroup`
+  JOIN `hpapi_run`
+    ON `hpapi_run`.`usergroup`=`hpapi_usergroup`.`usergroup`
+  JOIN `hpapi_method`
+    ON `hpapi_method`.`vendor`=`hpapi_run`.`vendor`
+   AND `hpapi_method`.`package`=`hpapi_run`.`package`
+   AND `hpapi_method`.`class`=`hpapi_run`.`class`
+   AND `hpapi_method`.`method`=`hpapi_run`.`method`
+  JOIN `hpapi_call`
+    ON `hpapi_call`.`vendor`=`hpapi_run`.`vendor`
+   AND `hpapi_call`.`package`=`hpapi_run`.`package`
+   AND `hpapi_call`.`class`=`hpapi_run`.`class`
+   AND `hpapi_call`.`method`=`hpapi_run`.`method`
+  JOIN `hpapi_spr`
+    ON `hpapi_spr`.`model`=`hpapi_call`.`model`
+   AND `hpapi_spr`.`spr`=`hpapi_call`.`spr`
+  GROUP BY
+    `hpapi_spr`.`model`
+   ,`hpapi_spr`.`spr`
+  ORDER BY
+    `hpapi_spr`.`model`
+   ,`hpapi_spr`.`spr`
+  ;
+END$$
 
 DROP PROCEDURE IF EXISTS `hpapiLogRequest`$$
 CREATE PROCEDURE `hpapiLogRequest`(
