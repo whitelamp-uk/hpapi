@@ -25,6 +25,7 @@ define ( 'HPAPI_PATTERN_DESC_DB_BOOL',      'must be 0 or 1'                    
 define ( 'HPAPI_PATTERN_DESC_EMAIL',        'must be a valid email address'                                                         );
 define ( 'HPAPI_PATTERN_GEO_COORD',         'must be a valid decimal geo-coordinate value'                                          );
 define ( 'HPAPI_PATTERN_DESC_HHMMSS',       'must be 6 digits representing a time - HHMMSS'                                         );
+define ( 'HPAPI_PATTERN_DESC_INT_1_POS',    'must be a positive single integer'                                                     );
 define ( 'HPAPI_PATTERN_DESC_INT_11_POS',   'must be a positive integer of no more than 11 digits'                                  );
 define ( 'HPAPI_PATTERN_DESC_INT_11_POS_NEG','must be an integer of no more than 11 digits'                                         );
 define ( 'HPAPI_PATTERN_DESC_INT_2_POS',    'must be a positive integer of no more than 2 digits'                                   );
