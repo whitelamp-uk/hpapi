@@ -7,9 +7,9 @@
             "file_exclude_patterns": [".git*","*.sublime-*"]
         },
         {
-            "path": "../../../.hpapi-config",
-            "file_include_patterns": ["choices.cfg.html","hpapi-server.hdr.php","humans.txt"],
-            "folder_exclude_patterns": ["*"]
+            "path": "../../../-hpapi-config/whitelamp-uk",
+            "file_include_patterns": ["hpapi-sec.*"],
+            "folder_exclude_patterns": ["hpapi-dba-columns"]
         }
     ]
 }
