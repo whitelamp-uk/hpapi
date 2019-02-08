@@ -889,7 +889,7 @@ class Hpapi {
         return $path;
     }
 
-    public function parse2d ($data,$keyField=null) {
+    public function parse2D ($data,$keyField=null) {
         if (!is_array($data)) {
             throw new \Exception (HPAPI_STR_2D_ARRAY);
             return false;
