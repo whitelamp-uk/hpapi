@@ -3,9 +3,10 @@
         "sql" : {
             "constraintsSep" : " AND ",
             "delimiter" : "`",
-            "insert" : "INSERT INTO `<table/>` ( <csv-columns> ) VALUES ( <csv-bindings/> );",
+            "insert" : "INSERT INTO `<table/>` ( <csv-columns/> ) VALUES ( <csv-bindings/> );",
             "primaryKeys" : "SELECT `COLUMN_NAME` AS `column`,`EXTRA` LIKE '%auto_increment%' AS `isAutoIncrement` FROM `information_schema`.`COLUMNS` WHERE `TABLE_NAME`=? AND `COLUMN_KEY`='PRI';",
             "spr" : "CALL `<spr/>`(<csv-bindings/>)",
+            "strictMode" : "SET @@SQL_MODE = CONCAT(@@SQL_MODE,',STRICT_ALL_TABLES');",
             "update" : "UPDATE `<table/>` SET `<column/>`=? WHERE <constraints/>;"
         }
        ,"sqlState" : {
@@ -16,9 +17,10 @@
         "sql" : {
             "constraintsSep" : " AND ",
             "delimiter" : "",
-            "insert" : "INSERT INTO `<table/>` ( <csv-columns> ) VALUES ( <csv-bindings/> );",
+            "insert" : "INSERT INTO `<table/>` ( <csv-columns/> ) VALUES ( <csv-bindings/> );",
             "primaryKeys" : null,
             "spr" : "SELECT <spr/>(<csv-bindings/>)",
+            "strictMode" : null,
             "update" : "UPDATE `<table/>` SET `<column/>`=? WHERE <constraints/>;"
         }
        ,"sqlState" : {
