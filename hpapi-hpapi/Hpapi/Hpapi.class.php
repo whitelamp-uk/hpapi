@@ -11,11 +11,12 @@ class Hpapi {
     protected   $db;                         // Database object \Hpapi\HpapiDb
     public      $datetime;                   // DateTime of response (can be faked for matching time-based test data)
     public      $email;                      // Email contained in request
-    public      $groupsAllowed   = array (); // Usergroups for this user
-    public      $groupsAvailable = array (); // Usergroups for this user
+    public      $groupsAllowed   = array (); // Memberships authenticated for access control
+    public      $groupsAvailable = array (); // Memberships found for the requested user (not necessarily authenticated)
     public      $logtime;                    // DateTime of response for logging (never faked)
     public      $microtime;                  // Microtime of response (decimal fraction of a second)
     public      $object;                     // The PHP object loaded from the input which is modified and returned
+    protected   $permissions;                // Full permissions array
     protected   $privilege;                  // Privilege array for this vendor::package::class::method
     public      $remoteAddrPattern;          // REMOTE_ADDR matching pattern for the current key
     public      $returnDiagnostic;           // Microtime of response (decimal fraction of a second)
@@ -133,26 +134,7 @@ class Hpapi {
             $this->end ();
         }
         $key                                        = $this->authenticate ();
-        if (HPAPI_PRIVILEGES_DYNAMIC) {
-            $privileges                             = $this->callPrivileges ();
-        }
-        else {
-            if (is_readable(HPAPI_PRIVILEGES_FILE)) {
-                $privileges                         = require HPAPI_PRIVILEGES_FILE;
-            }
-            if (!is_array($privileges)) {
-                $privileges                         = $this->callPrivileges ();
-                try {
-                    $this->exportArray (HPAPI_PRIVILEGES_FILE,$privileges);
-                }
-                catch (\Exception $e) {
-                    $this->diagnostic ($e->getMessage());
-                    $this->object->response->error  = HPAPI_STR_PRIV_WRITE;
-                    $this->end ();
-                }
-            }
-        }
-        $this->privilege                            = $this->access ($privileges,$key);
+        $this->privilege                            = $this->access ($this->fetchPrivileges(),$key);
         $this->object->response->returnValue        = $this->executeMethod ($this->object->method);
         $this->end ();
     }
@@ -234,7 +216,7 @@ class Hpapi {
         }
         catch (\Exception $e) {
             $this->diagnostic ($e->getMessage());
-            $this->object->response->error          = HPAPI_STR_ERROR_DB;
+            $this->object->response->error          = HPAPI_STR_DB_SPR_ERROR;
             $this->end ();
         }
         foreach ($results as $g) {
@@ -250,7 +232,7 @@ class Hpapi {
         }
         catch (\Exception $e) {
             $this->diagnostic ($e->getMessage());
-            $this->object->response->error          = HPAPI_STR_ERROR_DB;
+            $this->object->response->error          = HPAPI_STR_DB_SPR_ERROR;
             $this->end ();
         }
         if (!count($results)) {
@@ -360,6 +342,27 @@ class Hpapi {
         return false;
     }
 
+    public function callPermissions () {
+        try {
+            $columns                                = $this->db->call (
+                'hpapiColumnPermissions'
+            );
+        }
+        catch (\Exception $e) {
+            $this->diagnostic ($e->getMessage());
+            $this->object->response->error          = HPAPI_STR_DB_SPR_ERROR;
+            $this->end ();
+        }
+        $permissions                                        = array ();
+        foreach ($columns as $c) {
+            $key                                            = $c['table'].'.'.$c['column'];
+            $c['inserters']                                 = explode ('::',$c['inserters']);
+            $c['updaters']                                  = explode ('::',$c['updaters']);
+            $permissions[$key]                              = $c;
+        }
+        return $permissions;
+    }
+
     public function callPrivileges () {
         try {
             $methods                                = $this->db->call (
@@ -368,7 +371,7 @@ class Hpapi {
         }
         catch (\Exception $e) {
             $this->diagnostic ($e->getMessage());
-            $this->object->response->error          = HPAPI_STR_ERROR_DB;
+            $this->object->response->error          = HPAPI_STR_DB_SPR_ERROR;
             $this->end ();
         }
         $privileges                                 = array ();
@@ -411,7 +414,7 @@ class Hpapi {
         }
         catch (\Exception $e) {
             $this->diagnostic ($e->getMessage());
-            $this->object->response->error                      = HPAPI_STR_ERROR_DB;
+            $this->object->response->error                      = HPAPI_STR_DB_SPR_ERROR;
             $this->end ();
         }
         foreach ($sprs as $s) {
@@ -776,6 +779,51 @@ class Hpapi {
         }
     }
 
+    public function fetchPermissions ( ) {
+        if (HPAPI_PERMISSIONS_DYNAMIC) {
+            $this->permissions                      = $this->callPermissions ();
+        }
+        else {
+            if (is_readable(HPAPI_PERMISSIONS_FILE)) {
+                $this->permissions                  = require HPAPI_PERMISSIONS_FILE;
+            }
+            if (!is_array($this->permissions) || !count($this->permissions)) {
+                $this->permissions                  = $this->callPermissions ();
+                try {
+                    $this->exportArray (HPAPI_PERMISSIONS_FILE,$this->permissions);
+                }
+                catch (\Exception $e) {
+                    $this->diagnostic ($e->getMessage());
+                    $this->object->response->error  = HPAPI_STR_PERM_WRITE;
+                    $this->end ();
+                }
+            }
+        }
+    }
+
+    public function fetchPrivileges ( ) {
+        if (HPAPI_PRIVILEGES_DYNAMIC) {
+            $privileges                             = $this->callPrivileges ();
+        }
+        else {
+            if (is_readable(HPAPI_PRIVILEGES_FILE)) {
+                $privileges                         = require HPAPI_PRIVILEGES_FILE;
+            }
+            if (!is_array($privileges)) {
+                $privileges                         = $this->callPrivileges ();
+                try {
+                    $this->exportArray (HPAPI_PRIVILEGES_FILE,$privileges);
+                }
+                catch (\Exception $e) {
+                    $this->diagnostic ($e->getMessage());
+                    $this->object->response->error  = HPAPI_STR_PRIV_WRITE;
+                    $this->end ();
+                }
+            }
+        }
+        return $privileges;
+    }
+
     public function groupAllowed ($groupName) {
         foreach ($this->groupsAllowed as $ug) {
             if ($ug['usergroup']==$groupName) {
@@ -966,6 +1014,39 @@ class Hpapi {
         return $drv[0];
     }
 
+    public function permissionForColumn ($table,$column) {
+        $this->fetchPermissions ();
+        $key                                    = $table.'.'.$column;
+        if (!array_key_exists($key,$this->permissions)) {
+            return false;
+        }
+        return $this->permissions[$key];
+    }
+
+    public function permissionToInsert ($table,$column) {
+        return $this->permissionToWrite ($table,$column,'inserters');
+    }
+
+    public function permissionToUpdate ($table,$column) {
+        return $this->permissionToWrite ($table,$column,'updaters');
+    }
+
+    private function permissionToWrite ($table,$column,$type) {
+        $this->fetchPermissions ();
+        $key                                    = $table.'.'.$column;
+        if (!array_key_exists($key,$this->permissions)) {
+            return false;
+        }
+        foreach ($this->permissions[$key][$type] as $permg) {
+            foreach ($this->groupsAllowed as $authg) {
+                if ($authg['usergroup']==$permg) {
+                    return $this->permissions[$key];
+                }
+            }
+        }
+        return false;
+    }
+
     public function resetPrivileges ( ) {
         if (!is_writable(HPAPI_PRIVILEGES_FILE)) {
             throw new \Exception (HPAPI_STR_RESET_PRIVS_FILE);
@@ -1052,7 +1133,11 @@ class Hpapi {
             $label  = $defn['name'];
         }
         $this->addSplash ($label.' '.$cstr);
-        throw new \Exception ($name.'['.$argNum.']: '.$e);
+        if ($argNum) {
+            throw new \Exception ($name.'['.$argNum.']: '.$e);
+            return false;
+        }
+        throw new \Exception ($name.': '.$e);
         return false;
     }
 

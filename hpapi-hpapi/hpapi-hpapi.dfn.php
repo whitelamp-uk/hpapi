@@ -22,6 +22,7 @@ define ( 'HPAPI_PATTERN_DESC_ALPHA_LC',     'must have only small letters (up to
 define ( 'HPAPI_PATTERN_DESC_CLASS',        'must be a valid PHP class name'                                                        );
 define ( 'HPAPI_PATTERN_DESC_DATETIME',     'must be universal datetime format yyyy-mm-dd hh:mm:ss+hh:mm'                           );
 define ( 'HPAPI_PATTERN_DESC_DB_BOOL',      'must be 0 or 1'                                                                        );
+define ( 'HPAPI_PATTERN_DESC_DB_ENTITY',    'must start with letter, only lower-case letter, nrs. or _, maximum 64 characters'      );
 define ( 'HPAPI_PATTERN_DESC_EMAIL',        'must be a valid email address'                                                         );
 define ( 'HPAPI_PATTERN_GEO_COORD',         'must be a valid decimal geo-coordinate value'                                          );
 define ( 'HPAPI_PATTERN_DESC_HHMMSS',       'must be 6 digits representing a time - HHMMSS'                                         );
@@ -74,9 +75,10 @@ define ( 'HPAPI_STR_DB_DFN',                '042 500 DB configuration error - co
 define ( 'HPAPI_STR_DB_DFN_DRV',            '043 500 DB configuration error - missing PDO driver definition'                        );
 define ( 'HPAPI_STR_DB_OBJ',                '044 500 Could not construct database object'                                           );
 define ( 'HPAPI_STR_DB_CONN',               '045 500 Could not connect to database'                                                 );
-define ( 'HPAPI_STR_PRIV_WRITE',            '046 500 Could not write privileges'                                                    );
-define ( 'HPAPI_STR_PRIV_READ',             '047 500 Could not read privileges'                                                     );
-define ( 'HPAPI_STR_TOKEN_DURATION',        '048 500 No matching user group has a token duration'                                   );
+define ( 'HPAPI_STR_PERM_WRITE',            '046 500 Could not write permissions'                                                    );
+define ( 'HPAPI_STR_PRIV_WRITE',            '047 500 Could not write privileges'                                                    );
+define ( 'HPAPI_STR_PRIV_READ',             '048 500 Could not read privileges'                                                     );
+define ( 'HPAPI_STR_TOKEN_DURATION',        '049 500 No matching user group has a token duration'                                   );
 
 // Authentication error
 define ( 'HPAPI_STR_AUTH_DENIED',           '050 403 Access denied'                                                                 );
@@ -128,7 +130,26 @@ define ( 'HPAPI_STR_DB_SPR_AVAIL',          '202 403 Stored procedure not availa
 define ( 'HPAPI_STR_DB_SPR_ARGS',           '203 500 Incorrect argument count for stored procedure'                                 );
 define ( 'HPAPI_STR_DB_SPR_ARG_VAL',        '204 500 Invalid stored procedure argument'                                             );
 define ( 'HPAPI_STR_DB_SPR_ARG_TYPE',       '205 500 Illegal data type for stored procedure argument'                               );
-define ( 'HPAPI_STR_ERROR_DB',              '206 500 SQL execution error'                                                           );
+define ( 'HPAPI_STR_DB_SPR_ERROR',          '206 500 Stored procedure execution error'                                                           );
+
+// Inserting data
+define ( 'HPAPI_STR_DB_INSERT_COLS',        '211 400 No columns were given'                                                         );
+define ( 'HPAPI_STR_DB_INSERT_PERMISSION',  '212 403 Column insert not allowed'                                                     );
+define ( 'HPAPI_STR_DB_INSERT_MODELS',      '213 400 Columns are from different models'                                             );
+define ( 'HPAPI_STR_DB_INSERT_ERROR',       '214 500 Database error (for insert)'                                                   );
+define ( 'HPAPI_STR_DB_INSERT_PRI_CHECK',   '215 500 Unable to check primary key'                                                   );
+define ( 'HPAPI_STR_DB_INSERT_PRI',         '216 400 Non-auto-incrementing primary key was not given'                               );
+define ( 'HPAPI_STR_DB_INSERT_AUTOINC',     '217 400 Auto-incrementing primary key was given'                                       );
+define ( 'HPAPI_STR_DB_INSERT_COL_VAL',     '218 400 Invalid column value'                                                          );
+
+// Updating data
+define ( 'HPAPI_STR_DB_UPDATE_PERMISSION',  '221 403 Column update not allowed'                                                     );
+define ( 'HPAPI_STR_DB_UPDATE_ERROR',       '222 500 Database error (for update)'                                                   );
+define ( 'HPAPI_STR_DB_UPDATE_COL_VAL',     '223 400 Invalid column value'                                                          );
+define ( 'HPAPI_STR_DB_UPDATE_PRI_PERM',    '224 400 Primary key is not recognised'                                                 );
+define ( 'HPAPI_STR_DB_UPDATE_PRI_VAL',     '225 400 Invalid primary key value'                                                     );
+define ( 'HPAPI_STR_DB_UPDATE_PRI_CHECK',   '226 500 Unable to check primary key'                                                   );
+define ( 'HPAPI_STR_DB_UPDATE_PRI',         '227 400 The primary key given is incomplete'                                           );
 
 // SSL notice
 define ( 'HPAPI_STR_PLAIN',                 'WARNING - UNENCRYPTED CONNECTION'                                                      );
@@ -144,11 +165,12 @@ define ( 'HPAPI_STR_EXPORT_ARRAY_ARR',      '\Hpapi\Hpapi::exportArray(): variab
 define ( 'HPAPI_STR_RESET_PRIVS_FILE',      '\Hpapi\Hpapi::resetPrivileges(): privileges file is not writable'                      );
 define ( 'HPAPI_STR_VALID_DEFN_PARAM',      '\Hpapi\Hpapi::validation(): definition is missing property'                            );
 
-
 // Database notices
-define ( 'HPAPI_STR_DB_SPR_PREP',           'Query preparation failed'                                                              );
-define ( 'HPAPI_STR_DB_SPR_BIND',           'Query binding failed'                                                                  );
-define ( 'HPAPI_STR_DB_SPR_EXEC',           'Query execution failed'                                                                );
+define ( 'HPAPI_STR_DB_PREP',               'Query preparation failed'                                                              );
+define ( 'HPAPI_STR_DB_BIND',               'Query binding failed'                                                                  );
+define ( 'HPAPI_STR_DB_EXEC',               'Query execution failed'                                                                );
+define ( 'HPAPI_STR_DB_PRI_KEY',            'Table does not seem to have a primary key'                                             );
+define ( 'HPAPI_STR_DB_STRICT',             'Failed to set SQL strict mode'                                                         );
 
 // Validation strings
 define ( 'HPAPI_STR_VALID_PATTERN',         'must match pattern'                                                                    );

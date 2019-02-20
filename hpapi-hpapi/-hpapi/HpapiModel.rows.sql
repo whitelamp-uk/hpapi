@@ -29,6 +29,7 @@ INSERT IGNORE INTO `hpapi_pattern` (`pattern`, `constraints`, `expression`, `inp
 ('class',	'HPAPI_PATTERN_DESC_CLASS',	'^\\\\[A-Z][A-z]*\\\\[A-Z][A-z]*$',	'text',	'',	4,	64,	'',	''),
 ('datetime',	'HPAPI_PATTERN_DESC_DATETIME',	'^[0-9]{4}-[0-9]{2}-[0-9]{2}(\\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}$',	'datetime-local',	'',	0,	0,	'',	''),
 ('db-boolean',	'HPAPI_PATTERN_DESC_DB_BOOL',	'',	'checkbox',	'FILTER_VALIDATE_INT',	0,	0,	'0',	'1'),
+('db-entity',	'HPAPI_PATTERN_DESC_DB_ENTITY',	'^[a-z][a-z0-9_]*$',	'text',	'',	1,	64,	'',	''),
 ('email',	'HPAPI_PATTERN_DESC_EMAIL',	'',	'email',	'FILTER_VALIDATE_EMAIL',	3,	254,	'',	''),
 ('geo-coordinate',	'HPAPI_PATTERN_GEO_COORD',	'^[-+]?([0-9]+\.?|\.[0-9])[0-9]*$',	'text',	'',	0,	0,	'-360',	'360'),
 ('hhmmss',	'HPAPI_PATTERN_DESC_HHMMSS',	'^[0-9]{6}$',	'text',	'',	0,	0,	'000000',	'235959'),

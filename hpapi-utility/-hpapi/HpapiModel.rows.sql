@@ -13,8 +13,10 @@ INSERT IGNORE INTO `hpapi_call` (`model`, `spr`, `vendor`, `package`, `class`, `
 
 INSERT IGNORE INTO `hpapi_method` (`vendor`, `package`, `class`, `method`, `label`, `notes`) VALUES
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'describeMethod',	'Method description',	'Method, argument and validation details'),
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'insert',	'Insert row',	'Insert into multiple columns in a table. Enforce all primary keys but reject auto-incrementing keys. On success return last insert ID (auto-inc) or true (not auto-inc)'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'myMethods',	'My methods',	'Methods available to the current user.'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'myUsergroups',	'My user groups',	'User groups for the current user.'),
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'update',	'Update column',	'Update a column value for a specific primary key. Ensure whole primary key is given. On success return true.'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'usergroups',	'User groups',	'Details of all user groups.'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'uuid',	'Get UUID',	'Hpapi default UUID generating method.');
 
@@ -22,9 +24,17 @@ INSERT IGNORE INTO `hpapi_methodarg` (`vendor`, `package`, `class`, `method`, `a
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'describeMethod',	1,	'Vendor',	0,	'vendor'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'describeMethod',	2,	'Package',	0,	'package'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'describeMethod',	3,	'Class',	0,	'class'),
-('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'describeMethod',	4,	'Method',	0,	'method');
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'describeMethod',	4,	'Method',	0,	'method'),
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'insert',	1,	'Table',	0,	'db-entity'),
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'insert',	2,	'Columns',	0,	'object'),
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'update',	1,	'Table',	0,	'db-entity'),
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'update',	2,	'Column',	0,	'db-entity'),
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'update',	3,	'Value',	1,	'varchar-255'),
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'update',	4,	'Primary keys',	0,	'object');
 
 INSERT IGNORE INTO `hpapi_run` (`usergroup`, `vendor`, `package`, `class`, `method`) VALUES
+('admin',	'whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'insert'),
+('admin',	'whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'update'),
 ('admin',	'whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'usergroups'),
 ('anon',	'whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'describeMethod'),
 ('anon',	'whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'myMethods'),

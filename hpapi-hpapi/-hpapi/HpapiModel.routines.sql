@@ -59,6 +59,38 @@ BEGIN
 END$$
 
 
+DROP PROCEDURE IF EXISTS `hpapiColumnPermissions`$$
+CREATE PROCEDURE `hpapiColumnPermissions`(
+)
+BEGIN
+  SELECT
+    `hpapi_column`.`table`
+   ,`hpapi_column`.`column`
+   ,`hpapi_column`.`model`
+   ,`hpapi_column`.`empty_allowed` AS `emptyAllowed`
+   ,`hpapi_pattern`.`pattern`
+   ,`hpapi_pattern`.`constraints`
+   ,`hpapi_pattern`.`expression`
+   ,`hpapi_pattern`.`php_filter` AS `phpFilter`
+   ,`hpapi_pattern`.`length_minimum` AS `lengthMinimum`
+   ,`hpapi_pattern`.`length_maximum` AS `lengthMaximum`
+   ,`hpapi_pattern`.`value_minimum` AS `valueMinimum`
+   ,`hpapi_pattern`.`value_maximum` AS `valueMaximum`
+   ,GROUP_CONCAT(`hpapi_insert`.`usergroup` SEPARATOR '::') AS `inserters`
+   ,GROUP_CONCAT(`hpapi_update`.`usergroup` SEPARATOR '::') AS `updaters`
+  FROM `hpapi_column`
+  LEFT JOIN `hpapi_pattern` USING (`pattern`)
+  LEFT JOIN `hpapi_insert` USING (`table`,`column`)
+  LEFT JOIN `hpapi_update` USING (`table`,`column`)
+  GROUP BY `hpapi_column`.`table`,`hpapi_column`.`column`
+  ORDER BY
+      `hpapi_column`.`model`
+     ,`hpapi_column`.`table`
+     ,`hpapi_column`.`column`
+  ;
+END$$
+
+
 DROP PROCEDURE IF EXISTS `hpapiGdprMethodArguments`$$
 CREATE PROCEDURE `hpapiGdprMethodArguments`(
 )

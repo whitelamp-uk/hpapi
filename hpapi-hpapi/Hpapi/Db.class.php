@@ -75,7 +75,7 @@ class Db {
             $q              = str_replace ('<csv-bindings/>',$b,$q);
         }
         catch (\Exception $e) {
-            throw new \Exception (HPAPI_STR_DB_SPR_PREP.' [1] - '.$spr.' ('.$e.')');
+            throw new \Exception (HPAPI_STR_DB_PREP.' [1] - '.$spr.' ('.$e.')');
             return false;
         }
         try {
@@ -83,7 +83,7 @@ class Db {
             $stmt           = $this->PDO->prepare ($q);
         }
         catch (\PDOException $e) {
-            throw new \Exception (HPAPI_STR_DB_SPR_PREP.' [2] - '.$spr.' ('.$e.')');
+            throw new \Exception (HPAPI_STR_DB_PREP.' [2] - '.$spr.' ('.$e.')');
             return false;
         }
         foreach ($args as $i=>$arg) {
@@ -93,7 +93,7 @@ class Db {
                 $stmt->bindValue (($i+1),$arg[0],$arg[1]);
             }
             catch (\PDOException $e) {
-                throw new \Exception (HPAPI_STR_DB_SPR_BIND.' - '.$spr.' ('.$e.')');
+                throw new \Exception (HPAPI_STR_DB_BIND.' - '.$spr.' ('.$e.')');
                 return false;
             }
         }
@@ -103,7 +103,7 @@ class Db {
         }
         catch (\PDOException $e) {
             // Execution failed
-            $this->hpapi->diagnostic (HPAPI_STR_DB_SPR_EXEC.' - '.$spr.' ('.$e->getMessage().')');
+            $this->hpapi->diagnostic (HPAPI_STR_DB_EXEC.' - '.$spr.' ('.$e->getMessage().')');
             throw new \Exception ($e->getMessage());
             return false;
         }
@@ -151,6 +151,111 @@ class Db {
         return true;
     }
 
+    public function insert ($table,$columns,$defns) {
+        // Check inputs
+        try {
+            $this->insertCheck ($table,$columns,$defns);
+        }
+        catch (\Exception $e) {
+            throw new \Exception ($e->getMessage());
+            return false;
+        }
+        // Set strict mode
+        try {
+            $this->strictMode ();
+        }
+        catch (\Exception $e) {
+            $this->hpapi->diagnostic ($e->getMessage());
+            throw new \Exception (HPAPI_STR_DB_INSERT_ERROR);
+            return false;
+        }
+        // Build query
+        try {
+            $q              = $this->dfn->sql->insert;
+            $q              = str_replace ('<table/>',$table,$q);
+            $c              = array ();
+            $b              = array ();
+            foreach ($columns as $col=>$val) {
+                array_push ($c,$this->dfn->sql->delimiter.$col.$this->dfn->sql->delimiter);
+                array_push ($b,'?');
+            }
+            $c              = implode (',',$c);
+            $b              = implode (',',$b);
+            $q              = str_replace ('<csv-columns/>',$c,$q);
+            $q              = str_replace ('<csv-bindings/>',$b,$q);
+        }
+        catch (\Exception $e) {
+            $this->hpapi->diagnostic (HPAPI_STR_DB_PREP.' [1] - '.$table.' ('.$e->getMessage().')');
+            throw new \Exception (HPAPI_STR_DB_INSERT_ERROR);
+            return false;
+        }
+        // Prepare and execute statement
+        try {
+            $stmt           = $this->PDO->prepare ($q);
+        }
+        catch (\PDOException $e) {
+            $this->hpapi->diagnostic (HPAPI_STR_DB_PREP.' [2] - '.$table.' ('.$e->getMessage().')');
+            throw new \Exception (HPAPI_STR_DB_INSERT_ERROR);
+            return false;
+        }
+        $i                  = 0;
+        foreach ($columns as $v) {
+            try {
+                $i++;
+                (array)$arg = $this->pdoCast ($v);
+                $stmt->bindValue ($i,$arg[0],$arg[1]);
+            }
+            catch (\PDOException $e) {
+                $this->hpapi->diagnostic (HPAPI_STR_DB_BIND.' - '.$table.'.'.$column.' ('.$e->getMessage().')');
+                throw new \Exception (HPAPI_STR_DB_INSERT_ERROR);
+                return false;
+            }
+        }
+        try {
+            $stmt->execute ();
+        }
+        catch (\PDOException $e) {
+            // Execution failed
+            $this->hpapi->diagnostic (HPAPI_STR_DB_EXEC.' - '.$table.' ('.$e->getMessage().')');
+            throw new \Exception (HPAPI_STR_DB_INSERT_ERROR);
+            return false;
+        }
+        $stmt->closeCursor ();
+        return true;
+    }
+
+    public function insertCheck ($table,$columns,$defns) {
+        // Check primary keys
+        try {
+            $tableKeys          = $this->primaryKeys ($table);
+        }       
+        catch (\Exception $e) {
+            throw new \Exception (HPAPI_STR_DB_INSERT_PRI_CHECK);
+            return false;
+        }
+        foreach ($tableKeys AS $pk) {
+            if (!property_exists($columns,$pk['column']) && !$pk['isAutoIncrement']) {
+                throw new \Exception (HPAPI_STR_DB_INSERT_PRI);
+                return false;
+            }
+            if (property_exists($columns,$pk['column']) && $pk['isAutoIncrement']) {
+                throw new \Exception (HPAPI_STR_DB_INSERT_AUTOINC);
+                return false;
+            }
+        }
+        // Validate columns
+        foreach ($columns as $c=>$v) {
+            try {
+                $this->hpapi->validation ($table.'.'.$c,null,$v,$defns->{$c});
+            }
+            catch (\Exception $e) {
+                throw new \Exception (HPAPI_STR_DB_INSERT_COL_VAL.': '.$e->getMessage());
+                return false;
+            }
+        }
+        return true;
+    }
+
     public function pdoCast ($value) {
             // Force change of data type
             if (is_bool($value)) {
@@ -179,6 +284,168 @@ class Db {
                 return false;
             }
             return array ($value,$type);
+    }
+
+    public function primaryKeys ($table) {
+        try {
+            $stmt           = $this->PDO->prepare ($this->dfn->sql->primaryKeys);
+        }
+        catch (\PDOException $e) {
+            throw new \Exception (HPAPI_STR_DB_PREP.' ('.$e.')');
+            return false;
+        }
+        try {
+            (array)$arg     = $this->pdoCast ($table);
+            $stmt->bindValue (1,$arg[0],$arg[1]);
+        }
+        catch (\PDOException $e) {
+            throw new \Exception (HPAPI_STR_DB_BIND.' ('.$e.')');
+            return false;
+        }
+        try {
+            $stmt->execute ();
+        }
+        catch (\PDOException $e) {
+            // Execution failed
+            $this->hpapi->diagnostic (HPAPI_STR_DB_EXEC.' ('.$e->getMessage().')');
+            throw new \Exception ($e->getMessage());
+            return false;
+        }
+        try {
+            $keys           =  $stmt->fetchAll (\PDO::FETCH_ASSOC);
+            $stmt->closeCursor ();
+        }
+        catch (\PDOException $e) {
+            throw new \Exception (HPAPI_STR_DB_PRI_KEY);
+            return false;
+        }
+        return $keys;
+    }
+
+    public function strictMode ( ) {
+        try {
+            $stmt           = $this->PDO->prepare ($this->dfn->sql->strictMode);
+            $stmt->execute ();
+        }
+        catch (\PDOException $e) {
+            throw new \Exception (HPAPI_STR_DB_STRICT.': '.$e->getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    public function update ($table,$column,$value,$primaryKeys) {
+        try {
+            $this->updateCheck ($table,$column,$value,$primaryKeys);
+        }
+        catch (\Exception $e) {
+            throw new \Exception ($e->getMessage());
+            return false;
+        }
+        try {
+            // Query for an update
+            $q              = $this->dfn->sql->update;
+            $q              = str_replace ('<table/>',$table,$q);
+            $q              = str_replace ('<column/>',$column,$q);
+            // Binding placeholders
+            $q              = str_replace ('<value/>','?',$q);
+            $c              = array ();
+            foreach ($primaryKeys as $k=>$v) {
+                $p          = $this->dfn->sql->delimiter.$k.$this->dfn->sql->delimiter.'=?';
+                array_push ($c,$p);
+            }
+            $c              = implode ($this->dfn->sql->constraintsSep,$c);
+            $q              = str_replace ('<constraints/>',$c,$q);
+        }
+        catch (\Exception $e) {
+            $this->hpapi->diagnostic (HPAPI_STR_DB_PREP.' [1] - '.$table.'.'.$column.' ('.$e->getMessage().')');
+            throw new \Exception (HPAPI_STR_DB_UPDATE_ERROR);
+            return false;
+        }
+        try {
+            // SQL statement
+            $stmt           = $this->PDO->prepare ($q);
+        }
+        catch (\PDOException $e) {
+            $this->hpapi->diagnostic (HPAPI_STR_DB_PREP.' [2] - '.$table.'.'.$column.' ('.$e->getMessage().')');
+            throw new \Exception (HPAPI_STR_DB_UPDATE_ERROR);
+            return false;
+        }
+        // Bind values to placeholders
+        $i                  = 1;
+        try {
+            (array)$arg = $this->pdoCast ($value);
+            $stmt->bindValue (1,$arg[0],$arg[1]);
+        }
+        catch (\PDOException $e) {
+            $this->hpapi->diagnostic (HPAPI_STR_DB_BIND.' [1] - '.$table.'.'.$column.' ('.$e->getMessage().')');
+            throw new \Exception (HPAPI_STR_DB_UPDATE_ERROR);
+            return false;
+        }
+        foreach ($primaryKeys as $k=>$v) {
+            try {
+                $i++;
+                (array)$arg = $this->pdoCast ($v);
+                $stmt->bindValue ($i,$arg[0],$arg[1]);
+            }
+            catch (\PDOException $e) {
+                $this->hpapi->diagnostic (HPAPI_STR_DB_BIND.' [2] - '.$table.'.'.$column.' ('.$e->getMessage().')');
+                throw new \Exception (HPAPI_STR_DB_UPDATE_ERROR);
+                return false;
+            }
+        }
+        try {
+            // Execute SQL statement
+            $stmt->execute ();
+        }
+        catch (\PDOException $e) {
+            // Execution failed
+            $this->hpapi->diagnostic (HPAPI_STR_DB_EXEC.' - '.$spr.' ('.$e->getMessage().')');
+            throw new \Exception (HPAPI_STR_DB_UPDATE_ERROR);
+            return false;
+        }
+        $stmt->closeCursor ();
+        return true;
+    }
+
+    public function updateCheck ($table,$column,$value,$primaryKeys) {
+        // Validate column
+        try {
+            $this->hpapi->validation ($table.'.'.$column->column,null,$value,$column);
+        }
+        catch (\Exception $e) {
+            throw new \Exception (HPAPI_STR_DB_UPDATE_COL_VAL.': '.$e->getMessage());
+            return false;
+        }
+        foreach ($primaryKeys as $col=>$val) {
+            // Get primary column details
+            if (!($c=$this->hpapi->permissionForColumn($table,$col))) {
+                throw new \Exception (HPAPI_STR_DB_UPDATE_PRI_PERM);
+                return false;
+            }
+            // Validate primary column
+            try {
+                $this->hpapi->validation ($table.'.'.$col,null,$val,$c);
+            }
+            catch (\Exception $e) {
+                throw new \Exception (HPAPI_STR_DB_UPDATE_PRI_VAL.': '.$e->getMessage());
+                return false;
+            }
+        }
+        // Check primary key has the right columns
+        try {
+            $tableKeys      = $this->primaryKeys ($table);
+        }       
+        catch (\Exception $e) {
+            throw new \Exception (HPAPI_STR_DB_UPDATE_PRI_CHECK);
+            return false;
+        }
+        foreach ($tableKeys as $k) {
+            if (!property_exists($primaryKeys,$k['column'])) {
+                throw new \Exception (HPAPI_STR_DB_UPDATE_PRI);
+                return false;
+            }
+        }
     }
 
 }

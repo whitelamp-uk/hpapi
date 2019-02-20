@@ -1,7 +1,12 @@
 {
     "mysql" : {
         "sql" : {
-            "spr" : "CALL `<spr/>`(<csv-bindings/>)"
+            "constraintsSep" : " AND ",
+            "delimiter" : "`",
+            "insert" : "INSERT INTO `<table/>` ( <csv-columns> ) VALUES ( <csv-bindings/> );",
+            "primaryKeys" : "SELECT `COLUMN_NAME` AS `column`,`EXTRA` LIKE '%auto_increment%' AS `isAutoIncrement` FROM `information_schema`.`COLUMNS` WHERE `TABLE_NAME`=? AND `COLUMN_KEY`='PRI';",
+            "spr" : "CALL `<spr/>`(<csv-bindings/>)",
+            "update" : "UPDATE `<table/>` SET `<column/>`=? WHERE <constraints/>;"
         }
        ,"sqlState" : {
             "duplicatePrimary" : "23000"
@@ -9,7 +14,12 @@
     }
    ,"pgsql" : {
         "sql" : {
-            "spr" : "SELECT <spr/>(<csv-bindings/>)"
+            "constraintsSep" : " AND ",
+            "delimiter" : "",
+            "insert" : "INSERT INTO `<table/>` ( <csv-columns> ) VALUES ( <csv-bindings/> );",
+            "primaryKeys" : null,
+            "spr" : "SELECT <spr/>(<csv-bindings/>)",
+            "update" : "UPDATE `<table/>` SET `<column/>`=? WHERE <constraints/>;"
         }
        ,"sqlState" : {
             "duplicatePrimary" : "23515"

@@ -62,6 +62,44 @@ class Utility {
         return false;
     }
 
+    public function insert ($table,$columns) {
+        if (!count(get_object_vars($columns))) {
+            throw new \Exception (HPAPI_STR_DB_INSERT_COLS);
+            return false;
+        }
+        $defns                  = new \stdClass ();
+        $model                  = null;
+        foreach ($columns as $column=>$value) {
+            if (!($c=$this->hpapi->permissionToInsert($table,$column))) {
+                throw new \Exception (HPAPI_STR_DB_INSERT_PERMISSION);
+                return false;
+            }
+            if ($model && $c['model']!=$model) {
+                throw new \Exception (HPAPI_STR_DB_INSERT_MODELS);
+                return false;
+            }
+            $model              = $c['model'];
+            $defns->{$column}   = $c;
+        }
+        try {
+            $db                 = new \Hpapi\Db ($this->hpapi,$this->hpapi->models->{$model});
+        }
+        catch (\Exception $e) {
+            throw new \Exception (HPAPI_STR_DB_INSERT_ERROR);
+            return false;
+        }
+        try {
+            $db->insert ($table,$columns,$defns);
+            $db->close ();
+            return true;
+        }
+        catch (\Exception $e) {
+            $db->close ();
+            throw new \Exception ($e->getMessage());
+            return false;
+        }
+    }
+
     public function myMethods ( ) {
         $authenticated                          = intval (strlen($this->hpapi->object->email)>0);
         try {
@@ -92,6 +130,32 @@ class Utility {
             return false;
         }
         return $this->hpapi->parse2D ($usergroups);
+    }
+
+    public function update ($table,$column,$value,$primaryKeys) {
+        // Get column permission and details
+        if (!($c=$this->hpapi->permissionToUpdate($table,$column))) {
+            throw new \Exception (HPAPI_STR_DB_UPDATE_PERMISSION);
+            return false;
+        }
+        try {
+            $db             = new \Hpapi\Db ($this->hpapi,$this->hpapi->models->{$c['model']});
+        }
+        catch (\Exception $e) {
+            throw new \Exception (HPAPI_STR_DB_UPDATE_ERROR);
+            return false;
+        }
+        try {
+            $db->update ($table,$c,$value,$primaryKeys);
+            $db->close ();
+            return true;
+        }
+        catch (\Exception $e) {
+            $db->close ();
+            $this->diagnostic ($e->getMessage());
+            throw new \Exception ($e->getMessage());
+            return false;
+        }
     }
 
     public function usergroups ( ) {

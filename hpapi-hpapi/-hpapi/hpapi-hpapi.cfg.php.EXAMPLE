@@ -34,6 +34,11 @@ define ( 'HPAPI_PRIVILEGES_DYNAMIC',        true                                
 define ( 'HPAPI_PRIVILEGES_FILE',           HPAPI_DIR_CONFIG.'/hpapi-privileges.array.php'                                          );
 
 
+// HPAPI PERMISSIONS - HPAPI_PERMISSIONS_DYNAMIC is useful in development but slow in production
+define ( 'HPAPI_PERMISSIONS_DYNAMIC',       true                                                                                    );
+define ( 'HPAPI_PERMISSIONS_FILE',          HPAPI_DIR_CONFIG.'/hpapi-permissions.array.php'                                         );
+
+
 // CODE ERROR REPORTING
 define ( 'HPAPI_PHP_ERROR_LEVEL',           E_ALL                                                                                   );
 

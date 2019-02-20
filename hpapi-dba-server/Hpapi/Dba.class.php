@@ -30,7 +30,7 @@ class Dba {
         }
         catch (\Exception $e) {
             $this->hpapi->diagnostic ($e->getMessage());
-            $this->hpapi->object->response->error   = HPAPI_STR_ERROR_DB;
+            $this->hpapi->object->response->error   = HPAPI_STR_DB_SPR_ERROR;
             return false;
         }
         $columns                                    = array ();
