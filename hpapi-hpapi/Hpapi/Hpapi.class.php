@@ -236,7 +236,7 @@ class Hpapi {
             $this->end ();
         }
         if (!count($results)) {
-            $this->diagnostic (HPAPI_DG_PRIV_RESULTS);
+            $this->diagnostic (HPAPI_DG_AUTH_RESULTS);
             $this->object->response->authStatus     = HPAPI_STR_AUTH_EMAIL;
             $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
             $this->end ();

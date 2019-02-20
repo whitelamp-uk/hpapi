@@ -55,8 +55,6 @@ CREATE TABLE IF NOT EXISTS `hpapi_level` (
   `level` int(11) unsigned NOT NULL,
   `name` varchar(64) NOT NULL,
   `notes` text NOT NULL,
-  `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`level`)
