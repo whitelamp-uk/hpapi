@@ -89,9 +89,9 @@ class Utility {
             return false;
         }
         try {
-            $db->insert ($table,$columns,$defns);
+            $insert             = $db->insert ($table,$columns,$defns);
             $db->close ();
-            return true;
+            return $insert;
         }
         catch (\Exception $e) {
             $db->close ();
