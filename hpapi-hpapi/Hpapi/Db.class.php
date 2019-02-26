@@ -6,6 +6,7 @@ namespace Hpapi;
 
 class Db {
 
+    protected   $lastAutoColumn;  // Auto-increment column found on last use of primaryKeys()
     protected   $dfn;
     protected   $filter;
     protected   $hpapi;
@@ -220,8 +221,14 @@ class Db {
             throw new \Exception (HPAPI_STR_DB_INSERT_ERROR);
             return false;
         }
+        if ($this->lastAutoColumn) {
+            $rtn = $this->PDO->lastInsertId ();
+        }
+        else {
+            $rtn = true;
+        }
         $stmt->closeCursor ();
-        return true;
+        return $rtn;
     }
 
     public function insertCheck ($table,$columns,$defns) {
@@ -318,6 +325,13 @@ class Db {
         catch (\PDOException $e) {
             throw new \Exception (HPAPI_STR_DB_PRI_KEY);
             return false;
+        }
+        $this->lastAutoColumn = null;
+        foreach ($keys as $key) {
+            if ($key['isAutoIncrement']) {
+                $this->lastAutoColumn = $key['column'];
+                break;
+            }
         }
         return $keys;
     }
