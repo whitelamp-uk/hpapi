@@ -360,7 +360,7 @@ class Db {
             // Query for an update
             $q              = $this->dfn->sql->update;
             $q              = str_replace ('<table/>',$table,$q);
-            $q              = str_replace ('<column/>',$column,$q);
+            $q              = str_replace ('<column/>',$column['column'],$q);
             // Binding placeholders
             $q              = str_replace ('<value/>','?',$q);
             $c              = array ();
@@ -372,7 +372,7 @@ class Db {
             $q              = str_replace ('<constraints/>',$c,$q);
         }
         catch (\Exception $e) {
-            $this->hpapi->diagnostic (HPAPI_STR_DB_PREP.' [1] - '.$table.'.'.$column.' ('.$e->getMessage().')');
+            $this->hpapi->diagnostic (HPAPI_STR_DB_PREP.' [1] - '.$table.'.'.$column['column'].' ('.$e->getMessage().')');
             throw new \Exception (HPAPI_STR_DB_UPDATE_ERROR);
             return false;
         }
@@ -381,7 +381,7 @@ class Db {
             $stmt           = $this->PDO->prepare ($q);
         }
         catch (\PDOException $e) {
-            $this->hpapi->diagnostic (HPAPI_STR_DB_PREP.' [2] - '.$table.'.'.$column.' ('.$e->getMessage().')');
+            $this->hpapi->diagnostic (HPAPI_STR_DB_PREP.' [2] - '.$table.'.'.$column['column'].' ('.$e->getMessage().')');
             throw new \Exception (HPAPI_STR_DB_UPDATE_ERROR);
             return false;
         }
@@ -392,7 +392,7 @@ class Db {
             $stmt->bindValue (1,$arg[0],$arg[1]);
         }
         catch (\PDOException $e) {
-            $this->hpapi->diagnostic (HPAPI_STR_DB_BIND.' [1] - '.$table.'.'.$column.' ('.$e->getMessage().')');
+            $this->hpapi->diagnostic (HPAPI_STR_DB_BIND.' [1] - '.$table.'.'.$column['column'].' ('.$e->getMessage().')');
             throw new \Exception (HPAPI_STR_DB_UPDATE_ERROR);
             return false;
         }
@@ -403,7 +403,7 @@ class Db {
                 $stmt->bindValue ($i,$arg[0],$arg[1]);
             }
             catch (\PDOException $e) {
-                $this->hpapi->diagnostic (HPAPI_STR_DB_BIND.' [2] - '.$table.'.'.$column.' ('.$e->getMessage().')');
+                $this->hpapi->diagnostic (HPAPI_STR_DB_BIND.' [2] - '.$table.'.'.$column['column'].' ('.$e->getMessage().')');
                 throw new \Exception (HPAPI_STR_DB_UPDATE_ERROR);
                 return false;
             }
@@ -425,7 +425,7 @@ class Db {
     public function updateCheck ($table,$column,$value,$primaryKeys) {
         // Validate column
         try {
-            $this->hpapi->validation ($table.'.'.$column->column,null,$value,$column);
+            $this->hpapi->validation ($table.'.'.$column['column'],null,$value,$column);
         }
         catch (\Exception $e) {
             throw new \Exception (HPAPI_STR_DB_UPDATE_COL_VAL.': '.$e->getMessage());
