@@ -125,9 +125,7 @@ export class Hpapi {
                 var xhr                     = new XMLHttpRequest ();
                     xhr.timeout             = 1000 * timeoutSecs;
                     xhr.onerror             = function ( ) {
-
                         failed (new Error('999 Could not connect or unknown error'));
-//                        failed ({"httpCode":999,"message":"Could not connect or unknown error"});
                     };
                     xhr.onload              = function ( ) {
                         var fail            = false;
