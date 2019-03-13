@@ -152,7 +152,7 @@ class Utility {
         }
         catch (\Exception $e) {
             $db->close ();
-            $this->diagnostic ($e->getMessage());
+            $this->hpapi->diagnostic ($e->getMessage());
             throw new \Exception ($e->getMessage());
             return false;
         }
