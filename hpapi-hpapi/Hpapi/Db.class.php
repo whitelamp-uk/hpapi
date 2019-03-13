@@ -356,17 +356,6 @@ class Db {
     }
 
     public function update ($table,$column,$value,$primaryKeys) {
-
-//var_dump ($column);
-//die ();
-
-/*
-        foreach ($columns as $c) {
-            $model              = $c->model;
-            break;
-        }
-*/
-
         try {
             $hasChanger     = $this->updateCheck ($table,$column,$value,$primaryKeys);
         }
