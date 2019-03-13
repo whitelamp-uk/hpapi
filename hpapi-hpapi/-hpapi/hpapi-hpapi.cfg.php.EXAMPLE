@@ -5,6 +5,11 @@ define ( 'HPAPI_DIAGNOSTIC_EMAIL_REGEXP',   '^(sysadmin|orgadmin|test\.1)@no\.wh
 // Under normal circumstances this should be null. It is an argument to new \DateTime() to fake data time eg. '@1534487400'
 define ( 'HPAPI_DIAGNOSTIC_FAKE_NOW',       null                                                                                    );
 
+// AUDIT
+// Use this column name (if it exists) to store the user ID
+// that last changed the data in a table row
+define ( 'HPAPI_AUDIT_COLUMN',              'changer'                                                                               );
+
 
 // LOGGING
 define ( 'HPAPI_LOG_LAST_OUTPUT',           false                                                                                   );

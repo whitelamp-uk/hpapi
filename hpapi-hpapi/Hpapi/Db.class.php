@@ -155,11 +155,15 @@ class Db {
     public function insert ($table,$columns,$defns) {
         // Check inputs
         try {
-            $this->insertCheck ($table,$columns,$defns);
+            $hasChanger     = $this->insertCheck ($table,$columns,$defns);
         }
         catch (\Exception $e) {
             throw new \Exception ($e->getMessage());
             return false;
+        }
+        // Set audit column
+        if ($hasChanger) {
+            $columns->{HPAPI_AUDIT_COLUMN} = $this->hpapi->userId;
         }
         // Set strict mode
         try {
@@ -249,6 +253,7 @@ class Db {
                 throw new \Exception (HPAPI_STR_DB_INSERT_AUTOINC);
                 return false;
             }
+            $hasChanger        = $pk['hasChanger'];
         }
         // Validate columns
         foreach ($columns as $c=>$v) {
@@ -260,7 +265,7 @@ class Db {
                 return false;
             }
         }
-        return true;
+        return $hasChanger;
     }
 
     public function pdoCast ($value) {
@@ -302,8 +307,10 @@ class Db {
             return false;
         }
         try {
-            (array)$arg     = $this->pdoCast ($table);
+            (array)$arg     = $this->pdoCast (HPAPI_AUDIT_COLUMN);
             $stmt->bindValue (1,$arg[0],$arg[1]);
+            (array)$arg     = $this->pdoCast ($table);
+            $stmt->bindValue (2,$arg[0],$arg[1]);
         }
         catch (\PDOException $e) {
             throw new \Exception (HPAPI_STR_DB_BIND.' ('.$e.')');
@@ -349,8 +356,19 @@ class Db {
     }
 
     public function update ($table,$column,$value,$primaryKeys) {
+
+//var_dump ($column);
+//die ();
+
+/*
+        foreach ($columns as $c) {
+            $model              = $c->model;
+            break;
+        }
+*/
+
         try {
-            $this->updateCheck ($table,$column,$value,$primaryKeys);
+            $hasChanger     = $this->updateCheck ($table,$column,$value,$primaryKeys);
         }
         catch (\Exception $e) {
             throw new \Exception ($e->getMessage());
@@ -361,6 +379,16 @@ class Db {
             $q              = $this->dfn->sql->update;
             $q              = str_replace ('<table/>',$table,$q);
             $q              = str_replace ('<column/>',$column['column'],$q);
+            $columns        = array ($column['column']=>$value);
+            if ($hasChanger) {
+               $columns[HPAPI_AUDIT_COLUMN] = $this->hpapi->userId;
+            }
+            $b              = array ();
+            foreach ($columns as $col=>$val) {
+                array_push ($b,$this->dfn->sql->delimiter.$col.$this->dfn->sql->delimiter.'=?');
+            }
+            $b              = implode (',',$b);
+            $q              = str_replace ('<cs-kvp-bindings/>',$b,$q);
             // Binding placeholders
             $q              = str_replace ('<value/>','?',$q);
             $c              = array ();
@@ -386,17 +414,20 @@ class Db {
             return false;
         }
         // Bind values to placeholders
-        $i                  = 1;
+        $i                  = 0;
         try {
-            (array)$arg = $this->pdoCast ($value);
-            $stmt->bindValue (1,$arg[0],$arg[1]);
+            foreach ($columns as $v) {
+                $i++;
+                (array)$arg = $this->pdoCast ($v);
+                $stmt->bindValue ($i,$arg[0],$arg[1]);
+            }
         }
         catch (\PDOException $e) {
             $this->hpapi->diagnostic (HPAPI_STR_DB_BIND.' [1] - '.$table.'.'.$column['column'].' ('.$e->getMessage().')');
             throw new \Exception (HPAPI_STR_DB_UPDATE_ERROR);
             return false;
         }
-        foreach ($primaryKeys as $k=>$v) {
+        foreach ($primaryKeys as $v) {
             try {
                 $i++;
                 (array)$arg = $this->pdoCast ($v);
@@ -460,6 +491,7 @@ class Db {
                 return false;
             }
         }
+        return $k['hasChanger'];
     }
 
 }
