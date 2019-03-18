@@ -430,6 +430,26 @@ BEGIN
 END$$
 
 
+DROP PROCEDURE IF EXISTS `hpapiPatterns`$$
+CREATE PROCEDURE `hpapiPatterns`(
+)
+BEGIN
+  SELECT
+    `hpapi_pattern`.`pattern`
+   ,`hpapi_pattern`.`constraints`
+   ,`hpapi_pattern`.`expression`
+   ,`hpapi_pattern`.`input`
+   ,`hpapi_pattern`.`php_filter` AS `phpFilter`
+   ,`hpapi_pattern`.`length_minimum` AS `lengthMinimum`
+   ,`hpapi_pattern`.`length_maximum` AS `lengthMaximum`
+   ,`hpapi_pattern`.`value_minimum` AS `valueMinimum`
+   ,`hpapi_pattern`.`value_maximum` AS `valueMaximum`
+  FROM `hpapi_pattern`
+  ORDER BY `hpapi_pattern`.`pattern`
+  ;
+END$$
+
+
 DROP PROCEDURE IF EXISTS `hpapiSprargs`$$
 CREATE PROCEDURE `hpapiSprargs`(
   IN        `vdr` VARCHAR(64) CHARSET ascii
