@@ -1080,7 +1080,7 @@ class Hpapi {
         $this->tokenExtend = $bool;
     }
 
-    public function validation ($name,$argNum,$value,$defn) {
+    public function validation ($name,$ref,$value,$defn) {
         if (is_object($defn)) {
             $arr = array ();
             foreach ($defn as $k=>$v) {
@@ -1133,8 +1133,8 @@ class Hpapi {
             $label  = $defn['name'];
         }
         $this->addSplash ($label.' '.$cstr);
-        if ($argNum) {
-            throw new \Exception ($name.'['.$argNum.']: '.$e);
+        if ($ref) {
+            throw new \Exception ($name.'['.$ref.']: '.$e);
             return false;
         }
         throw new \Exception ($name.': '.$e);
