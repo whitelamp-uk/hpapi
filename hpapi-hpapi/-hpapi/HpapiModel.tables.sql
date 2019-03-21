@@ -220,24 +220,25 @@ CREATE TABLE IF NOT EXISTS `hpapi_user` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `active` int(1) unsigned NOT NULL DEFAULT '1',
   `verified` int(1) unsigned NOT NULL DEFAULT '0',
-  `uuid` varchar(64) CHARACTER SET ascii NOT NULL,
-  `key` varchar(64) CHARACTER SET ascii NOT NULL,
+  `uuid` varchar(64) CHARACTER SET ascii DEFAULT NULL,
+  `key` varchar(64) CHARACTER SET ascii DEFAULT NULL,
   `key_expired` int(1) unsigned NOT NULL DEFAULT '0',
-  `key_release` int(1) unsigned NOT NULL DEFAULT '1',
-  `key_release_until` datetime NOT NULL,
+  `key_release` int(1) unsigned NOT NULL DEFAULT '0',
+  `key_release_until` datetime DEFAULT NULL,
   `remote_addr_pattern` varchar(255) NOT NULL DEFAULT '^.*$',
   `name` varchar(64) NOT NULL,
   `notes` text NOT NULL,
   `email` varchar(254) CHARACTER SET ascii NOT NULL,
-  `password_hash` varchar(255) CHARACTER SET ascii NOT NULL DEFAULT '',
-  `token` varchar(255) CHARACTER SET ascii NOT NULL,
-  `token_expires` datetime NOT NULL,
-  `token_remote_addr` varbinary(16) NOT NULL,
+  `password_hash` varchar(255) CHARACTER SET ascii DEFAULT NULL,
+  `token` varchar(255) CHARACTER SET ascii DEFAULT NULL,
+  `token_expires` datetime DEFAULT NULL,
+  `token_remote_addr` varbinary(16) DEFAULT NULL,
   `created` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `user_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='API users';
+
 
 CREATE TABLE IF NOT EXISTS `hpapi_usergroup` (
   `usergroup` varchar(64) CHARACTER SET ascii NOT NULL,
