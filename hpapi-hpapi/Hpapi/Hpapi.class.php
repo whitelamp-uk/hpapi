@@ -1035,6 +1035,7 @@ class Hpapi {
         $this->fetchPermissions ();
         $key                                    = $table.'.'.$column;
         if (!array_key_exists($key,$this->permissions)) {
+            $this->diagnostic ('permissiotnToWrite(): array key not found - "'.$key.'"');
             return false;
         }
         foreach ($this->permissions[$key][$type] as $permg) {

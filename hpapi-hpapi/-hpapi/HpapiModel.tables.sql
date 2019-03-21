@@ -227,7 +227,7 @@ CREATE TABLE IF NOT EXISTS `hpapi_user` (
   `key_release_until` datetime DEFAULT NULL,
   `remote_addr_pattern` varchar(255) NOT NULL DEFAULT '^.*$',
   `name` varchar(64) NOT NULL,
-  `notes` text NOT NULL,
+  `notes` text,
   `email` varchar(254) CHARACTER SET ascii NOT NULL,
   `password_hash` varchar(255) CHARACTER SET ascii DEFAULT NULL,
   `token` varchar(255) CHARACTER SET ascii DEFAULT NULL,
