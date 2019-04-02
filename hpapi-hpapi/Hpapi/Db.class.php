@@ -434,7 +434,7 @@ class Db {
         }
         catch (\PDOException $e) {
             // Execution failed
-            $this->hpapi->diagnostic (HPAPI_STR_DB_EXEC.' - '.$spr.' ('.$e->getMessage().')');
+            $this->hpapi->diagnostic (HPAPI_STR_DB_EXEC.' - '.$table.'.'.$column['column'].' ('.$e->getMessage().')');
             throw new \Exception (HPAPI_STR_DB_UPDATE_ERROR);
             return false;
         }
