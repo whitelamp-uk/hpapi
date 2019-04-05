@@ -144,7 +144,9 @@ export class Hpapi {
                             else {
                             var err         = returned.response.error;
                                 if (err) {
-                                    failed (new Error(err));
+                                var errObj  = new Error (err);
+                                    errObj.splash = returned.response.splash;
+                                    failed (errObj);
                                 }
                                 else {
                                     if ('tokenExpires' in returned.response) {
