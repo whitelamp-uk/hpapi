@@ -90,6 +90,54 @@ BEGIN
   ;
 END$$
 
+DROP PROCEDURE IF EXISTS `hpapiGdprAccess`$$
+CREATE PROCEDURE `hpapiGdprAccess`(
+)
+BEGIN
+  SELECT
+    CONCAT (`hpapi_usergroup`.`usergroup`,': ',`hpapi_usergroup`.`name`) AS `User group`
+   ,`hpapi_usergroup`.`remote_addr_pattern` AS `Remote IP pattern`
+   ,CONCAT(
+      `hpapi_spr`.`model`
+     ,'.'
+     ,`hpapi_spr`.`spr`
+     ,'()'
+    ) AS `Stored Procedure`
+   ,`hpapi_spr`.`notes` AS `Stored Procedure Notes`
+   ,CONCAT(
+        `hpapi_method`.`class`
+       ,'::'
+       ,`hpapi_method`.`method`
+       ,'()'
+    ) AS `Methods`
+   ,`hpapi_method`.`notes` AS `Method Notes`
+  FROM `hpapi_usergroup`
+  JOIN `hpapi_run`
+    ON `hpapi_run`.`usergroup`=`hpapi_usergroup`.`usergroup`
+  JOIN `hpapi_method`
+    ON `hpapi_method`.`vendor`=`hpapi_run`.`vendor`
+   AND `hpapi_method`.`package`=`hpapi_run`.`package`
+   AND `hpapi_method`.`class`=`hpapi_run`.`class`
+   AND `hpapi_method`.`method`=`hpapi_run`.`method`
+  LEFT JOIN `hpapi_call`
+         ON `hpapi_call`.`vendor`=`hpapi_run`.`vendor`
+        AND `hpapi_call`.`package`=`hpapi_run`.`package`
+        AND `hpapi_call`.`class`=`hpapi_run`.`class`
+        AND `hpapi_call`.`method`=`hpapi_run`.`method`
+  LEFT JOIN `hpapi_spr`
+         ON `hpapi_spr`.`model`=`hpapi_call`.`model`
+        AND `hpapi_spr`.`spr`=`hpapi_call`.`spr`
+  ORDER BY
+    `hpapi_usergroup`.`usergroup`
+   ,`hpapi_method`.`vendor`
+   ,`hpapi_method`.`package`
+   ,`hpapi_method`.`class`
+   ,`hpapi_method`.`method`
+   ,`hpapi_spr`.`model`
+   ,`hpapi_spr`.`spr`
+  ;
+END$$
+
 
 DROP PROCEDURE IF EXISTS `hpapiGdprMethodArguments`$$
 CREATE PROCEDURE `hpapiGdprMethodArguments`(
@@ -289,9 +337,9 @@ CREATE PROCEDURE `hpapiGdprUser`(
 )
 BEGIN
   SELECT
-      `hpapi_user`.`id` AS "User ID"
-     ,`hpapi_user`.`name` AS "Name"
-     ,`hpapi_user`.`email` AS "Email Address"
+      `hpapi_user`.`id` AS `User ID`
+     ,`hpapi_user`.`name` AS `Name`
+     ,`hpapi_user`.`email` AS `Email Address`
    ,CONCAT(
       `hpapi_spr`.`model`
      ,'.'
