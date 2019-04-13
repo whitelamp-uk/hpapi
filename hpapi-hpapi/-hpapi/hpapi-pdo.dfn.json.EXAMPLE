@@ -10,7 +10,7 @@
             "update" : "UPDATE `<table/>` SET <cs-kvp-bindings/> WHERE <constraints/>;"
         }
        ,"sqlState" : {
-            "duplicatePrimary" : "23000"
+            "23000" : "duplicatePrimary"
         }
     }
    ,"pgsql" : {
@@ -24,7 +24,7 @@
             "update" : "UPDATE `<table/>` SET `<column/>`=? WHERE <constraints/>;"
         }
        ,"sqlState" : {
-            "duplicatePrimary" : "23515"
+            "23515" : "duplicatePrimary"
         }
     }
 }

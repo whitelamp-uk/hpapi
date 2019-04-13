@@ -17,6 +17,9 @@ define ( 'HPAPI_CONTENT_TYPE_JSON',         'application/json; charset=utf-8'   
 define ( 'HPAPI_CONTENT_TYPE_TEXT',         'text/plain; charset=utf-8'                                                             );
 define ( 'HPAPI_CONTENT_TYPE_UNKNOWN',      'unknown/unknown'                                                                       );
 
+// SQL states
+define ( 'HPAPI_SQL_STATE_DUPLICATE',       'duplicatePrimary'                                                                      );
+
 // Definitions for `hpapi_pattern`.`constraints` for hpapi (and supporting class) methods and stored procedures
 define ( 'HPAPI_PATTERN_DESC_ALPHA_LC',     'must have only small letters (up to 64 characters)'                                    );
 define ( 'HPAPI_PATTERN_DESC_CLASS',        'must be a valid PHP class name'                                                        );
@@ -130,7 +133,7 @@ define ( 'HPAPI_STR_DB_SPR_AVAIL',          '202 403 Stored procedure not availa
 define ( 'HPAPI_STR_DB_SPR_ARGS',           '203 500 Incorrect argument count for stored procedure'                                 );
 define ( 'HPAPI_STR_DB_SPR_ARG_VAL',        '204 500 Invalid stored procedure argument'                                             );
 define ( 'HPAPI_STR_DB_SPR_ARG_TYPE',       '205 500 Illegal data type for stored procedure argument'                               );
-define ( 'HPAPI_STR_DB_SPR_ERROR',          '206 500 Stored procedure execution error'                                                           );
+define ( 'HPAPI_STR_DB_SPR_ERROR',          '206 500 Stored procedure execution error'                                              );
 
 // Inserting data
 define ( 'HPAPI_STR_DB_INSERT_COLS',        '211 400 No columns were given'                                                         );
@@ -141,15 +144,16 @@ define ( 'HPAPI_STR_DB_INSERT_PRI_CHECK',   '215 500 Unable to check primary key
 define ( 'HPAPI_STR_DB_INSERT_PRI',         '216 400 Non-auto-incrementing primary key was not given'                               );
 define ( 'HPAPI_STR_DB_INSERT_AUTOINC',     '217 400 Auto-incrementing primary key was given'                                       );
 define ( 'HPAPI_STR_DB_INSERT_COL_VAL',     '218 400 Invalid column value'                                                          );
+define ( 'HPAPI_STR_DB_INSERT_DUPLICATE',   '219 400 Record already exists'                                                         );
 
 // Updating data
-define ( 'HPAPI_STR_DB_UPDATE_PERMISSION',  '221 403 Column update not allowed'                                                     );
-define ( 'HPAPI_STR_DB_UPDATE_ERROR',       '222 500 Database error (for update)'                                                   );
-define ( 'HPAPI_STR_DB_UPDATE_COL_VAL',     '223 400 Invalid column value'                                                          );
-define ( 'HPAPI_STR_DB_UPDATE_PRI_PERM',    '224 400 Primary key is not recognised'                                                 );
-define ( 'HPAPI_STR_DB_UPDATE_PRI_VAL',     '225 400 Invalid primary key value'                                                     );
-define ( 'HPAPI_STR_DB_UPDATE_PRI_CHECK',   '226 500 Unable to check primary key'                                                   );
-define ( 'HPAPI_STR_DB_UPDATE_PRI',         '227 400 The primary key given is incomplete'                                           );
+define ( 'HPAPI_STR_DB_UPDATE_PERMISSION',  '231 403 Column update not allowed'                                                     );
+define ( 'HPAPI_STR_DB_UPDATE_ERROR',       '232 500 Database error (for update)'                                                   );
+define ( 'HPAPI_STR_DB_UPDATE_COL_VAL',     '233 400 Invalid column value'                                                          );
+define ( 'HPAPI_STR_DB_UPDATE_PRI_PERM',    '234 400 Primary key is not recognised'                                                 );
+define ( 'HPAPI_STR_DB_UPDATE_PRI_VAL',     '235 400 Invalid primary key value'                                                     );
+define ( 'HPAPI_STR_DB_UPDATE_PRI_CHECK',   '236 500 Unable to check primary key'                                                   );
+define ( 'HPAPI_STR_DB_UPDATE_PRI',         '237 400 The primary key given is incomplete'                                           );
 
 // SSL notice
 define ( 'HPAPI_STR_PLAIN',                 'WARNING - UNENCRYPTED CONNECTION'                                                      );

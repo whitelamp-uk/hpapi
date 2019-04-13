@@ -13,6 +13,7 @@ class Db {
     public      $inputs;
     public      $model;
     protected   $PDO;
+    public      $sqlState;
     protected   $sprCmd; // eg. CALL (), SELECT () OR EXEC () keyword
 
     public function __construct (\Hpapi\Hpapi $hpapi,$model) {
@@ -50,6 +51,7 @@ class Db {
     }
 
     public function call ( ) {
+        $this->sqlState     = null;
         // Process inputs
         $args               = func_get_args ();
         try {
@@ -104,6 +106,10 @@ class Db {
         }
         catch (\PDOException $e) {
             // Execution failed
+            $error = $e->getCode ();
+            if (property_exists($this->dfn->sqlState,$error)) {
+                $this->sqlState = $this->dfn->sqlState->{$error};
+            }
             $this->hpapi->diagnostic (HPAPI_STR_DB_EXEC.' - '.$spr.' ('.$e->getMessage().')');
             throw new \Exception ($e->getMessage());
             return false;
@@ -153,6 +159,7 @@ class Db {
     }
 
     public function insert ($table,$columns,$defns) {
+        $this->sqlState     = null;
         // Check inputs
         try {
             $hasChanger     = $this->insertCheck ($table,$columns,$defns);
@@ -221,6 +228,10 @@ class Db {
         }
         catch (\PDOException $e) {
             // Execution failed
+            $error = $e->getCode ();
+            if (property_exists($this->dfn->sqlState,$error)) {
+                $this->sqlState = $this->dfn->sqlState->{$error};
+            }
             $this->hpapi->diagnostic (HPAPI_STR_DB_EXEC.' - '.$table.' ('.$e->getMessage().')');
             throw new \Exception (HPAPI_STR_DB_INSERT_ERROR);
             return false;
@@ -356,6 +367,7 @@ class Db {
     }
 
     public function update ($table,$column,$value,$primaryKeys) {
+        $this->sqlState     = null;
         try {
             $hasChanger     = $this->updateCheck ($table,$column,$value,$primaryKeys);
         }
@@ -434,6 +446,10 @@ class Db {
         }
         catch (\PDOException $e) {
             // Execution failed
+            $error = $e->getCode ();
+            if (property_exists($this->dfn->sqlState,$error)) {
+                $this->sqlState = $this->dfn->sqlState->{$error};
+            }
             $this->hpapi->diagnostic (HPAPI_STR_DB_EXEC.' - '.$table.'.'.$column['column'].' ('.$e->getMessage().')');
             throw new \Exception (HPAPI_STR_DB_UPDATE_ERROR);
             return false;

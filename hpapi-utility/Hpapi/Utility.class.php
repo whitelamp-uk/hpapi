@@ -95,7 +95,11 @@ class Utility {
         }
         catch (\Exception $e) {
             $db->close ();
-            throw new \Exception ($e->getMessage());
+            if ($db->sqlState==HPAPI_SQL_STATE_DUPLICATE) {
+                throw new \Exception (HPAPI_STR_DB_INSERT_DUPLICATE);
+                return false;
+            }
+            throw new \Exception (HPAPI_STR_DB_INSERT_ERROR);
             return false;
         }
     }
