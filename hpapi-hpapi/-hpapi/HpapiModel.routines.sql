@@ -376,8 +376,8 @@ BEGIN
     ON `hpapi_spr`.`model`=`hpapi_call`.`model`
    AND `hpapi_spr`.`spr`=`hpapi_call`.`spr`
   WHERE `hpapi_user`.`id`=usr
-     OR `hpapi_user`.`email` LIKE CONCAT('%',usr,'%')
-     OR `hpapi_user`.`name` LIKE CONCAT('%',usr,'%')
+     OR `hpapi_user`.`email` LIKE usr
+     OR `hpapi_user`.`name` LIKE usr
   ORDER BY
     `hpapi_user`.`id`
    ,`hpapi_method`.`vendor`
