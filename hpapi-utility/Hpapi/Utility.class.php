@@ -104,6 +104,33 @@ class Utility {
         }
     }
 
+    public function keyRelease ($userId) {
+        try {
+            $uuid                           = $this->hpapi->dbCall (
+                'hpapiUUID'
+            );
+        }
+        catch (\Exception $e) {
+            throw new \Exception ($e->getMessage());
+            return false;
+        }
+        $key                                = $uuid[0]['uuid'];
+        $expiry                             = $this->hpapi->timestamp + (60*HPAPI_KEY_RELEASE_MINS);
+        try {
+            $this->hpapi->dbCall (
+                'hpapiKeyrelease'
+               ,$userId
+               ,$key
+               ,$expiry
+            );
+        }
+        catch (\Exception $e) {
+            throw new \Exception ($e->getMessage());
+            return false;
+        }
+        return $expiry;
+    }
+
     public function myMethods ( ) {
         $authenticated                          = intval (strlen($this->hpapi->object->email)>0);
         try {

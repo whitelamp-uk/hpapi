@@ -61,6 +61,10 @@ define ( 'HPAPI_HASH_COST',                 12                                  
 define ( 'HPAPI_HASH_ALGO',                 PASSWORD_BCRYPT                                                                         );
 
 
+// KEY MANAGEMENT
+define ( 'HPAPI_KEY_RELEASE_MINS',          15                                                                                      );
+
+
 // TOKEN MANAGEMENT
 // Length of token
 define ( 'HPAPI_TOKEN_BYTES',               64                                                                                      );

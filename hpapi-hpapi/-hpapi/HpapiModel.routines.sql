@@ -375,6 +375,23 @@ BEGIN
 END$$
 
 
+DROP PROCEDURE IF EXISTS `hpapiKeyrelease`$$
+CREATE PROCEDURE `hpapiKeyrelease`(
+  IN        `uid` INT(11) UNSIGNED
+ ,IN        `ky` VARCHAR(64) CHARSET ascii
+ ,IN        `ts` INT(11) UNSIGNED
+)
+BEGIN
+  UPDATE `hpapi_user`
+  SET
+    `key`=ky
+   ,`key_release`=1
+   ,`key_release_until`=FROM_UNIXTIME(ts)
+  WHERE `id`=uid
+  ;
+END $$
+
+
 DROP PROCEDURE IF EXISTS `hpapiKeyreleaseRevoke`$$
 CREATE PROCEDURE `hpapiKeyreleaseRevoke`(
   IN        `em` VARCHAR(254) CHARSET ascii
