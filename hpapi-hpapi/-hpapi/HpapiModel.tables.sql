@@ -236,6 +236,7 @@ CREATE TABLE IF NOT EXISTS `hpapi_user` (
   `created` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
   KEY `user_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='API users';
 
