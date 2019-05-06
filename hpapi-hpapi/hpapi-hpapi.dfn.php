@@ -90,7 +90,7 @@ define ( 'HPAPI_STR_AUTH_DENIED',           '050 403 Access denied'             
 define ( 'HPAPI_STR_AUTH_EMAIL',            '063 Invalid credentials'                                                               );
 define ( 'HPAPI_STR_AUTH_BLACKLIST',        '061 Request not allowed at this time'                                                  );
 define ( 'HPAPI_STR_AUTH_REM_ADDR',         '062 User not allowed from remote address'                                              );
-define ( 'HPAPI_STR_AUTH_ACTIVE',           '063 Invalid credentials'                                                               );
+define ( 'HPAPI_STR_AUTH_ACTIVE',           '063 Invalid credentials (token error)'                                                 );
 define ( 'HPAPI_STR_AUTH_PASSWORD',         '063 Invalid credentials'                                                               );
 define ( 'HPAPI_STR_AUTH_TOKEN',            '063 Invalid credentials'                                                               );
 define ( 'HPAPI_STR_AUTH_VERIFY',           '064 Account not verified'                                                              );
