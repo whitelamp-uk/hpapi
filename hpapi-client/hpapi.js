@@ -145,7 +145,8 @@ export class Hpapi {
                             var err         = returned.response.error;
                                 if (err) {
                                 var errObj  = new Error (err);
-                                    errObj.splash = returned.response.splash;
+                                    errObj.authStatus       = returned.response.authStatus;
+                                    errObj.splash           = returned.response.splash;
                                     failed (errObj);
                                 }
                                 else {
