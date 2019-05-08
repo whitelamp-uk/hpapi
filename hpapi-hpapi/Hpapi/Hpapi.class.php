@@ -1101,7 +1101,6 @@ class Hpapi {
             return true;
         }
         $e          = null;
-$this->diagnostic ('HPAPI: '.gettype($value));
         if ($defn['pattern']=='object' && !(is_object($value) || is_array($value))) {
             $e      = HPAPI_STR_VALID_PATTERN.' <'.$defn['expression'].'>';
         }
