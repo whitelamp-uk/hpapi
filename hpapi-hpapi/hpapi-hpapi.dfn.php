@@ -178,6 +178,7 @@ define ( 'HPAPI_STR_DB_STRICT',             'Failed to set SQL strict mode'     
 
 // Validation strings
 define ( 'HPAPI_STR_VALID_PATTERN',         'must match pattern'                                                                    );
+define ( 'HPAPI_STR_VALID_OBJECT',          'must not be an object or array'                                                        );
 define ( 'HPAPI_STR_VALID_EXPRESSION',      'must match regular expression'                                                         );
 define ( 'HPAPI_STR_VALID_PHP_FILTER',      'must pass validation filter'                                                           );
 define ( 'HPAPI_STR_VALID_LMIN',            'must have character length at least'                                                   );

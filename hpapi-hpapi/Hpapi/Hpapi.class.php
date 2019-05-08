@@ -1101,8 +1101,12 @@ class Hpapi {
             return true;
         }
         $e          = null;
+$this->diagnostic ('HPAPI: '.gettype($value));
         if ($defn['pattern']=='object' && !(is_object($value) || is_array($value))) {
             $e      = HPAPI_STR_VALID_PATTERN.' <'.$defn['expression'].'>';
+        }
+        elseif ($defn['pattern']!='object' && (is_object($value) || is_array($value))) {
+            $e      = HPAPI_STR_VALID_OBJECT.' <'.$defn['expression'].'>';
         }
         elseif (strlen($defn['expression']) && !preg_match('<'.$defn['expression'].'>',$value)) {
             $e      = HPAPI_STR_VALID_EXPRESSION.' <'.$defn['expression'].'>';
