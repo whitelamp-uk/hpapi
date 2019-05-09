@@ -67,8 +67,8 @@ class Utility {
             throw new \Exception (HPAPI_STR_DB_INSERT_COLS);
             return false;
         }
-        $defns                  = new \stdClass ();
-        $model                  = null;
+        $defns                      = new \stdClass ();
+        $model                      = null;
         foreach ($columns as $column=>$value) {
             if (!($c=$this->hpapi->permissionToInsert($table,$column))) {
                 throw new \Exception (HPAPI_STR_DB_INSERT_PERMISSION);
@@ -78,18 +78,21 @@ class Utility {
                 throw new \Exception (HPAPI_STR_DB_INSERT_MODELS);
                 return false;
             }
-            $model              = $c['model'];
-            $defns->{$column}   = $c;
+            if ($c['emptyIsNull'] && !strlen($value)) {
+                $columns[$column]   = null;
+            }
+            $model                  = $c['model'];
+            $defns->{$column}       = $c;
         }
         try {
-            $db                 = new \Hpapi\Db ($this->hpapi,$this->hpapi->models->{$model});
+            $db                     = new \Hpapi\Db ($this->hpapi,$this->hpapi->models->{$model});
         }
         catch (\Exception $e) {
             throw new \Exception (HPAPI_STR_DB_INSERT_ERROR);
             return false;
         }
         try {
-            $insert             = $db->insert ($table,$columns,$defns);
+            $insert                 = $db->insert ($table,$columns,$defns);
             $db->close ();
             return $insert;
         }
@@ -169,10 +172,14 @@ class Utility {
             throw new \Exception (HPAPI_STR_DB_UPDATE_PERMISSION);
             return false;
         }
+        if ($c['emptyIsNull'] && !strlen($value)) {
+            $value          = null;
+        }
         try {
             $db             = new \Hpapi\Db ($this->hpapi,$this->hpapi->models->{$c['model']});
         }
         catch (\Exception $e) {
+            $this->hpapi->diagnostic ($e->getMessage());
             throw new \Exception (HPAPI_STR_DB_UPDATE_ERROR);
             return false;
         }
