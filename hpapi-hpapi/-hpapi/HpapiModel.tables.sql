@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS `hpapi_column` (
   `model` varchar(64) CHARACTER SET ascii NOT NULL,
   `pattern` varchar(64) CHARACTER SET ascii NOT NULL,
   `empty_allowed` int(1) unsigned NOT NULL,
+  `empty_is_null` int(1) unsigned NOT NULL,
   `created` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`table`,`column`),

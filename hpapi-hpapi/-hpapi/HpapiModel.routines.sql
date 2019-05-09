@@ -6,8 +6,6 @@ SET time_zone = '+00:00';
 
 
 DELIMITER $$
-
-
 DROP PROCEDURE IF EXISTS `hpapiAuthDetails`$$
 CREATE PROCEDURE `hpapiAuthDetails`(
   IN        `em` VARCHAR(254) CHARSET ascii
@@ -44,6 +42,7 @@ BEGIN
 END$$
 
 
+DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiColumnPermissions`$$
 CREATE PROCEDURE `hpapiColumnPermissions`(
 )
@@ -53,6 +52,7 @@ BEGIN
    ,`hpapi_column`.`column`
    ,`hpapi_column`.`model`
    ,`hpapi_column`.`empty_allowed` AS `emptyAllowed`
+   ,`hpapi_column`.`empty_is_null` AS `emptyIsNull`
    ,`hpapi_pattern`.`pattern`
    ,`hpapi_pattern`.`constraints`
    ,`hpapi_pattern`.`expression`
@@ -75,6 +75,8 @@ BEGIN
   ;
 END$$
 
+
+DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiGdprAccess`$$
 CREATE PROCEDURE `hpapiGdprAccess`(
 )
@@ -124,6 +126,7 @@ BEGIN
 END$$
 
 
+DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiGdprMethodArguments`$$
 CREATE PROCEDURE `hpapiGdprMethodArguments`(
 )
@@ -171,6 +174,7 @@ BEGIN
 END$$
 
 
+DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiGdprMethods`$$
 CREATE PROCEDURE `hpapiGdprMethods`(
 )
@@ -230,6 +234,7 @@ BEGIN
 END$$
 
 
+DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiGdprStoredProcedureArguments`$$
 CREATE PROCEDURE `hpapiGdprStoredProcedureArguments`(
 )
@@ -267,6 +272,7 @@ BEGIN
 END$$
 
 
+DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiGdprStoredProcedures`$$
 CREATE PROCEDURE `hpapiGdprStoredProcedures`(
 )
@@ -316,6 +322,7 @@ BEGIN
 END$$
 
 
+DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiGdprUser`$$
 CREATE PROCEDURE `hpapiGdprUser`(
   IN        `usr` VARCHAR(254) CHARSET ascii
@@ -375,6 +382,7 @@ BEGIN
 END$$
 
 
+DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiKeyrelease`$$
 CREATE PROCEDURE `hpapiKeyrelease`(
   IN        `uid` INT(11) UNSIGNED
@@ -392,6 +400,7 @@ BEGIN
 END $$
 
 
+DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiKeyreleaseRevoke`$$
 CREATE PROCEDURE `hpapiKeyreleaseRevoke`(
   IN        `em` VARCHAR(254) CHARSET ascii
@@ -407,6 +416,7 @@ BEGIN
 END $$
 
 
+DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiLogRequest`$$
 CREATE PROCEDURE `hpapiLogRequest`(
   IN        `ts` INT(11) unsigned
@@ -445,6 +455,7 @@ BEGIN
 END $$
 
 
+DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiMethodargs`$$
 CREATE PROCEDURE `hpapiMethodargs`(
   IN        `userId` INT(11) UNSIGNED
@@ -495,6 +506,7 @@ BEGIN
 END$$
 
 
+DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiPatterns`$$
 CREATE PROCEDURE `hpapiPatterns`(
 )
@@ -515,6 +527,7 @@ BEGIN
 END$$
 
 
+DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiSprargs`$$
 CREATE PROCEDURE `hpapiSprargs`(
   IN        `vdr` VARCHAR(64) CHARSET ascii
@@ -553,6 +566,7 @@ BEGIN
 END$$
 
 
+DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiInsertTestUsers`$$
 CREATE PROCEDURE `hpapiInsertTestUsers`(
 )
@@ -618,6 +632,7 @@ BEGIN
   ;
 END$$
 
+DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiSprPrivileges`$$
 CREATE PROCEDURE `hpapiSprPrivileges`(
 )
@@ -663,6 +678,7 @@ BEGIN
 END$$
 
 
+DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiToken`$$
 CREATE PROCEDURE `hpapiToken`(
   IN        `ui` INT(11) UNSIGNED
@@ -681,6 +697,7 @@ BEGIN
 END $$
 
 
+DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiTokenExtend`$$
 CREATE PROCEDURE `hpapiTokenExtend`(
   IN        `ui` INT(11) UNSIGNED
