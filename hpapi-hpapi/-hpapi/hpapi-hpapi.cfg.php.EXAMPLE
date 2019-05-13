@@ -25,6 +25,10 @@ define ( 'HPAPI_URL_HTML_HEADER',           './web.php'                         
 define ( 'HPAPI_URL_OTHER_HEADER',          ''                                                                                      );
 
 
+// FLAG FILES (FILE EXISTS = TRUE)
+define ( 'HPAPI_FLAG_API_UNAVAILABLE',      HPAPI_DIR_CONFIG.'/unavailable.flag'                                                    );
+
+
 // INFORMATIONAL
 define ( 'HPAPI_META_DESCRIPTION',          'HTTP POST API for My Organisation'                                                     );
 
