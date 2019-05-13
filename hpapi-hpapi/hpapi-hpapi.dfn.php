@@ -60,6 +60,7 @@ define ( 'HPAPI_STR_SSL',                   '022 400 SSL required but not used' 
 define ( 'HPAPI_STR_CONTENT_TYPE',          '023 400 Client header indicates wrong content type'                                    );
 define ( 'HPAPI_STR_JSON_DECODE',           '024 400 Cannot decode request'                                                         );
 define ( 'HPAPI_STR_SYS_CFG',               '025 500 Could not load system configuration'                                           );
+define ( 'HPAPI_STR_UNAVAILABLE',           '026 503 Service Unavailable'                                                           );
 
 // Validating posted object properties
 define ( 'HPAPI_STR_DATETIME',              '031 400 Property "datetime" does not exist'                                            );

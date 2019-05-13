@@ -28,6 +28,11 @@ class Hpapi {
     public      $userId = 0;                 // User unique numeric identifier
 
     public function __construct ( ) {
+        if (file_exists(HPAPI_FLAG_API_UNAVAILABLE)) {
+            http_response_code (503);
+            echo HPAPI_STR_UNAVAILABLE."\n";
+            exit;
+        }
         if (count(func_get_args())) {
             throw new \Exception (HPAPI_STR_CONSTRUCT);
             return false;
