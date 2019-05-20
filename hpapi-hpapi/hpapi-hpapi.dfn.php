@@ -23,7 +23,7 @@ define ( 'HPAPI_SQL_STATE_DUPLICATE',       'duplicatePrimary'                  
 // Definitions for `hpapi_pattern`.`constraints` for hpapi (and supporting class) methods and stored procedures
 define ( 'HPAPI_PATTERN_DESC_ALPHA_LC',     'must have only small letters (up to 64 characters)'                                    );
 define ( 'HPAPI_PATTERN_DESC_CLASS',        'must be a valid PHP class name'                                                        );
-define ( 'HPAPI_PATTERN_DESC_DATETIME',     'must be universal datetime format yyyy-mm-dd hh:mm:ss+hh:mm'                           );
+define ( 'HPAPI_PATTERN_DESC_DATETIME',     'must be standard datetime format yyyy-mm-dd hh:mm:ss'                           );
 define ( 'HPAPI_PATTERN_DESC_DB_BOOL',      'must be 0 or 1'                                                                        );
 define ( 'HPAPI_PATTERN_DESC_DB_ENTITY',    'must start with letter, only lower-case letter, nrs. or _, maximum 64 characters'      );
 define ( 'HPAPI_PATTERN_DESC_EMAIL',        'must be a valid email address'                                                         );

@@ -1156,5 +1156,9 @@ class Hpapi {
         return $path;
     }
 
+    public function warn ($warning) {
+        $this->object->response->warning .= $warning;
+    }
+
 }
 
