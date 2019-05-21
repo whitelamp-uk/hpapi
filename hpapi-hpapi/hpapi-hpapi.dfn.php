@@ -176,6 +176,8 @@ define ( 'HPAPI_STR_DB_BIND',               'Query binding failed'              
 define ( 'HPAPI_STR_DB_EXEC',               'Query execution failed'                                                                );
 define ( 'HPAPI_STR_DB_PRI_KEY',            'Table does not seem to have a primary key'                                             );
 define ( 'HPAPI_STR_DB_STRICT',             'Failed to set SQL strict mode'                                                         );
+define ( 'HPAPI_STR_DB_TZ',                 'Failed to set SQL time zone'                                                           );
+
 
 // Validation strings
 define ( 'HPAPI_STR_VALID_PATTERN',         'must match pattern'                                                                    );

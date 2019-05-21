@@ -65,6 +65,15 @@ class Db {
             throw new \Exception (HPAPI_STR_DB_EMPTY);
             return false;
         }
+        // Set time zone
+        try {
+            $this->timezone ($this->hpapi->tzName);
+        }
+        catch (\Exception $e) {
+            $this->hpapi->diagnostic ($e->getMessage());
+            throw new \Exception (HPAPI_STR_DB_TZ);
+            return false;
+        }
         try {
             // Query for a stored procedure
             $q              = $this->dfn->sql->spr;
@@ -179,6 +188,15 @@ class Db {
         catch (\Exception $e) {
             $this->hpapi->diagnostic ($e->getMessage());
             throw new \Exception (HPAPI_STR_DB_INSERT_ERROR);
+            return false;
+        }
+        // Set time zone
+        try {
+            $this->timezone ($this->hpapi->tzName);
+        }
+        catch (\Exception $e) {
+            $this->hpapi->diagnostic ($e->getMessage());
+            throw new \Exception (HPAPI_STR_DB_TZ);
             return false;
         }
         // Build query
@@ -366,6 +384,19 @@ class Db {
         return true;
     }
 
+    public function timezone ($name) {
+        $sql                = str_replace ('<timezone/>',$name,$this->dfn->sql->timezone);
+        try {
+            $stmt           = $this->PDO->prepare ($sql);
+            $stmt->execute ();
+        }
+        catch (\PDOException $e) {
+            throw new \Exception ($e->getMessage());
+            return false;
+        }
+        return true;
+    }
+
     public function update ($table,$column,$value,$primaryKeys) {
         $this->sqlState     = null;
         try {
@@ -373,6 +404,15 @@ class Db {
         }
         catch (\Exception $e) {
             throw new \Exception ($e->getMessage());
+            return false;
+        }
+        // Set time zone
+        try {
+            $this->timezone ($this->hpapi->tzName);
+        }
+        catch (\Exception $e) {
+            $this->hpapi->diagnostic ($e->getMessage());
+            throw new \Exception (HPAPI_STR_DB_TZ);
             return false;
         }
         try {

@@ -26,6 +26,7 @@ class Hpapi {
     public      $tokenExpiry;                // Expire time in seconds
     public      $tokenExtend;                // Boolean - extend token on each authenticated request
     public      $userId = 0;                 // User unique numeric identifier
+    public      $tzName = 'Europe/London';   // Overriden with HPAPI_TZNAME_DEFAULT
 
     public function __construct ( ) {
         if (file_exists(HPAPI_FLAG_API_UNAVAILABLE)) {
@@ -38,6 +39,7 @@ class Hpapi {
             return false;
         }
         error_reporting (HPAPI_PHP_ERROR_LEVEL);
+        $this->tzName                               = HPAPI_TZNAME_DEFAULT;
         $this->timestamp                            = time ();
         $this->setTokenExpiry ($this->timestamp+(60*HPAPI_TOKEN_LIFE_MINS));
         $this->setTokenExtend (HPAPI_TOKEN_LIFE_EXTEND);
@@ -65,6 +67,7 @@ class Hpapi {
         }
         header ('Content-Type: '.$this->contentType);
         $this->object->response                     = new \stdClass ();
+        $this->object->response->timezone           = $this->tzName;
         $this->object->response->datetime           = null;
         $this->object->response->authStatus         = null;
         $this->object->response->description        = HPAPI_META_DESCRIPTION;

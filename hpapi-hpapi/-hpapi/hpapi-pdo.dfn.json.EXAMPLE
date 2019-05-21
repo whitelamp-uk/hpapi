@@ -7,6 +7,7 @@
             "primaryKeys" : "SELECT `a`.`COLUMN_NAME` AS `column`,`a`.`EXTRA` LIKE '%auto_increment%' AS `isAutoIncrement`,`b`.`COLUMN_NAME` IS NOT NULL AS `hasChanger` FROM `information_schema`.`COLUMNS` AS `a` LEFT JOIN `information_schema`.`COLUMNS` AS `b` ON `b`.`TABLE_CATALOG`=`a`.`TABLE_CATALOG` AND `b`.`TABLE_SCHEMA`=`a`.`TABLE_SCHEMA` AND `b`.`TABLE_NAME`=`a`.`TABLE_NAME` AND `b`.`COLUMN_NAME`=? WHERE `a`.`TABLE_SCHEMA`=DATABASE() AND `a`.`TABLE_NAME`=? AND `a`.`COLUMN_KEY`='PRI' GROUP BY `a`.`TABLE_CATALOG`,`a`.`TABLE_SCHEMA`,`a`.`TABLE_NAME`,`a`.`COLUMN_NAME`;",
             "spr" : "CALL `<spr/>`(<csv-bindings/>)",
             "strictMode" : "SET @@SQL_MODE = CONCAT(@@SQL_MODE,',STRICT_ALL_TABLES');",
+            "timezone" : "SET @hpapiTimezone = '<timezone/>';",
             "update" : "UPDATE `<table/>` SET <cs-kvp-bindings/> WHERE <constraints/>;"
         }
        ,"sqlState" : {
@@ -21,6 +22,7 @@
             "primaryKeys" : null,
             "spr" : "SELECT <spr/>(<csv-bindings/>)",
             "strictMode" : null,
+            "timezone" : "SET @hpapiTimezone = '<timezone/>';",
             "update" : "UPDATE `<table/>` SET `<column/>`=? WHERE <constraints/>;"
         }
        ,"sqlState" : {
