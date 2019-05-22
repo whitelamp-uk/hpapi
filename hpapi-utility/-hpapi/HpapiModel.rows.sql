@@ -29,7 +29,7 @@ INSERT IGNORE INTO `hpapi_methodarg` (`vendor`, `package`, `class`, `method`, `a
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'keyRelease',	1,	'User ID',	0,	'int-11-positive'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'update',	1,	'Table',	0,	'db-entity'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'update',	2,	'Column',	0,	'db-entity'),
-('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'update',	3,	'Value',	1,	'varchar-255'),
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'update',	3,	'Value',	1,	'varchar-8192'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'update',	4,	'Primary keys',	0,	'object');
 
 

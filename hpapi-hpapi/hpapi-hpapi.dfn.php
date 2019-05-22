@@ -50,6 +50,7 @@ define ( 'HPAPI_PATTERN_DESC_VARCHAR_4',    'must have no more than 4 characters
 define ( 'HPAPI_PATTERN_DESC_VARCHAR_4096', 'must have no more than 4096 characters'                                                );
 define ( 'HPAPI_PATTERN_DESC_VARCHAR_6',    'must have no more than 6 characters'                                                   );
 define ( 'HPAPI_PATTERN_DESC_VARCHAR_64',   'must have no more than 64 characters'                                                  );
+define ( 'HPAPI_PATTERN_DESC_VARCHAR_8192', 'must have no more than 8192 characters'                                                );
 define ( 'HPAPI_PATTERN_DESC_VENDOR',       'must be valid format for a vendor name'                                                );
 define ( 'HPAPI_PATTERN_DESC_YYYY_MM_DD',   'must be a date in standard format'                                                     );
 define ( 'HPAPI_PATTERN_DESC_YYYYMMDD',     'must be 8 digits representing a date - YYYYMMDD'                                       );

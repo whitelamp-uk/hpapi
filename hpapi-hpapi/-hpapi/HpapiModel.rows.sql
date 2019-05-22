@@ -55,6 +55,7 @@ INSERT IGNORE INTO `hpapi_pattern` (`pattern`, `constraints`, `expression`, `inp
 ('varchar-4096',	'HPAPI_PATTERN_DESC_VARCHAR_4096',	'',	'textarea',	'',	1,	4096,	'',	''),
 ('varchar-6',	'HPAPI_PATTERN_DESC_VARCHAR_6',	'',	'text',	'',	1,	6,	'',	''),
 ('varchar-64',	'HPAPI_PATTERN_DESC_VARCHAR_64',	'',	'text',	'',	1,	64,	'',	''),
+('varchar-8192',	'HPAPI_PATTERN_DESC_VARCHAR_8192',	'',	'textarea',	'',	1,	8192,	'',	''),
 ('vendor',	'HPAPI_PATTERN_DESC_VENDOR',	'^[a-z][a-z\\-]*[a-z]$',	'text',	'',	2,	64,	'',	''),
 ('yyyy-mm-dd',	'HPAPI_PATTERN_DESC_YYYY_MM_DD',	'^[0-9]{4}-[0-9]{2}-[0-9]{2}$',	'date',	'',	10,	10,	'2000-01-01',	'2100-12-31'),
 ('yyyymmdd',	'HPAPI_PATTERN_DESC_YYYYMMDD',	'^[0-9]{8}$',	'text',	'',	0,	0,	'20000101',	'99991231');
