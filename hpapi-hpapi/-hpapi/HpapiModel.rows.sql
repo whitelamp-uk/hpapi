@@ -27,6 +27,7 @@ INSERT IGNORE INTO `hpapi_package` (`vendor`, `package`, `requires_key`, `notes`
 INSERT IGNORE INTO `hpapi_pattern` (`pattern`, `constraints`, `expression`, `input`, `php_filter`, `length_minimum`, `length_maximum`, `value_minimum`, `value_maximum`) VALUES
 ('alpha-lc-64',	'HPAPI_PATTERN_DESC_ALPHA_LC',	'^[a-z]*$',	'text',	'',	1,	64,	'',	''),
 ('class',	'HPAPI_PATTERN_DESC_CLASS',	'^\\\\[A-Z][A-z]*\\\\[A-Z][A-z]*$',	'text',	'',	4,	64,	'',	''),
+('currency-pos',	'HPAPI_PATTERN_CURRENCY_POS',	'^[0-9]{1,9}+(?:\\.[0-9]{0,2})?$',	'number',	'',	0,	0,	'',	''),
 ('datetime',	'HPAPI_PATTERN_DESC_DATETIME',	'^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}:[0-9]{2}$',	'datetime-local',	'',	0,	0,	'',	''),
 ('db-boolean',	'HPAPI_PATTERN_DESC_DB_BOOL',	'',	'checkbox',	'FILTER_VALIDATE_INT',	0,	0,	'0',	'1'),
 ('db-entity',	'HPAPI_PATTERN_DESC_DB_ENTITY',	'^[a-z][a-z0-9_]*$',	'text',	'',	1,	64,	'',	''),
