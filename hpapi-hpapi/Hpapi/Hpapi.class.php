@@ -29,6 +29,7 @@ class Hpapi {
     public      $tzName = 'Europe/London';   // Overriden with HPAPI_TZNAME_DEFAULT
 
     public function __construct ( ) {
+        $this->microtime                            = explode(' ',microtime())[0];
         if (file_exists(HPAPI_FLAG_API_UNAVAILABLE)) {
             http_response_code (503);
             echo HPAPI_STR_UNAVAILABLE."\n";
@@ -47,8 +48,7 @@ class Hpapi {
         if (defined('HPAPI_DIAGNOSTIC_FAKE_NOW') && strlen(HPAPI_DIAGNOSTIC_FAKE_NOW)) {
             $now                                    = HPAPI_DIAGNOSTIC_FAKE_NOW;
         }
-        $this->datetime                             = new \DateTime ($now);
-        $this->microtime                            = explode(' ',microtime())[0];
+        $this->datetime                             = new \DateTime ($now,new \DateTimeZone(HPAPI_TZNAME_DEFAULT));
         if (HPAPI_SSL_ENFORCE && !$this->isHTTPS()) {
             header ('Content-Type: '.HPAPI_CONTENT_TYPE_TEXT);
             $this->logLast (HPAPI_STR_SSL."\n");
