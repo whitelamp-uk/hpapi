@@ -88,6 +88,7 @@ class Utility {
             $db                     = new \Hpapi\Db ($this->hpapi,$this->hpapi->models->{$model});
         }
         catch (\Exception $e) {
+            $this->hpapi->diagnostic ($e->getMessage());
             throw new \Exception (HPAPI_STR_DB_INSERT_ERROR);
             return false;
         }
@@ -102,6 +103,7 @@ class Utility {
                 throw new \Exception (HPAPI_STR_DB_INSERT_DUPLICATE);
                 return false;
             }
+            $this->hpapi->diagnostic ($e->getMessage());
             throw new \Exception (HPAPI_STR_DB_INSERT_ERROR);
             return false;
         }
