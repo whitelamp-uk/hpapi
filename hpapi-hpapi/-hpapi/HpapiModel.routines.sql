@@ -551,6 +551,7 @@ BEGIN
    ,`hpapi_pattern`.`length_maximum` AS `lengthMaximum`
    ,`hpapi_pattern`.`value_minimum` AS `valueMinimum`
    ,`hpapi_pattern`.`value_maximum` AS `valueMaximum`
+   ,`hpapi_pattern`.`input`
   FROM `hpapi_method`
   LEFT JOIN `hpapi_call` USING (`vendor`,`package`,`class`,`method`)
   LEFT JOIN `hpapi_spr` USING (`model`,`spr`)
