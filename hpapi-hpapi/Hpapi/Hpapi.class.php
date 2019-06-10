@@ -749,9 +749,11 @@ class Hpapi {
         try {
             $args                                   = array ();
             foreach ($m->arguments as $arg) {
+                // In PHP objects are passed by reference but arrays are not
                 if (is_object($arg)) {
                     $copy                           = $this->jsonEncode ($arg);
                     array_push ($args,$this->jsonDecode($copy));
+                    continue;
                 }
                 array_push ($args,$arg);
             }
