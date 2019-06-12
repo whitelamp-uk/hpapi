@@ -80,7 +80,7 @@ class Hpapi {
         $this->object->response->remoteAddr         = $_SERVER['REMOTE_ADDR'];
         $this->object->response->serverAddr         = $_SERVER['SERVER_ADDR'];
         $this->object->response->datetime           = $this->datetime->format (\DateTime::ATOM);
-        if (strlen(HPAPI_DIAGNOSTIC_EMAIL_REGEXP) && preg_match('<'.HPAPI_DIAGNOSTIC_EMAIL_REGEXP.'>',$this->object->email)) {
+        if (HPAPI_DIAGNOSTIC_EMAIL_REGEXP && preg_match('<'.HPAPI_DIAGNOSTIC_EMAIL_REGEXP.'>',$this->object->email)) {
             $this->returnDiagnostic                 = true;
             $this->diagnostic (HPAPI_DG_ENABLED);
         }
