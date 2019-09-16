@@ -16,7 +16,7 @@ class Hpapi {
     public      $logtime;                    // DateTime of response for logging (never faked)
     public      $microtime;                  // Microtime of response (decimal fraction of a second)
     public      $object;                     // The PHP object loaded from the input which is modified and returned
-    protected   $passwordHash;               // Copy of the stored password hash upon correct authentication
+    public      $passwordHash;               // Copy of the stored password hash upon correct authentication
     protected   $permissions;                // Full permissions array
     protected   $privilege;                  // Privilege array for this vendor::package::class::method
     public      $remoteAddrPattern;          // REMOTE_ADDR matching pattern for the current key
@@ -1020,10 +1020,6 @@ class Hpapi {
 
     public function passwordHash ($plain) {
         return password_hash ($plain,HPAPI_HASH_ALGO,array('cost'=>HPAPI_HASH_COST));
-    }
-
-    public function passwordHashMatch ($hash) {
-        return $hash==$this->passwordHash;
     }
 
     public function pdoDriver ($dsn) {
