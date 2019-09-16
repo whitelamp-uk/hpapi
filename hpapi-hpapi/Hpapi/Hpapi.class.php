@@ -16,7 +16,7 @@ class Hpapi {
     public      $logtime;                    // DateTime of response for logging (never faked)
     public      $microtime;                  // Microtime of response (decimal fraction of a second)
     public      $object;                     // The PHP object loaded from the input which is modified and returned
-    protected   $passwordHash;               // Copy of the stored password hash upon correct authentication
+    public   $passwordHash;               // Copy of the stored password hash upon correct authentication
     protected   $permissions;                // Full permissions array
     protected   $privilege;                  // Privilege array for this vendor::package::class::method
     public      $remoteAddrPattern;          // REMOTE_ADDR matching pattern for the current key
@@ -292,6 +292,7 @@ class Hpapi {
         }
         else {
             if ($this->object->token==$auth['token'] && $auth['tokenExpires']>$this->timestamp && $auth['tokenRemoteAddr']==$_SERVER['REMOTE_ADDR']) {
+                $this->passwordHash                 = $auth['passwordHash'];
                 $this->object->response->authStatus = HPAPI_STR_AUTH_OK;
                 // Load user groups
                 $this->groupsAllowed                = $this->groupsAvailable;
