@@ -15,7 +15,8 @@ INSERT IGNORE INTO `hpapi_method` (`vendor`, `package`, `class`, `method`, `labe
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'keyRelease',	'Release new key',	'Create new key, release it until an expiry time for a given user ID'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'myMethods',	'My methods',	'Methods available to the current user.'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'myUsergroups',	'My user groups',	'User groups for the current user.'),
-('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'update',	'Update column',	'Update a column value for a specific primary key. Ensure whole primary key is given. On success return true.'),
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'keyRelease',	'Release new key',	'Create new key, release it until an expiry time for a given user ID'),
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'passwordClear',	'Clear user password',	'Set password hash to empty string for a given user.'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'usergroups',	'User groups',	'Details of all user groups.'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'uuid',	'Get UUID',	'Hpapi default UUID generating method.');
 
@@ -27,6 +28,7 @@ INSERT IGNORE INTO `hpapi_methodarg` (`vendor`, `package`, `class`, `method`, `a
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'insert',	1,	'Table',	0,	'db-entity'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'insert',	2,	'Columns',	0,	'object'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'keyRelease',	1,	'User ID',	0,	'int-11-positive'),
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'passwordClear',	1,	'User ID',	0,	'int-11-positive'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'update',	1,	'Table',	0,	'db-entity'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'update',	2,	'Column',	0,	'db-entity'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'update',	3,	'Value',	1,	'varchar-8192'),
@@ -40,6 +42,7 @@ INSERT IGNORE INTO `hpapi_spr` (`model`, `spr`, `notes`) VALUES
 ('HpapiModel',	'hpapiKeyrelease',	'Change key and release until expiry time'),
 ('HpapiModel',	'hpapiMyMethods',	'List of methods for a user UUID (authenticated or not).'),
 ('HpapiModel',	'hpapiMyUsergroups',	'Usergroups for a given user ID.'),
+('HpapiModel',	'hpapiPasswordEmpty',	'Remove password hash for a given user ID'),
 ('HpapiModel',	'hpapiUUID',	'Return a new UUID');
 
 INSERT IGNORE INTO `hpapi_sprarg` (`model`, `spr`, `argument`, `name`, `empty_allowed`, `pattern`) VALUES
@@ -49,12 +52,14 @@ INSERT IGNORE INTO `hpapi_sprarg` (`model`, `spr`, `argument`, `name`, `empty_al
 ('HpapiModel',	'hpapiMyMethods',	1,	'User ID',	0,	'int-11-positive'),
 ('HpapiModel',	'hpapiMyMethods',	2,	'Fully authenticated?',	0,	'db-boolean'),
 ('HpapiModel',	'hpapiMyUsergroups',	1,	'User ID',	0,	'int-11-positive'),
-('HpapiModel',	'hpapiMyUsergroups',	2,	'Fully authenticated?',	0,	'db-boolean');
+('HpapiModel',	'hpapiMyUsergroups',	2,	'Fully authenticated?',	0,	'db-boolean'),
+('HpapiModel',	'hpapiPasswordEmpty',	1,	'User ID',	0,	'int-11-positive');
 
 INSERT IGNORE INTO `hpapi_call` (`model`, `spr`, `vendor`, `package`, `class`, `method`) VALUES
 ('HpapiModel',	'hpapiKeyrelease',	'whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'keyRelease'),
 ('HpapiModel',	'hpapiMyMethods',	'whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'methods'),
 ('HpapiModel',	'hpapiMyUsergroups',	'whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'usergroups'),
+('HpapiModel',	'hpapiPasswordEmpty',	'whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'passwordClear'),
 ('HpapiModel',	'hpapiUUID',	'whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'keyRelease'),
 ('HpapiModel',	'hpapiUUID',	'whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'uuid');
 

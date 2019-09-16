@@ -507,6 +507,20 @@ END$$
 
 
 DELIMITER $$
+DROP PROCEDURE IF EXISTS `hpapiPasswordEmpty`$$
+CREATE PROCEDURE `hpapiPasswordEmpty`(
+  IN        `uid` INT(11) UNSIGNED
+)
+BEGIN
+  UPDATE `hpapi_user`
+  SET
+    `password_hash`=''
+  WHERE `id`=uid
+  ;
+END $$
+
+
+DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiPatterns`$$
 CREATE PROCEDURE `hpapiPatterns`(
 )

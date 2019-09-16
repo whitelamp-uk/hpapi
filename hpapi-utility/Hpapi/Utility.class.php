@@ -168,6 +168,20 @@ class Utility {
         return $this->hpapi->parse2D ($usergroups);
     }
 
+    public function passwordClear ($userId) {
+        try {
+            $this->hpapi->dbCall (
+                'hpapiPasswordEmpty'
+               ,$userId
+            );
+        }
+        catch (\Exception $e) {
+            throw new \Exception ($e->getMessage());
+            return false;
+        }
+        return true;
+    }
+
     public function update ($table,$column,$value,$primaryKeys) {
         // Get column permission and details
         if (!($c=$this->hpapi->permissionToUpdate($table,$column))) {
