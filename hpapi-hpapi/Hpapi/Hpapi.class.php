@@ -269,6 +269,12 @@ class Hpapi {
             $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
             $this->end ();
         }
+        if (!$auth['passwordExpires']>$this->timestamp) {
+            $this->diagnostic (HPAPI_STR_AUTH_PWD_EXPIRED);
+            $this->object->response->authStatus     = HPAPI_STR_AUTH_PWD_EXPIRED;
+            $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
+            $this->end ();
+        }
         if (property_exists($this->object,'password')) {
             if (password_verify($this->object->password,$auth['passwordHash'])) {
                 $this->passwordHash                 = $auth['passwordHash'];

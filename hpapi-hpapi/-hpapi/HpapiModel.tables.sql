@@ -231,6 +231,7 @@ CREATE TABLE IF NOT EXISTS `hpapi_user` (
   `notes` text,
   `email` varchar(254) CHARACTER SET ascii NOT NULL,
   `password_hash` varchar(255) CHARACTER SET ascii DEFAULT NULL,
+  `password_expires` datetime DEFAULT NULL,
   `token` varchar(255) CHARACTER SET ascii DEFAULT NULL,
   `token_expires` datetime DEFAULT NULL,
   `token_remote_addr` varbinary(16) DEFAULT NULL,

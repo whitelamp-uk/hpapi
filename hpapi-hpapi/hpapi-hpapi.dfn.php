@@ -97,6 +97,7 @@ define ( 'HPAPI_STR_AUTH_ACTIVE',           '063 Invalid credentials (token erro
 define ( 'HPAPI_STR_AUTH_PASSWORD',         '063 Invalid credentials'                                                               );
 define ( 'HPAPI_STR_AUTH_TOKEN',            '063 Invalid credentials'                                                               );
 define ( 'HPAPI_STR_AUTH_VERIFY',           '064 Account not verified'                                                              );
+define ( 'HPAPI_STR_AUTH_PWD_EXPIRED',      '065 Password expired'                                                                  );
 define ( 'HPAPI_STR_AUTH_OK',               '068 Fully authenticated'                                                               );
 define ( 'HPAPI_STR_AUTH_REM_ADDR_PKG',     '069 Package not allowed from remote address'                                           );
 define ( 'HPAPI_STR_AUTH_KEY',              '070 Package requires valid key'                                                        );

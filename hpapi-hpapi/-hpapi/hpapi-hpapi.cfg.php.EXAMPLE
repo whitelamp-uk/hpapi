@@ -67,6 +67,8 @@ define ( 'HPAPI_POST_BYTES_MAX',            65536                               
 // PASSWORD MANAGEMENT
 define ( 'HPAPI_HASH_COST',                 12                                                                                      );
 define ( 'HPAPI_HASH_ALGO',                 PASSWORD_BCRYPT                                                                         );
+define ( 'HPAPI_PASSWORD_DAYS',             null                                                                                    );
+define ( 'HPAPI_PASSWORD_DAYS_TEMP',        1                                                                                       );
 
 
 // KEY MANAGEMENT
