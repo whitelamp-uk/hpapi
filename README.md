@@ -1,2 +1,2 @@
 # hpapi
-HTTP POST API for client-server JSON interactions
+HTTP POST API for client-server JSON interactions.
