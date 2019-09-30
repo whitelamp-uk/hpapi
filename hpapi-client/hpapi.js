@@ -3,8 +3,10 @@
 export class Hpapi {
 
     constructor ( ) {
-        this.token                      = '';
-        this.tokenExpires               = 0;
+        if (!window.sessionStorage.getItem(this.tokenKey('e'))) {
+            window.sessionStorage.setItem (this.tokenKey('t'),'');
+            window.sessionStorage.setItem (this.tokenKey('e'),0);
+        }
     }
 
     errorSplit (errStr) {
@@ -103,7 +105,7 @@ export class Hpapi {
                 return false;
             }
             else {
-                request.token               = this.token;
+                request.token               = this.tokenRead ();
             }
         }
         catch (e) {
@@ -152,9 +154,9 @@ export class Hpapi {
                                 else {
                                     if ('tokenExpires' in returned.response) {
                                         if ('token' in returned.response) {
-                                            hpapi.token     = returned.response.token
+                                            hpapi.tokenSet(returned.response.token);
                                         }
-                                        hpapi.tokenExpires  = returned.response.tokenExpires;
+                                        hpapi.tokenSetExpiry (returned.response.tokenExpires);
                                         hpapi.tokenTOSet();
                                     }
                                     succeeded (returned.response);
@@ -185,20 +187,39 @@ export class Hpapi {
     }
 
     tokenExpired ( ) {
+
+// Load expiry from storage
+
        return 1000*this.tokenExpires < Date.now();
+    }
+
+    tokenKey (suffix) {
+        return 'hpapi-token' + window.location.pathname.replace('/','-') + '-' + suffix;
     }
 
     tokenPurge (token,timestamp) {
         console.log ('Hpapi purging token');
-        this.token          = '';
-        this.tokenExpires   = 0;
+        window.sessionStorage.setItem (this.tokenKey('t'),'');
+        window.sessionStorage.setItem (this.tokenKey('e'),0);
+    }
+
+    tokenRead ( ) {
+        return window.sessionStorage.getItem (this.tokenKey('t'));
+    }
+
+    tokenSet (token) {
+        window.sessionStorage.setItem (this.tokenKey('t'),token);
+    }
+
+    tokenSetExpiry (expires) {
+        window.sessionStorage.setItem (this.tokenKey('e'),expires);
     }
 
     tokenTOSet ( ) {
         this.tokenTOClear ();
     var now                 = Date.now ();
         console.log ('Now = '+(new Date(now).toISOString()));
-    var then                = 1000*this.tokenExpires;
+    var then                = 1000 * window.sessionStorage.getItem(this.tokenKey('e'));
         console.log ('Then = '+(new Date(then).toISOString()));
     var expireMs            = then - now;
         console.log ('Hpapi setting token timeout '+expireMs+'ms');
@@ -214,3 +235,5 @@ export class Hpapi {
     }
 
 }
+
+
