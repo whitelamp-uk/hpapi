@@ -2,26 +2,7 @@
 
 export class Hpapi {
 
-    cookieRead (key) {
-    var ck              = document.cookie.split (';');
-        for (var i=0;i<ck.length;i++) {
-        var p           = ck[i].split ('=');
-            if (decodeURIComponent(p[0].trim())==key) {
-                return decodeURIComponent(p[1].trim());
-            }
-        }
-        return undefined;
-    }
-
-    cookieWrite (key,val) {
-        document.cookie = encodeURIComponent(key) + '=' + encodeURIComponent(val);
-    }
-
     constructor ( ) {
-        if (!this.cookieRead(this.tokenKey('e'))) {
-            this.cookieWrite (this.tokenKey('t'),'');
-            this.cookieWrite (this.tokenKey('e'),0);
-        }
     }
 
     errorSplit (errStr) {
@@ -115,16 +96,12 @@ export class Hpapi {
             if ('password' in reqObj) {
                 request.password            = reqObj.password;
             }
-            else if (this.tokenExpired()) {
-                throw new Error ('tokenExpired');
-                return false;
+            else if ('token' in reqObj) {
+                request.token               = reqObj.token;
             }
             else {
-                request.token               = this.tokenRead ();
-                if (!request.token) {
-                    throw new Error ('tokenMissing');
-                    return false;
-                }
+                throw new Error ('tokenMissing');
+                return false;
             }
         }
         catch (e) {
@@ -171,13 +148,6 @@ export class Hpapi {
                                     failed (errObj);
                                 }
                                 else {
-                                    if ('tokenExpires' in returned.response) {
-                                        if ('token' in returned.response) {
-                                            hpapi.tokenSet(returned.response.token);
-                                        }
-                                        hpapi.tokenSetExpiry (returned.response.tokenExpires);
-                                        hpapi.tokenTOSet();
-                                    }
                                     succeeded (returned.response);
                                 }
                             }
@@ -203,55 +173,6 @@ export class Hpapi {
 
     log (message) {
         console.log (message);
-    }
-
-    tokenExpired ( ) {
-       return 1000*this.tokenReadExpiry() < Date.now();
-    }
-
-    tokenKey (suffix) {
-        return 'hpapi-token' + window.location.pathname.replace('/','-') + '-' + suffix;
-    }
-
-    tokenPurge (token,timestamp) {
-        console.log ('Hpapi purging token');
-        this.cookieWrite (this.tokenKey('t'),'');
-        this.cookieWrite (this.tokenKey('e'),0);
-    }
-
-    tokenRead ( ) {
-        return this.cookieRead (this.tokenKey('t'));
-    }
-
-    tokenReadExpiry ( ) {
-        this.cookieRead (this.tokenKey('e'));
-    }
-
-    tokenSet (token) {
-        this.cookieWrite (this.tokenKey('t'),token);
-    }
-
-    tokenSetExpiry (expires) {
-        this.cookieWrite (this.tokenKey('e'),expires);
-    }
-
-    tokenTOSet ( ) {
-        this.tokenTOClear ();
-    var now                 = Date.now ();
-        console.log ('Now = '+(new Date(now).toISOString()));
-    var then                = 1000 * this.cookieRead(this.tokenKey('e'));
-        console.log ('Then = '+(new Date(then).toISOString()));
-    var expireMs            = then - now;
-        console.log ('Hpapi setting token timeout '+expireMs+'ms');
-        this.tokenTO = setTimeout (this.tokenPurge.bind(this),expireMs);
-    }
-
-    tokenTOClear ( ) {
-        if ('tokenTO' in this) {
-            console.log ('Hpapi clearing token timeout');
-            clearTimeout (this.tokenTO);
-            delete this.tokenTO;
-        }
     }
 
 }
