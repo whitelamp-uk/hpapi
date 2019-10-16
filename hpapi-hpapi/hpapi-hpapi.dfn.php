@@ -23,6 +23,8 @@ define ( 'HPAPI_SQL_STATE_DUPLICATE',       'duplicatePrimary'                  
 // Definitions for `hpapi_pattern`.`constraints` for hpapi (and supporting class) methods and stored procedures
 define ( 'HPAPI_PATTERN_DESC_ALPHA_LC',     'must have only small letters (up to 64 characters)'                                    );
 define ( 'HPAPI_PATTERN_DESC_CLASS',        'must be a valid PHP class name'                                                        );
+define ( 'HPAPI_PATTERN_DESC_CS_INTS_250',  'must be a comma-separated list of integers'                                            );
+
 define ( 'HPAPI_PATTERN_DESC_CURRENCY_POS', 'must be a valid money amount (and not negative'                                        );
 define ( 'HPAPI_PATTERN_DESC_DATETIME',     'must be standard datetime format yyyy-mm-dd hh:mm:ss'                                  );
 define ( 'HPAPI_PATTERN_DESC_DB_BOOL',      'must be 0 or 1'                                                                        );
