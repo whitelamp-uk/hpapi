@@ -7,7 +7,7 @@
             "file_exclude_patterns": [".git*","*.sublime-*"]
         },
         {
-            "path": "../../../-hpapi-config",
+            "path": "../../../_hpapi-config",
             "file_include_patterns": ["choices.cfg.html","hpapi-server.hdr.php","humans.txt"],
             "folder_exclude_patterns": ["*"]
         }

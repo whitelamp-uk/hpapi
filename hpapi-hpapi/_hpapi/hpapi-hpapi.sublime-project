@@ -7,12 +7,12 @@
             "file_exclude_patterns": [".git*","*.sublime-*"]
         },
         {
-            "path": "../../../-hpapi-config",
+            "path": "../../../_hpapi-config",
             "folder_exclude_patterns": ["*"],
             "file_include_patterns": ["hpapi-models.cfg.json","hpapi-pdo.dfn.json","hpapi-privileges.array.php"]
         },
         {
-            "path": "../../../-hpapi-config/whitelamp-uk",
+            "path": "../../../_hpapi-config/whitelamp-uk",
             "folder_exclude_patterns": ["*"],
             "file_include_patterns": ["hpapi-hpapi.cfg.php"]
         }

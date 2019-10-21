@@ -1916,6 +1916,14 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
         return true;
     }
 
+    loadCss (href,integrity) {
+    var linkTag                     = document.createElement ('script');
+        linkTag.setAttribute ('rel','stylesheet');
+        linkTag.setAttribute ('href',href);
+        linkTag.setAttribute ('integrity',integrity);
+        document.head.appendChild (linkTag);
+    }
+
     loadDateNow (targetElmt) {
     var today                       = this.today ();
     var elmts                       = this.qsa (targetElmt,'.date-now');
@@ -1923,6 +1931,13 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
             elmt.value              = today;
         }
         return true;
+    }
+
+    loadJsIife (src,integrity) {
+    var scriptTag                   = document.createElement ('script');
+        scriptTag.setAttribute ('src',src);
+        scriptTag.setAttribute ('integrity',integrity);
+        document.head.appendChild (scriptTag);
     }
 
     loaders (evt,templateName) {
