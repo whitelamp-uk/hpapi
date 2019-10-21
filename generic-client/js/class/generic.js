@@ -1462,7 +1462,10 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
         this.hotkeyListen ();
         this.queueInit ();
         this.contexts                   = {};
-        this.qs (document,'#gui-context').addEventListener ('click',this.contextHandle.bind(this));
+    var cm                              = this.qs (document,'#gui-context');
+        if (cm) {
+            cm.addEventListener ('click',this.contextHandle.bind(this));
+        }
         this.globalLoaded               = true;
     }
 
