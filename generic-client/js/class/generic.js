@@ -304,7 +304,6 @@ return false;
         }
     var k                   = this.saveKey (key);
         if (k.length==0) {
-            console.log ('cookieExpire(): no save key available');
             return false;
         }
 console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
@@ -320,7 +319,6 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     var c                   = document.cookie.split (';');
     var k                   = this.saveKey (key);
         if (k.length==0) {
-            console.log ('cookieRead(): no save key available');
             return '';
         }
         for (var i=0;i<c.length;i++) {
@@ -339,7 +337,6 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
         }
     var k                   = this.saveKey (key);
         if (k.length==0) {
-            console.log ('cookieWrite(): no save key available');
             return false;
         }
         document.cookie     = encodeURIComponent(k) + '=' + encodeURIComponent(val);
@@ -2794,9 +2791,11 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
 
     saveKey (key) {
         if (!key.length) {
+            console.log ('saveKey(): no key given');
             return '';
         }
         if (!this.saveScope) {
+            console.log ('saveKey(): no save scope available');
             return '';
         }
         return this.saveScope + '-' + key;
