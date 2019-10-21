@@ -1,0 +1,138 @@
+
+<!-- USER -->
+
+{{#each users}}
+    {{#equals userId ../parameters.userId}}
+
+<form data-history="API {{userId}}: {{userName}} - {{email}}">
+  <input type="hidden" name="userId" value="{{userId}}"/>
+</form>
+
+<div class="edit nugget">
+  <a id="edit-mode" title="Edit toggle">&nbsp;</a>
+  <h2>API user {{email}}</h2>
+</div>
+
+<section class="view">
+
+  <div class="nugget user">
+
+    {{#if isFundraiser}}
+        {{#if hasImage}}
+    <a class="navigator portrait" data-screen="fundraiser" data-parameter="fundraiserId" data-value="{{userId}}"><img title="Switch to fundraiser view" class="portrait large" src="./media/fundraiser/fundraiser-{{userId}}.png" /></a>
+        {{/if}}
+    <a class="navigator" data-screen="fundraiser" data-parameter="fundraiserId" data-value="{{userId}}"><img title="Switch to fundraiser view" class="icon" src="./media/usertype/fundraiser.png" /></a>
+    {{/if}}
+    {{#if isAgent}}
+    <a class="navigator" data-screen="agent" data-parameter="agentId" data-value="{{userId}}"><img title="Switch to agent view" class="icon" src="./media/usertype/agent.png" /></a>
+    {{/if}}
+
+    <h3>#{{userId}}</h3>
+
+    <form id="user" data-update data-editmode data-table="hpapi_user">
+
+      <template data-keys>
+        <section>
+          <input data-key="users" />
+          <input data-key="{{@index}}" />
+        </section>
+      </template>
+
+      <input type="hidden" data-primary data-column="id" name="userId" value="{{userId}}" />
+
+    {{#if isFundraiser}}
+        {{#if active}}
+      <section>
+        <h4>Security</h4>
+        <div>
+          <span class="legend">App key</span>
+          <a id="user-key" class="atom {{#unless hasKey}}warning{{/unless}}">Release new application key</a>
+        </div>
+        <div>
+          <span class="legend">Password</span>
+          <a id="user-pwd-clear" class="atom">Clear password</a>
+          <span id="user-pwd-warning" class="atom warning {{#unless passwordIsSame}}hidden{{/unless}}">This user has your password!</a>
+        </div>
+        <div>
+          <span class="legend">Temporary password</span>
+          <input id="user-pwd" type="password" />
+        </div>
+        <div>
+          <span class="legend">Confirm</span>
+          <input id="user-pwd-confirm" type="password" />
+        </div>
+        <div>
+          <span class="legend">&nbsp;</span>
+          <a id="user-pwd-set" class="atom">Set</a>
+        </div>
+      </section>
+        {{/if}}
+    {{/if}}
+
+      <section>
+        <h4>Availability</h4>
+        <div {{#unless active}}class="deleted"{{/unless}}>
+          <span class="legend">Active</span>
+          <input type="checkbox" data-column="active" name="active" {{#if active}}checked{{/if}} />
+        </div>
+      </section>
+
+      <section>
+        <h4>Details</h4>
+        <div>
+          <span class="legend">Name</span>
+          <input type="text" data-column="name" name="userName" value="{{userName}}" />
+        </div>
+        <div>
+          <span class="legend">Email</span>
+          <input type="text" data-column="email" name="email" value="{{email}}" />
+        </div>
+        <div>
+          <span class="legend">Notes</span>
+          <textarea data-column="notes" name="notes">{{notes}}</textarea>
+        </div>
+        <div>
+          <span class="legend">IP match pattern</span>
+          <input type="text" data-column="remote_addr_pattern" name="remoteAddrPattern" value="{{remoteAddrPattern}}" />
+        </div>
+      </section>
+
+    </form>
+
+  </div>
+
+</section>
+
+<div class="nugget usergroups">
+
+  <h3>API memberships</h3>
+
+  <form id="membership" data-editmode >
+
+    <input type="hidden" name="userId" value="{{userId}}" />
+
+    <section>
+        {{#each ../usergroups}}
+            {{#equals usergroup 'anon'}}
+            {{else}}
+      <div>
+        <span class="legend">{{name}}</span>
+        <input type="checkbox" name="{{usergroup}}"
+            {{#each ../memberships}}
+                {{#equals this ../usergroup}}
+          checked
+                {{/equals}}
+            {{/each}}
+        />
+      </div>
+            {{/equals}}
+        {{/each}}
+    </section>
+
+  </form>
+
+</div>
+
+    {{/equals}}
+{{/each}}
+

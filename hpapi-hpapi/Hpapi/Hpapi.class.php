@@ -70,7 +70,7 @@ class Hpapi {
         $this->object->response                     = new \stdClass ();
         $this->object->response->timezone           = $this->tzName;
         $this->object->response->datetime           = null;
-        $this->object->response->authStatus         = null;
+        $this->object->response->authStatus         = HPAPI_STR_AUTH_DEFAULT;
         $this->object->response->description        = HPAPI_META_DESCRIPTION;
         $this->object->response->splash             = array ();
         $this->object->response->error              = null;

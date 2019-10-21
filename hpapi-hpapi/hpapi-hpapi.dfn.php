@@ -92,17 +92,18 @@ define ( 'HPAPI_STR_TOKEN_DURATION',        '049 500 No matching user group has 
 define ( 'HPAPI_STR_AUTH_DENIED',           '050 403 Access denied'                                                                 );
 
 // Authentication status
-define ( 'HPAPI_STR_AUTH_EMAIL',            '063 Invalid credentials'                                                               );
-define ( 'HPAPI_STR_AUTH_BLACKLIST',        '061 Request not allowed at this time'                                                  );
-define ( 'HPAPI_STR_AUTH_REM_ADDR',         '062 User not allowed from remote address'                                              );
-define ( 'HPAPI_STR_AUTH_ACTIVE',           '063 Invalid credentials (token error)'                                                 );
-define ( 'HPAPI_STR_AUTH_PASSWORD',         '063 Invalid credentials'                                                               );
-define ( 'HPAPI_STR_AUTH_TOKEN',            '063 Invalid credentials'                                                               );
-define ( 'HPAPI_STR_AUTH_VERIFY',           '064 Account not verified'                                                              );
-define ( 'HPAPI_STR_AUTH_PWD_EXPIRED',      '065 Password expired'                                                                  );
+define ( 'HPAPI_STR_AUTH_DEFAULT',          '061 Bad request'                                                                       );
+define ( 'HPAPI_STR_AUTH_REM_ADDR_PKG',     '062 Package not allowed from remote address'                                           );
+define ( 'HPAPI_STR_AUTH_KEY',              '063 Package requires valid key'                                                        );
+define ( 'HPAPI_STR_AUTH_BLACKLIST',        '064 Not authorised'                                                                    );
+define ( 'HPAPI_STR_AUTH_EMAIL',            '064 Not authorised'                                                                    );
+define ( 'HPAPI_STR_AUTH_REM_ADDR',         '065 Not authorised from remote address'                                                );
+define ( 'HPAPI_STR_AUTH_ACTIVE',           '066 Not activated by administrator'                                                    );
+define ( 'HPAPI_STR_AUTH_PWD_EXPIRED',      '067 Password expired'                                                                  );
 define ( 'HPAPI_STR_AUTH_OK',               '068 Fully authenticated'                                                               );
-define ( 'HPAPI_STR_AUTH_REM_ADDR_PKG',     '069 Package not allowed from remote address'                                           );
-define ( 'HPAPI_STR_AUTH_KEY',              '070 Package requires valid key'                                                        );
+define ( 'HPAPI_STR_AUTH_PASSWORD',         '064 Not authorised'                                                                    );
+define ( 'HPAPI_STR_AUTH_TOKEN',            '069 Invalid token'                                                                     );
+define ( 'HPAPI_STR_AUTH_VERIFY',           '070 Account unverified'                                                                );
 
 // Validating posted object->method
 define ( 'HPAPI_STR_METHOD_VDR',            '081 400 Method property "vendor" does not exist'                                       );

@@ -1,0 +1,39 @@
+
+<!-- ACCESS SCREEN -->
+
+<nav class="navigator"></nav>
+
+<h2>Log in</h2>
+    
+<div class="login nugget">
+
+  <div>
+{{#if badge}}
+    <span class="legend">Badge number</span>
+    <input id="gui-badge" type="text" name="badgeNumber" pattern="\d*" />
+    <input id="gui-email" type="hidden" name="email" />
+{{else}}
+    <span class="legend">Email</span>
+    <input id="gui-email" type="email" name="email" />
+{{/if}}
+  </div>
+  <div>
+    <span class="legend">Password</span>
+    <input id="gui-password" type="password" name="password" />
+  </div>
+  <div>
+    <span class="legend">&nbsp;</span>
+    <button id="gui-unlock">Unlock</button>
+  </div>
+
+{{#if reset}}
+  <div id="login-password-reset">
+    <div>
+      <span class="legend">&nbsp;</span>
+      <button id="gui-password-reset">Reset password</button>
+    </div>
+  </div>
+{{/if}}
+
+</div>
+

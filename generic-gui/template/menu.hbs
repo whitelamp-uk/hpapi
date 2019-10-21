@@ -1,0 +1,67 @@
+
+
+<ul data-menu="admin">
+
+  <li><a data-screen="home">Home</a></li>
+
+  <li data-block="people">
+    <a>People</a>
+    <ul>
+      <li data-block="users">
+        <a data-screen="users">API users</a>
+        <ul data-params="userId" data-screen="user"></ul>
+      </li>
+      <li data-block="agents">
+        <a data-screen="agents">Agents</a>
+        <ul data-params="agentId" data-screen="agent"></ul>
+      </li>
+      <li data-block="fundraisers">
+        <a data-screen="fundraisers">Fundraisers</a>
+        <ul data-params="fundraiserId" data-screen="fundraiser"></ul>
+      </li>
+    </ul>
+  </li>
+
+  <li data-block="structure">
+    <a>Structure</a>
+    <ul>
+      <li data-block="managers">
+        <a data-screen="managers">Managers</a>
+        <ul data-params="managerId" data-screen="manager"></ul>
+      </li>
+      <li data-block="teams">
+        <a data-screen="teams">Teams</a>
+        <ul data-params="teamId" data-screen="team"></ul>
+      </li>
+      <li><a data-screen="tree">Hierarchy</a></li>
+    </ul>
+
+  <li data-block="flags">
+    <a data-screen="flags">Flags</a>
+    <ul data-params="signupId" data-screen="flag" data-title="Flag"></ul>
+  </li>
+
+  <li data-block="accounts">
+    <a data-screen="accounts">Accounts</a>
+    <ul data-params="accountId" data-screen="account" data-title="Account"></ul>
+    <ul data-params="accountId" data-screen="allows" data-title="Agents"></ul>
+    <ul data-params="accountId" data-screen="areas" data-title="Postcode areas"></ul>
+    <ul data-params="accountId" data-screen="contractors" data-title="Contractors"></ul>
+    <ul data-params="accountId" data-screen="products" data-title="Products"></ul>
+    <ul data-params="accountId,producttypeCode" data-screen="product" data-title="Product"></ul>
+  </li>
+
+  <li>
+    <a data-screen="reports">Reports</a>
+    <ul data-params="spr" data-screen="report"></ul>
+  </li>
+
+  <li>
+    <a data-screen="forms">Forms</a>
+    <ul data-params="formId" data-screen="formfields" data-title="Fields"></ul>
+  </li>
+
+  <li><a data-screen="test">Test</a></li>
+
+</ul>
+

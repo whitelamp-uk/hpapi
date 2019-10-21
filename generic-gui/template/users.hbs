@@ -1,0 +1,105 @@
+
+<!-- USERS -->
+
+<h2>Users</h2>
+
+<div class="users">
+
+  <span class="filter nugget">
+    <a class="filter" title="Show/hide filter"><img src="./media/filter.png" /></a>
+    <form data-selector="div.nugget.user">
+      <div>
+        <a class="reset" title="Reset filter"><img src="./media/reset.png" /></a>
+        <select data-deleted >
+          <option value="N" selected >Available</option>
+          <option value="Y">Deleted</option>
+          <option value="*">All</option>
+        </select>
+        <span>Warnings: <input type="checkbox" data-warning /></span>
+        <input type="text" class="char-16" data-match="userName" placeholder="Name" />
+        <input type="text" class="char-16" data-freetext placeholder="Search" />
+        <span class="status"></span>
+      </div>
+    </form>
+  </span>
+
+  <div class="new nugget">
+    <button class="new">+</button>
+    <h3>New user</h3>
+    <form data-add data-table="hpapi_user" data-next="users" data-bounce="user">
+      <template data-keys>
+        <section>
+          <input data-key="users" />
+        </section>
+      </template>
+      <template data-primaries>
+        <section>
+          <input name="userId" data-autoinc />
+        </section>
+      </template>
+      <section>
+        <div>
+          <span class="legend">Email</span>
+          <input class="char-16" type="email" data-column="email" name="email" />
+        </div>
+        <div>
+          <span class="legend">Friendly name</span>
+          <input class="char-16" type="text" data-column="name" name="userName" />
+        </div>
+      </section>
+      <button>Add</button>
+    </form>
+  </div>
+
+  <section>
+
+{{#each users}}
+    <div class="nugget user {{#equals userId ../parameters.userId}}scoped{{/equals}} {{#unless active}}deleted{{/unless}}" >
+    {{#if isAgent}}
+      <a class="navigator icon" data-screen="agent" data-parameter="agentId" data-value="{{userId}}"><img title="Agent details" class="icon" src="./media/usertype/agent.png" />
+    {{/if}}
+    {{#if isFundraiser}}
+       <a class="navigator icon" data-screen="fundraiser" data-parameter="fundraiserId" data-value="{{userId}}"><img title="Fundraiser details" class="icon" src="./media/usertype/fundraiser.png" /></a>
+        {{#if hasImage}}
+      <a class="navigator portrait" data-screen="fundraiser" data-parameter="fundraiserId" data-value="{{userId}}"><img title="{{userName}}" class="portrait" src="./media/fundraiser/fundraiser-{{userId}}.png" /></a>
+        {{/if}}
+    {{/if}}
+      <h3>
+        <span class="userId">#{{userId}}</span>
+        <span data-match="userName">{{userName}}</span>
+      </h3>
+      <div>
+      {{email}}
+    {{#each memberships}}
+        {{#each ../../usergroups}}
+            {{#equals usergroup ../this}}
+          <span class="atom">{{name}}</span>
+            {{/equals}}
+        {{/each}}
+    {{else}}
+          <a class="navigator atom warning" data-screen="user" data-parameter="userId" data-value="{{userId}}">No API memberships</a>
+    {{/each}}
+      </div>
+      <div>
+        <button class="navigator" data-screen="user" data-parameter="userId" data-value="{{userId}}">API Details</button>
+    {{#if isFundraiser}}
+        <button class="navigator" data-screen="fundraiser" data-parameter="fundraiserId" data-value="{{userId}}">Fundraiser</button>
+    {{else}}
+        {{#if isAgent}}
+        <button class="navigator" data-screen="agent" data-parameter="agentId" data-value="{{userId}}">Agent</button>
+        {{else}}
+            {{#emailLikeFundraiser email}}
+        <a class="navigator atom" data-screen="fundraisers">No business role - view fundraisers</a>
+            {{else}}
+        <a class="navigator atom" data-screen="agents">No business role - view agents</a>
+            {{/emailLikeFundraiser}}
+        {{/if}}
+    {{/if}}
+      </div>
+    </div>
+{{/each}}
+
+  </section>
+
+</div>
+

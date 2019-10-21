@@ -1,0 +1,51 @@
+
+<!-- REPORTS -->
+
+<h2>Data reports</h2>
+
+<div class="reports">
+
+  <span class="filter nugget">
+    <a class="filter" title="Show/hide filter"><img src="./media/filter.png" /></a>
+    <form data-selector="div.nugget.report">
+      <div>
+        <a class="reset" title="Reset filter"><img src="./media/reset.png" /></a>
+        <select data-deleted >
+          <option value="N" selected >Available</option>
+          <option value="Y">Deleted</option>
+          <option value="*">All</option>
+        </select>
+        <input type="text" class="char-16" data-freetext placeholder="Search" />
+        <span class="status"></span>
+      </div>
+    </form>
+  </span>
+
+  <div class="new nugget">
+    <button class="new">+</button>
+    <h3>New report</h3>
+    <form data-add>
+      Not currently supported
+    </form>
+  </div>
+
+  <section>
+
+{{#each reports}}
+    <div class="nugget report {{#if deleted}}deleted{{/if}}" >
+      <h3>
+{{#if deleted}}
+        {{reportName}}
+{{else}}
+        <a class="navigator" data-insert="report" data-target="report-target" data-parameter="spr" data-value="{{spr}}">{{reportName}}</a>
+{{/if}}
+      </h3>
+    </div>
+{{/each}}
+
+  </section>
+
+</div>
+
+<div id="report-target" class="layer1"></div>
+

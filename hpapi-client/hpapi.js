@@ -100,7 +100,7 @@ export class Hpapi {
                 request.token               = reqObj.token;
             }
             else {
-                throw new Error ('tokenMissing');
+                throw new Error ('999 400 Missing both password and token');
                 return false;
             }
         }
@@ -123,7 +123,7 @@ export class Hpapi {
                 var xhr                     = new XMLHttpRequest ();
                     xhr.timeout             = 1000 * timeoutSecs;
                     xhr.onerror             = function ( ) {
-                        failed (new Error('999 Could not connect or unknown error'));
+                        failed (new Error('997 502 Could not connect or unknown error'));
                     };
                     xhr.onload              = function ( ) {
                         var fail            = false;
@@ -137,12 +137,13 @@ export class Hpapi {
                                 fail        = true;
                             }
                             if (fail) {
-                                failed (new Error(xhr.responseText));
+                                failed (new Error('995 502 Server is borked: '+xhr.responseText));
                             }
                             else {
                             var err         = returned.response.error;
                                 if (err) {
                                 var errObj  = new Error (err);
+                                    errObj.error            = err;
                                     errObj.authStatus       = returned.response.authStatus;
                                     errObj.splash           = returned.response.splash;
                                     failed (errObj);
@@ -153,11 +154,11 @@ export class Hpapi {
                             }
                         }
                         else {
-                            failed (new Error(xhr.status+' '+xhr.statusText));
+                            failed (new Error('996 '+xhr.status+' '+xhr.statusText));
                         }
                     };
                     xhr.ontimeout   = function ( ) {
-                        failed (new Error('999 Request timed out'));
+                        failed (new Error('998 404 Request timed out'));
                     };
                     xhr.open ('POST',url,true);
                     xhr.setRequestHeader ('Content-Type','application/json');

@@ -1,0 +1,14 @@
+{
+    "folders":
+    [
+        {
+            "path": "../",
+            "file_include_patterns": ["*.EXAMPLE","*.md","*.html","style.css","index.js","plugins.js","generic-enforcer.js","generic-gui.js","*.hbs"],
+            "file_exclude_patterns": [".git*","data.hbs","login.hbs","place.hbs","splash.hbs"]
+        },
+        {
+            "path": "../../../-hpapi-config/whitelamp-uk",
+            "file_include_patterns": ["generic-cfg.js"]
+        }
+    ]
+}

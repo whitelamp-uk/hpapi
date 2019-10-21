@@ -1,0 +1,59 @@
+
+/* Copyright 2019 Whitelamp http://www.whitelamp.co.uk/ */
+
+export class GenericCfg {
+
+    constructor ( ) {
+        this.connectTO              = 10;
+        this.diagnostic             = {
+            data                : true
+        };
+        this.enforceLocalStorage    = false;
+        this.environment            = 'development';
+        this.forceTemplateLoad      = true;
+        this.inBodyLoggerId         = 'logger';     // or null
+        this.loginByBadge           = true;
+        this.navigatorOptions       = ['lock'];
+        this.noPasswordReset        = true;
+        this.papaparse              = {
+            export                  : {
+                quotes              : false,        // or array of booleans
+                quoteChar           : '"',
+                escapeChar          : '"',
+                delimiter           : ",",
+                header              : true,
+                newline             : "\r\n",
+                skipEmptyLines      : false,        // or 'greedy',
+                columns             : null          // or array of strings
+            },
+            import                  : {
+                delimiter           : "",           // auto-detect
+                newline             : "",           // auto-detect
+                quoteChar           : '"',
+                escapeChar          : '"',
+                header              : true,
+                transformHeader     : undefined,
+                dynamicTyping       : true,
+                preview             : 0,
+                encoding            : "",
+                comments            : false,
+                skipEmptyLines      : true,
+                fastMode            : undefined,    // only works if no fields are quoted
+                error               : undefined,    // callback for FileReader errors
+                download            : false,        // parse argument is a string at this URL
+                withCredentials     : undefined,    // XMLHttpRequest.withCredentials
+                delimitersToGuess   : [',', '\t', '|', ';', Papa.RECORD_SEP, Papa.UNIT_SEP],
+                worker              : false,        // parse asynchronously
+                beforeFirstChunk    : undefined,    // streaming callback function before first chunk
+                chunk               : undefined,    // EITHER: streaming callback function for every chunk
+                step                : undefined,    // OR:     streaming callback function for every row
+                transform           : undefined,    // function to transform each value
+                complete            : undefined     // worker callback function
+            }
+        };
+        this.screenTO               = 60;
+        this.templateTO             = 4;
+    }
+
+}
+

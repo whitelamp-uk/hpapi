@@ -1,0 +1,56 @@
+
+<!-- TEST -->
+
+<h2>Test screen</h2>
+
+<div id="test-validate" class="nugget">
+  <button id="test-validate-number">Validate Mobile</button>
+  <input id="test-validate-input" type="text" />
+  <div id="test-validate-div"></div>
+</div>
+
+
+<div id="test-map" class="nugget">
+  <button id="test-map-load">Map</button>
+  <div id="test-map-div">
+    <input type="date" name="fromdate">
+    <input type="date" name="todate">
+  </div>
+</div>
+
+<div id="test-map" class="nugget">
+  <button id="test-map-route-load" data-target="test-map-route" data-zoom="14" data-pincolor="blue" data-pintype="pushpin" data-pathcolor="#0000aa" data-label>Ping route example with mapPings()/mapPinsRoute()</button>
+  <div id="test-map-route" style="z-index:1000"></div>
+</div>
+
+<div class="nugget">
+  <button id="test-xml-download" data-immediate >Download XML</button>
+</div>
+
+<div class="nugget">
+  <button id="test-csv-download" data-immediate >Download CSV</button>
+</div>
+
+<div class="nugget">
+  <h3>Table with 2-D looping</h3>
+  <h4>Name: {{test.name}}</h4>
+  <table border="1">
+    <thead>
+      <tr>
+{{#each test.colHeads}}
+        <th>{{this}}</th>
+{{/each}}
+      </tr>
+    </thead>
+    <tbody>
+{{#each test.rows}}
+      <tr>
+{{#each this}}
+        <td>{{this}}</td>
+{{/each}}
+      </tr>
+{{/each}}
+    </tbody>
+  </table>
+</div>
+
