@@ -3469,11 +3469,7 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     }
 
     userScope ( ) {
-    var userScope                   = '#gui-email';
-        if (this.cfg.loginByBadge) {
-            userScope               = '#gui-badge';
-        }
-        return this.qs(document,userScope);
+        return this.qs(document,'#gui-email');
     }
 
     windowLog ( ) {
