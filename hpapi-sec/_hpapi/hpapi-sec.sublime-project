@@ -7,9 +7,8 @@
             "file_exclude_patterns": [".git*","*.sublime-*"]
         },
         {
-            "path": "../../../-hpapi-config/whitelamp-uk",
-            "file_include_patterns": ["hpapi-sec.*"],
-            "folder_exclude_patterns": ["hpapi-dba-columns"]
+            "path": "../../../_hpapi-config/whitelamp-uk",
+            "file_include_patterns": ["hpapi-sec.*"]
         }
     ]
 }

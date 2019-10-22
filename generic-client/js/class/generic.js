@@ -304,7 +304,6 @@ return false;
         }
     var k                   = this.saveKey (key);
         if (k.length==0) {
-            console.log ('cookieExpire(): no save key available');
             return false;
         }
 console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
@@ -320,7 +319,6 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     var c                   = document.cookie.split (';');
     var k                   = this.saveKey (key);
         if (k.length==0) {
-            console.log ('cookieRead(): no save key available');
             return '';
         }
         for (var i=0;i<c.length;i++) {
@@ -339,7 +337,6 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
         }
     var k                   = this.saveKey (key);
         if (k.length==0) {
-            console.log ('cookieWrite(): no save key available');
             return false;
         }
         document.cookie     = encodeURIComponent(k) + '=' + encodeURIComponent(val);
@@ -1924,6 +1921,14 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
         return true;
     }
 
+    loadCss (href,integrity) {
+    var linkTag                     = document.createElement ('script');
+        linkTag.setAttribute ('rel','stylesheet');
+        linkTag.setAttribute ('href',href);
+        linkTag.setAttribute ('integrity',integrity);
+        document.head.appendChild (linkTag);
+    }
+
     loadDateNow (targetElmt) {
     var today                       = this.today ();
     var elmts                       = this.qsa (targetElmt,'.date-now');
@@ -1931,6 +1936,13 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
             elmt.value              = today;
         }
         return true;
+    }
+
+    loadJsIife (src,integrity) {
+    var scriptTag                   = document.createElement ('script');
+        scriptTag.setAttribute ('src',src);
+        scriptTag.setAttribute ('integrity',integrity);
+        document.head.appendChild (scriptTag);
     }
 
     loaders (evt,templateName) {
@@ -2787,9 +2799,11 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
 
     saveKey (key) {
         if (!key.length) {
+            console.log ('saveKey(): no key given');
             return '';
         }
         if (!this.saveScope) {
+            console.log ('saveKey(): no save scope available');
             return '';
         }
         return this.saveScope + '-' + key;
