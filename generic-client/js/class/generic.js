@@ -1406,6 +1406,14 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
         if ('globalLoaded' in this) {
             return true;
         }
+
+        window.addEventListener('beforeunload', function (e) {
+          // Cancel the event
+          e.preventDefault();
+          // Chrome requires returnValue to be set
+          e.returnValue = '';
+        });
+        
         window.name                     = 'w-' + Date.now();
         this.loginTried                 = 0;
         this.loggedOut                  = 1;

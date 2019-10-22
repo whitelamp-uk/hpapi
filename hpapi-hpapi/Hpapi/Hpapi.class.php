@@ -844,21 +844,25 @@ class Hpapi {
     }
 
     public function groupAllowed ($groupName) {
-        foreach ($this->groupsAllowed as $ug) {
-            if ($ug['usergroup']==$groupName) {
-                return true;
-            }
-        }
-        return false;
+        return $this->groupCheck($groupName, $this->groupsAllowed);
     }
 
     public function groupAvailable ($groupName) {
-        foreach ($this->groupsAvailable as $ug) {
-            if ($ug['usergroup']==$groupName) {
-                return true;
+        return $this->groupCheck($groupName, $this->groupsAvailable);
+    }
+
+    private function groupCheck($needles, $haystack) {
+        if (!is_array($needles)) {
+            $needles = array($needles);
+        }
+        foreach ($needles as $needle) {
+            foreach ($haystack as $ug) {
+                if ($ug['usergroup']==$needle) {
+                    return true;
+                }
             }
         }
-        return false;
+        return false;        
     }
 
     public function isHTTPS ( ) {
