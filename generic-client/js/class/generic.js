@@ -230,23 +230,26 @@ export class Generic extends Hpapi {
         this.contextTarget      = evt.currentTarget;
     }
 
-    contextUrl (user) {
+    contextUrl (user,screen) {
             if (!user) {
                 user            = '';
             }
-            this.parameterParse (this.contextTarget);
+            if (!screen) {
+                this.parameterParse (this.contextTarget);
+                screen          = this.contextTarget.dataset.screen;
+            }
         var url                 = window.location.protocol + '//';
             url                += window.location.host + window.location.pathname ;
             url                += '?' + encodeURI(user);
-            url                += '?' + encodeURI(this.contextTarget.dataset.screen);
-            if ((typeof this.templates[this.contextTarget.dataset.screen])!='function') {
-                this.log ('contextUrl(): "'+this.contextTarget.dataset.screen+'.hbs" not available');
+            url                += '?' + encodeURI(screen);
+            if ((typeof this.templates[screen])!='function') {
+                this.log ('contextUrl(): "'+screen+'.hbs" not available');
                 return false;
             }
         var obj                = {};
             try {
             var prms           = document.createElement ('div');
-                prms.innerHTML = this.templates[this.contextTarget.dataset.screen] (this.data);
+                prms.innerHTML = this.templates[screen] (this.data);
                 prms           = this.qsa (prms,'form[data-history] input');
             }
             catch (e) {
@@ -1403,14 +1406,10 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
         if ('globalLoaded' in this) {
             return true;
         }
-
-        window.addEventListener('beforeunload', function (e) {
-          // Cancel the event
-          e.preventDefault();
-          // Chrome requires returnValue to be set
-          e.returnValue = '';
-        });
-        
+        // Warn before leaving the app
+        window.addEventListener ('beforeunload',this.unloadHandle.bind(this));
+        // Handle browser back/formward buttons
+        window.addEventListener ('popstate',this.historyHandle.bind(this));
         window.name                     = 'w-' + Date.now();
         this.loginTried                 = 0;
         this.loggedOut                  = 1;
@@ -1631,6 +1630,19 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
                 return dt.toUTCString ();
             }
         );
+    }
+
+    historyHandle (evt) {
+        if (!window.history.state) {
+console.log ('NO STATE');
+            return;
+        }
+        console.log ('SETTING STATE '+JSON.stringify(window.history.state),null,'    ');
+    var params = Object.keys (window.history.state.parameters);
+        for (var i=0;i<params.length;i++) {
+            this.parameterWrite (params[i],window.history.state.parameters[params[i]]);
+        }
+        this.screenRender (null,window.history.state.screen,null,false);
     }
 
     hotkeyEvent (evt) {
@@ -2500,7 +2512,7 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     }
 
     placeClose ( ) {
-        this.screenRender (null,this.currentScreen);
+        this.screenRender (null,this.currentScreen,null,false);
     }
 
     placeListen ( ) {
@@ -2849,6 +2861,10 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
         }
         console.log ('screenHandle(): rendering "'+target.dataset.screen+'"');
         evt.currentTargetWas = target;
+        if (target.dataset.nohistory>0) {
+            this.screenRender (evt,target.dataset.screen,null,false);
+            return;
+        }
         this.screenRender (evt,target.dataset.screen);
     }
 
@@ -2933,7 +2949,7 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
         this.screenLock ('Unlock');
     }
 
-    async screenRender (evt,screen,bounceScreen) {
+    async screenRender (evt,screen,bounceScreen,storeState=true) {
         if (!(screen in this.templates)) {
             console.log ('Screen "'+screen+'.hbs" is missing');
             return false;
@@ -2985,6 +3001,20 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
             document.body.classList.remove ('wait');
             return false;
         }
+        this.currentScreen                      = screen;
+        if (storeState) {
+        var state = {
+                id : Date.now (),
+                screen : screen,
+                parameters : this.parameters
+            };
+            console.log ('PUSHING STATE '+JSON.stringify(state,null,'    '));
+            window.history.pushState (
+                state,
+                "Screen = "+screen,
+                this.contextUrl (this.userScope().value,this.currentScreen)
+            );
+        }
         if (!(screen in this.currentTemplates)) {
             this.currentTemplates[screen]       = {};
         }
@@ -2997,7 +3027,6 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
         if (this.cfg.diagnostic.data) {
             this.restricted.innerHTML          += this.templates['data'] (this.data);
         }
-        this.currentScreen                      = screen;
         this.data.currentScreen                 = this.currentScreen;
 // this.logSummary ();
         // Add automatic navigation defined by navigators()
@@ -3340,7 +3369,7 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
 
     async templateFetch (handle) {
         if (handle in this.templates) {
-            console.log ('templateFetch(): already got or getting template "'+handle+'.hbs"');
+            // console.log ('templateFetch(): already got or getting template "'+handle+'.hbs"');
             return true;
         }
         try {
@@ -3357,7 +3386,7 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
 
     templateGet (handle) {
         try {
-            console.log ('templateGet(): getting template "'+handle+'.hbs"');
+            // console.log ('templateGet(): getting template "'+handle+'.hbs"');
         var timeout                         = 1000 * this.cfg.templateTO;
         var url                             = './template/' + handle + '.hbs';
             if (this.cfg.forceTemplateLoad) {
@@ -3453,6 +3482,19 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
         }
     }
 
+    unloadHandle (evt) {
+        // Cancel the event
+        evt.preventDefault ();
+        // Chrome requires returnValue to be set
+        evt.returnValue = '';
+    }
+
+    unstickers ( ) {
+        // Override this in an extension class
+        return {
+        }
+    }
+
     async update (tableName,columnName,columnValue,rowPrimaries) {
     var request     = {
             "email" : this.access.email.value
@@ -3481,12 +3523,6 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
             console.log ('update(): '+e.message);
             throw err;
             return false;
-        }
-    }
-
-    unstickers ( ) {
-        // Override this in an extension class
-        return {
         }
     }
 

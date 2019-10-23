@@ -44,7 +44,7 @@ export class GenericGui extends Generic {
             );
 //            this.splash (0,'Agent access changed','Success','Continue',target);
             this.statusShow ('Agent access changed');
-            this.screenRender (null,this.currentScreen);
+            this.screenRender (null,this.currentScreen,null,false);
         }
         catch (e) {
             if (newState) {
@@ -77,7 +77,7 @@ export class GenericGui extends Generic {
             );
 //            this.splash (0,'Agent permission changed','Success','Continue');
             this.statusShow ('Agent permission changed');
-            this.screenRender (null,this.currentScreen);
+            this.screenRender (null,this.currentScreen,null,false);
         }
         catch (e) {
             if (newState) {
@@ -149,7 +149,7 @@ export class GenericGui extends Generic {
         // Render a screen by URL (only when page loads)
         if (this.urlScreen) {
             await this.templateFetch (this.urlScreen);
-            await this.screenRender (null,this.urlScreen);
+            await this.screenRender (null,this.urlScreen,null,false);
             this.urlScreen = null;
             return;
         }
@@ -214,7 +214,7 @@ export class GenericGui extends Generic {
             );
 //            this.splash (0,'Contract changed','Success','Continue',target);
             this.statusShow ('Contract changed');
-            this.screenRender (null,this.currentScreen);
+            this.screenRender (null,this.currentScreen,null,false);
         }
         catch (e) {
             if (newState) {
@@ -296,7 +296,7 @@ export class GenericGui extends Generic {
     var dt                  = new Date (expires*1000);
         this.splash (0,'New key created and released by successful log-in before '+dt.toUTCString());
         this.find(this.data.users,'userId',this.parameters.userId,false).hasKey = 1;
-        this.screenRender (null,'user');
+        this.screenRender (null,'user',null,false);
         return true;
     }
 
