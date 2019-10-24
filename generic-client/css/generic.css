@@ -70,9 +70,10 @@ a[download]:hover {
 }
 
 a[data-insert=tech] {
-    position: absolute;
-    left: auto;
-    top: auto;
+    position: fixed;
+    z-index: 1001;
+    right: 2em;
+    bottom: 1em;
     display: block;
     margin: 0;
     padding: 0;

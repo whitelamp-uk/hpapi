@@ -161,6 +161,10 @@ export class Generic extends Hpapi {
         }
     }
 
+    burger ( ) {
+        this.statusShow ('Dude, you clicked the burger!');
+    }
+
     clicks (targetElmt) {
     var elmts = this.qsa (targetElmt,'.auto-click');
         for (var elmt of elmts) {
@@ -2157,7 +2161,9 @@ console.log ('HISTORY = '+JSON.stringify(this.data.history,null,'    '));
         for (var i=0;this.cfg.navigatorOptions[i];i++) {
         var item                    = document.createElement ('a');
             item.classList.add (this.cfg.navigatorOptions[i]);
-            item.addEventListener ('click',this[this.cfg.navigatorOptions[i]].bind(this));
+            if (this.cfg.navigatorOptions[i] in this) {
+                item.addEventListener ('click',this[this.cfg.navigatorOptions[i]].bind(this));
+            }
             nav.appendChild (item);
         }
     var block                       = null;
