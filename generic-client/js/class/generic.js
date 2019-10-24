@@ -49,7 +49,7 @@ export class Generic extends Hpapi {
             try {
                 if ('id' in defns[i]) {
                 var elmt        = this.qs (this.restricted,'#'+defns[i].id);
-                    console.log ('actorsListen(): ['+(i+1)+'] id='+defns[i].id+' - '+defns[i].event);
+                    // console.log ('actorsListen(): ['+(i+1)+'] id='+defns[i].id+' - '+defns[i].event);
                     elmt.addEventListener (
                         defns[i].event,
                         defns[i].function.bind (this)
@@ -59,7 +59,7 @@ export class Generic extends Hpapi {
                 if ('class' in defns[i]) {
                 var elmts       = this.qsa (this.restricted,'.'+defns[i].class);
                     for (var elmt of elmts) {
-                        console.log ('actorsListen(): ['+(i+1)+'] class='+defns[i].class+' - '+defns[i].event);
+                        // console.log ('actorsListen(): ['+(i+1)+'] class='+defns[i].class+' - '+defns[i].event);
                         elmt.addEventListener (
                             defns[i].event,
                             defns[i].function.bind (this)
@@ -70,7 +70,7 @@ export class Generic extends Hpapi {
                 if ('name' in defns[i]) {
                 var elmts       = this.qsa (this.restricted,'[name='+defns[i].name+']');
                     for (var elmt of elmts) {
-                        console.log ('actorsListen(): ['+(i+1)+'] name='+defns[i].name+' - '+defns[i].event);
+                        // console.log ('actorsListen(): ['+(i+1)+'] name='+defns[i].name+' - '+defns[i].event);
                         elmt.addEventListener (
                             defns[i].event,
                             defns[i].function.bind (this)
@@ -1411,8 +1411,6 @@ This looks unused
         }
         // Warn before leaving the app
         window.addEventListener ('beforeunload',this.unloadHandle.bind(this));
-        // Handle browser back/formward buttons
-        window.addEventListener ('popstate',this.historyHandle.bind(this));
         window.name                     = 'w-' + Date.now();
         this.loginTried                 = 0;
         this.loggedOut                  = 1;
@@ -1465,6 +1463,11 @@ This looks unused
                     return false;
                 }
             }
+        }
+        // Handle browser back/forward buttons
+        if (this.cfg.history) {
+            this.historyLoad ();
+            window.addEventListener ('popstate',this.historyHandle.bind(this));
         }
         this.hotkeyListen ();
         this.queueInit ();
@@ -1637,15 +1640,72 @@ This looks unused
 
     historyHandle (evt) {
         if (!window.history.state) {
-console.log ('NO STATE');
             return;
         }
-        console.log ('SETTING STATE '+JSON.stringify(window.history.state),null,'    ');
-    var params = Object.keys (window.history.state.parameters);
-        for (var i=0;i<params.length;i++) {
-            this.parameterWrite (params[i],window.history.state.parameters[params[i]]);
+    var s = this.historyRead (window.history.state);
+        console.log ('SETTING STATE '+JSON.stringify(s),null,'    ');
+    var ps = Object.keys (s);
+        for (var i=0;i<ps.length;i++) {
+            this.parameterWrite (ps[i],s.ps[ps[i]]);
         }
-        this.screenRender (window.history.state.screen,null,false);
+        this.screenRender (s.sc,null,false);
+    }
+
+    historyLoad ( ) {
+        this.data.history   = this.storageRead ('history');
+this.data.history = null;
+        if (this.data.history) {
+            return;
+        }
+        this.data.history   = [];
+        this.storageWrite ('history',this.data.history);
+    }
+
+    historyPush (state) {
+        // Browser state
+        window.history.pushState (
+            state.id,
+            state.tt,
+            this.contextUrl (this.userScope().value,this.currentScreen)
+        );
+        // History object
+        this.historyUpdate (this.currentScreen,state);
+    }
+
+    historyRead (stateId) {
+        if (!this.data.history) {
+            return false;
+        }
+        for (var i=0;i<this.data.history.length;i++) {
+            if (this.data.history[i].id==stateId) {
+                return this.data.history[i];
+            }
+        }
+        return false;
+    }
+
+    historyTop (stack,state) {
+    var nw = [state];
+    var ps = JSON.stringify (state.ps);
+        for (var i=0;i<stack.length;i++) {
+            if (stack[i].sc==state.sc) {
+                if (JSON.stringify(stack[i].ps)==ps) {
+                    // Already at top of stack
+                    continue;
+                }
+            }
+            nw.push (stack[i]);
+        }
+        return nw;
+    }
+
+    historyUpdate (screen,state) {
+        if (!this.data.history) {
+            this.data.history           = [];
+        }
+        this.data.history               = this.historyTop (this.data.history,state);
+        this.storageWrite ('history',this.data.history);
+console.log ('HISTORY = '+JSON.stringify(this.data.history,null,'    '));
     }
 
     hotkeyEvent (evt) {
@@ -2959,6 +3019,7 @@ console.log ('NO STATE');
         }
         console.log ('screenRender(): "'+this.currentScreen+'" ---> "'+screen+'"');
         document.body.classList.add ('wait');
+    var sameScreen  = screen == this.currentScreen;
     var target      = null;
         if (evt) {
             target  = evt.currentTargetWas;
@@ -2976,7 +3037,7 @@ console.log ('NO STATE');
             return false;
         }
         if (bounceScreen) {
-           console.log ('screenRender(): bouncing straight on to "'+bounceScreen+'"');
+            console.log ('screenRender(): bouncing straight on to "'+bounceScreen+'"');
             return this.screenRender (bounceScreen,evt);
         }
         // Record scroll position
@@ -3005,18 +3066,9 @@ console.log ('NO STATE');
             return false;
         }
         this.currentScreen                      = screen;
-        if (storeState) {
-        var state = {
-                id : Date.now (),
-                screen : screen,
-                parameters : this.parameters
-            };
-            console.log ('PUSHING STATE '+JSON.stringify(state,null,'    '));
-            window.history.pushState (
-                state,
-                "Screen = "+screen,
-                this.contextUrl (this.userScope().value,this.currentScreen)
-            );
+        // History state
+        if (this.cfg.history && storeState) {
+            this.statePush ();
         }
         if (!(screen in this.currentTemplates)) {
             this.currentTemplates[screen]       = {};
@@ -3271,6 +3323,46 @@ console.log ('NO STATE');
 
     splashMessage (box,data) {
         box.innerHTML   += this.templates['splash'] (data);
+    }
+
+    statePush ( ) {
+    var changed                 = false;
+    var so                      = null;
+        if (window.history.state) {
+            so                  = this.historyRead (window.history.state);
+        }
+        else {
+            changed             = true;
+        }
+        if (!so || this.currentScreen!=so.sc) {
+            changed             = true;
+        }
+    var f                       = this.qs (this.restricted,'form[data-history]');
+    var ps                      = null;
+        if (f) {
+            ps                  = this.qsa (f,'form[data-history] input');
+        }
+        else {
+            f                   = {dataset:{title:window.title,history:'No history name'}};
+        }
+    var sn = {
+            id : Date.now (),
+            tt : f.dataset.title,
+            sc : this.currentScreen,
+            lg : f.dataset.history,
+            ps : {}
+        };
+        if (ps) {
+            for (var p of ps) {
+                if (!changed && so.ps[p.name]!=this.parameters[p.name]) {
+                    changed     = true;
+                }
+                sn.ps[p.name]   = this.parameters[p.name];
+            }
+        }
+        if (changed) {
+            this.historyPush (sn);
+        }
     }
 
     statusClick (evt) {

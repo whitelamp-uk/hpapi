@@ -11,6 +11,7 @@ export class GenericCfg {
         this.enforceLocalStorage    = false;
         this.environment            = 'development';
         this.forceTemplateLoad      = true;
+        this.history                = true;
         this.inBodyLoggerId         = 'logger';     // or null
         this.loginByBadge           = true;
         this.navigatorOptions       = ['lock'];
