@@ -988,14 +988,17 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
         if (inputElmt.form.dataset.parameter) {
             this.parameterParse (inputElmt.form);
         }
+/*
+This looks unused
         if (inputElmt.form.dataset.insert) {
             console.log ('entrySave(): rendering insert "'+inputElmt.form.dataset.insert+'"');
-            this.insertRender (null,inputElmt.form.dataset.insert);
+            this.insertRender (inputElmt.form.dataset.insert,inputElmt.form.dataset.target);
             return;
         }
+*/
         if (inputElmt.form.dataset.screen) {
             console.log ('entrySave(): rendering screen "'+inputElmt.form.dataset.screen+'"');
-            this.screenRender (null,inputElmt.form.dataset.screen);
+            this.screenRender (inputElmt.form.dataset.screen);
             return;
         }
     }
@@ -1365,7 +1368,7 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
         }
         this.entryAddReset (target);
         if (target.dataset.next) {
-            await this.screenRender (null,target.dataset.next,target.dataset.bounce);
+            await this.screenRender (target.dataset.next,null,true,target.dataset.bounce);
         }
     }
 
@@ -1642,7 +1645,7 @@ console.log ('NO STATE');
         for (var i=0;i<params.length;i++) {
             this.parameterWrite (params[i],window.history.state.parameters[params[i]]);
         }
-        this.screenRender (null,window.history.state.screen,null,false);
+        this.screenRender (window.history.state.screen,null,false);
     }
 
     hotkeyEvent (evt) {
@@ -1840,10 +1843,10 @@ console.log ('NO STATE');
         }
         console.log ('insertHandle(): rendering "'+target.dataset.insert+'.hbs" into "#'+target.dataset.target+'"');
         evt.currentTargetWas = target;
-        this.insertRender (event,target.dataset.insert,this.qs(document,'#'+target.dataset.target));
+        this.insertRender (target.dataset.insert,this.qs(document,'#'+target.dataset.target),event);
     }
 
-    async insertRender (evt,insert,targetElmt) {
+    async insertRender (insert,containerElmt,evt=null) {
         if (!(insert in this.templates)) {
             this.log ('Insert "'+insert+'.hbs" is missing');
             return false;
@@ -1868,7 +1871,7 @@ console.log ('NO STATE');
         }
         console.log ('insertRender(): rendering template "'+insert+'.hbs"');
         try {
-            targetElmt.innerHTML                = this.templates[insert] (this.data);
+            containerElmt.innerHTML = this.templates[insert] (this.data);
         }
         catch (e) {
             this.log ('Handlebars says: '+e.message);
@@ -1886,44 +1889,44 @@ console.log ('NO STATE');
             this.currentTemplates[insert].visited = true;
         }
         // Listen for block control elements
-        this.insertControl (targetElmt);
+        this.insertControl (containerElmt);
         // Override loaders() to run methods after template is loaded
         this.loaders (evt,insert);
         // Set current date
-        this.loadDateNow (targetElmt);
+        this.loadDateNow (containerElmt);
         // Listen for events on HTML status messages
-        this.statusListen (targetElmt);
+        this.statusListen (containerElmt);
         // Listen for data entry field(s)
-        this.entryListen (targetElmt);
+        this.entryListen (containerElmt);
         // Listen for splash messages
-        this.splashListen (targetElmt);
+        this.splashListen (containerElmt);
         // Override actors() to add associated function event handlers for the template to your extension class
         this.actors (insert);
         // Pre-fetch templates
-        this.prefetchers (targetElmt);
+        this.prefetchers (containerElmt);
         // Listen for navigators
-        this.navigatorsListen (targetElmt);
+        this.navigatorsListen (containerElmt);
         // Listen for filter inputs
-        this.filtersListen (targetElmt);
+        this.filtersListen (containerElmt);
         // Form submit hook
-    var forms = this.qsa (targetElmt,'form');
+    var forms = this.qsa (containerElmt,'form');
         for (var f=0;f<forms.length;f++) {
             forms[f].addEventListener ('submit',this.formSubmit.bind(this));
         }
         // Buffer up linked screens
-    var screens = this.qsa (targetElmt,'[data-screen]');
+    var screens = this.qsa (containerElmt,'[data-screen]');
         for (var s=0;s<screens.length;s++) {
             this.templateFetch (screens[s].dataset.screen);
         }
         // Buffer up linked inserts
-    var inserts = this.qsa (targetElmt,'[data-insert]');
+    var inserts = this.qsa (containerElmt,'[data-insert]');
         for (var i=0;i<inserts.length;i++) {
             this.templateFetch (inserts[i].dataset.insert);
         }
         // Click auto-click elements
-        this.clicks (targetElmt);
+        this.clicks (containerElmt);
         // Scroll first scoped element into view and focus
-    var scopedElmt =  this.scrollToScoped (targetElmt);
+    var scopedElmt =  this.scrollToScoped (containerElmt);
         if (scopedElmt) {
             scopedElmt.focus ();
         }
@@ -2512,7 +2515,7 @@ console.log ('NO STATE');
     }
 
     placeClose ( ) {
-        this.screenRender (null,this.currentScreen,null,false);
+        this.screenRender (this.currentScreen,null,false);
     }
 
     placeListen ( ) {
@@ -2862,10 +2865,10 @@ console.log ('NO STATE');
         console.log ('screenHandle(): rendering "'+target.dataset.screen+'"');
         evt.currentTargetWas = target;
         if (target.dataset.nohistory>0) {
-            this.screenRender (evt,target.dataset.screen,null,false);
+            this.screenRender (target.dataset.screen,evt,false);
             return;
         }
-        this.screenRender (evt,target.dataset.screen);
+        this.screenRender (target.dataset.screen,evt);
     }
 
     screenLock (label) {
@@ -2949,7 +2952,7 @@ console.log ('NO STATE');
         this.screenLock ('Unlock');
     }
 
-    async screenRender (evt,screen,bounceScreen,storeState=true) {
+    async screenRender (screen,evt=null,storeState=true,bounceScreen=null) {
         if (!(screen in this.templates)) {
             console.log ('Screen "'+screen+'.hbs" is missing');
             return false;
@@ -2974,7 +2977,7 @@ console.log ('NO STATE');
         }
         if (bounceScreen) {
            console.log ('screenRender(): bouncing straight on to "'+bounceScreen+'"');
-            return this.screenRender (evt,bounceScreen);
+            return this.screenRender (bounceScreen,evt);
         }
         // Record scroll position
         if (this.currentScreen) {
