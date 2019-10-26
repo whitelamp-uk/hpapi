@@ -163,7 +163,7 @@ export class Generic extends Hpapi {
 
     async burger (evt) {
         if (!this.cfg.navigatorOptions.burger) {
-            console.log ('lock(): no configured burger selector');
+            console.log ('burger(): no configured burger selector');
             return;
         }
     var selector            = this.cfg.navigatorOptions.burger;
@@ -195,7 +195,6 @@ export class Generic extends Hpapi {
             console.log ('burger(): '+e.message);
             return;
         }
-//console.log ('THIS.DATA.MENU = '+JSON.stringify(this.data.menu,null,'    '));
         this.insertRender ('menu',container);
         container.classList.add ('visible');
         container.focus ();
@@ -1709,7 +1708,6 @@ This looks unused
 
     historyLoad ( ) {
         this.data.history   = this.storageRead ('history');
-this.data.history = null;
         if (this.data.history) {
             return;
         }
@@ -1761,7 +1759,6 @@ this.data.history = null;
         }
         this.data.history               = this.historyTop (this.data.history,state);
         this.storageWrite ('history',this.data.history);
-console.log ('HISTORY = '+JSON.stringify(this.data.history,null,'    '));
     }
 
     hotkeyEvent (evt) {
@@ -2262,6 +2259,41 @@ console.log ('HISTORY = '+JSON.stringify(this.data.history,null,'    '));
             row[keys[i]]        = elmt.dataset[keys[i]];
         }
         return row;
+    }
+
+    menuGo (evt) {
+        if (!evt.target.dataset.screen) {
+            console.log ('Link has no data-screen');
+        }
+    var state,keys;
+        if (evt.target.dataset.state) {
+            state   = this.historyRead (evt.target.dataset.state);
+            if (state) {
+                keys    = Object.keys (state.ps);
+                for (var i=0;i<keys.length;i++) {
+                    this.parameterParse (keys[i],state.ps[keys[i]]);
+                }
+            }
+        }
+        this.qs (document,this.cfg.navigatorOptions.burger).classList.remove ('visible');
+        this.screenRender (evt.target.dataset.screen);
+    }
+
+    menuListen ( ) {
+        if (!this.cfg.navigatorOptions.burger) {
+            console.log ('menuListen(): no configured menu selector this.cfg.navigatorOptions.burger');
+            return;
+        }
+    var selector            = this.cfg.navigatorOptions.burger;
+    var container           = this.qs (document,selector);
+        if (!container) {
+            console.log ('menuListen(): no menu container "'+selector+'"');
+            return;
+        }
+    var links = this.qsa (container,'[data-menu] a');
+        for (var link of links) {
+            link.addEventListener ('click',this.menuGo.bind(this));
+        }
     }
 
     navigators ( ) {
