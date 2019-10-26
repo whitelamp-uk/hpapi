@@ -2086,7 +2086,7 @@ console.log ('HISTORY = '+JSON.stringify(this.data.history,null,'    '));
 
     lock (evt) {
         if (evt.type=='focusout') {
-            return
+            return;
         }
         if (!this.cfg.navigatorOptions.lock) {
             console.log ('lock(): no configured lock selector');
@@ -2111,20 +2111,17 @@ console.log ('HISTORY = '+JSON.stringify(this.data.history,null,'    '));
     }
 
     lockClose (evt) {
-event.stopPropagation();
     var container               = evt.currentTarget.parentElement.parentElement;
         container.innerHTML     = '';
         container.classList.remove ('visible');
     }
 
     lockLock (evt) {
-event.stopPropagation();
         this.lockClose (evt);
         this.screenLock ();
     }
 
     lockLogOut (evt) {
-event.stopPropagation();
         this.authForget ();
         this.lockClose (evt);
         this.screenLock ();
