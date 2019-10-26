@@ -161,8 +161,44 @@ export class Generic extends Hpapi {
         }
     }
 
-    burger ( ) {
-        this.statusShow ('Dude, you clicked the burger!');
+    async burger (evt) {
+        if (!this.cfg.navigatorOptions.burger) {
+            console.log ('lock(): no configured burger selector');
+            return;
+        }
+    var selector            = this.cfg.navigatorOptions.burger;
+    var container           = this.qs (document,selector);
+        if (!container) {
+            console.log ('burger(): no menu container "'+selector+'"');
+            return;
+        }
+        // Close if opened
+        if (container.classList.contains('visible')) {
+            if (evt.type=='focusout') {
+                this.burgerFocusout = true;
+            var obj = this;
+                window.setTimeout (function(){obj.burgerFocusout=false;},600);
+            }
+            container.classList.remove ('visible');
+            return;
+        }
+        if (evt.type=='focusout') {
+            return;
+        }
+        if (evt.type=='click' && this.burgerFocusout) {
+            return;
+        }
+        try {
+            await this.menu ();
+        }
+        catch (e) {
+            console.log ('burger(): '+e.message);
+            return;
+        }
+//console.log ('THIS.DATA.MENU = '+JSON.stringify(this.data.menu,null,'    '));
+        this.insertRender ('menu',container);
+        container.classList.add ('visible');
+        container.focus ();
     }
 
     clicks (targetElmt) {
@@ -1642,6 +1678,22 @@ This looks unused
         );
     }
 
+    historyForScreens (screens) {
+    var history = [];
+        if (!this.data.history) {
+            return history;
+        }
+        for (var i=0;i<this.data.history.length;i++) {
+            for (var j=0;j<screens.length;j++) {
+                if (this.data.history[i].sc==screens[j]) {
+                    history.push (this.data.history[i]);
+                    break;
+                }
+            }
+        }
+        return history;
+    }
+
     historyHandle (evt) {
         if (!window.history.state) {
             return;
@@ -1713,6 +1765,9 @@ console.log ('HISTORY = '+JSON.stringify(this.data.history,null,'    '));
     }
 
     hotkeyEvent (evt) {
+        if (!this.screenUnlocked()) {
+            return;
+        }
         if (evt.key=='Control') {
             return;
         }
@@ -2029,30 +2084,47 @@ console.log ('HISTORY = '+JSON.stringify(this.data.history,null,'    '));
         return true;
     }
 
-    lock ( ) {
-    var splash              = this.qs (document,'#gui-splash');
-        splash.innerHTML    = this.templates['lock'] ();
-        this.splashCount    = 0;
-        splash.classList.add ('visible');
-        this.qs(splash,'#lock-lock').addEventListener ('click',this.lockLock.bind(this));
-        this.qs(splash,'#lock-log-out').addEventListener ('click',this.lockLogOut.bind(this));
-    var cancel              = this.qs (splash,'button');
+    lock (evt) {
+        if (evt.type=='focusout') {
+            return
+        }
+        if (!this.cfg.navigatorOptions.lock) {
+            console.log ('lock(): no configured lock selector');
+            return;
+        }
+    var selector                = this.cfg.navigatorOptions.lock;
+    var container               = this.qs (document,selector);
+        if (!container) {
+            console.log ('lock(): no lock container "'+selector+'"');
+            return;
+        }
+        container.innerHTML     = this.templates.lock ();
+        if (selector=='#gui-splash') {
+            this.splashCount    = 0;
+        }
+        container.classList.add ('visible');
+        this.qs(container,'#lock-lock').addEventListener ('click',this.lockLock.bind(this));
+        this.qs(container,'#lock-log-out').addEventListener ('click',this.lockLogOut.bind(this));
+    var cancel                  = this.qs (container,'button');
         cancel.addEventListener ('click',this.lockClose.bind(this));
         cancel.focus ();
     }
 
     lockClose (evt) {
-    var splash              = evt.currentTarget.parentElement.parentElement;
-        splash.innerHTML    = '';
-        splash.classList.remove ('visible');
+event.stopPropagation();
+    var container               = evt.currentTarget.parentElement.parentElement;
+        container.innerHTML     = '';
+        container.classList.remove ('visible');
     }
 
     lockLock (evt) {
+event.stopPropagation();
         this.lockClose (evt);
         this.screenLock ();
     }
 
     lockLogOut (evt) {
+event.stopPropagation();
         this.authForget ();
         this.lockClose (evt);
         this.screenLock ();
@@ -2134,6 +2206,67 @@ console.log ('HISTORY = '+JSON.stringify(this.data.history,null,'    '));
         }
     }
 
+    async menu ( ) {
+        try {
+            await this.templateFetch ('menudfn');
+            await this.templateFetch ('menu');
+        var dfn                 = document.createElement ('div');
+            dfn.innerHTML       = this.templates.menudfn ();
+            dfn                 = this.qs (dfn,'[data-menu]');
+            this.data.menuName  = dfn.dataset.menu;
+            this.data.menu      = this.menuData (dfn);
+        }
+        catch (e) {
+            throw new Error ('menu(): '+e.message);
+            return false;
+        }
+    }
+
+    menuData (elmt) {
+        elmt.setAttribute ('data-top','1');
+    var items                       = this.qsa (elmt,'[data-top] > li');
+    var data                        = [];
+    var row, list, history, group, screens, hc;
+        for (var item of items) {
+            item.setAttribute ('data-top','1');
+            row                     = this.menuDataset (item);
+            history                 = this.qs (item,'[data-top] > ul[data-history]');
+            if (history) {
+                row.history         = this.menuDataset (history);
+                row.history.columns = [];
+                screens             = [];
+                list                = this.qsa (item,'[data-top] > ul[data-history] > li');
+                for (var li of list) {
+                    hc              = this.menuDataset (li);
+                    row.history.columns.push (hc);
+                    if ('nohistory' in hc) {
+                        continue;
+                    }
+                    screens.push (hc.screen);
+                }
+                row.history.items   = this.historyForScreens (screens);
+            }
+            group                   = this.qs (item,'[data-top] > ul[data-group]');
+            if (group) {
+                row.items           = this.menuData (group); // RECURSION
+            }
+            data.push (row);
+        }
+        return data;
+    }
+
+    menuDataset (elmt) {
+        if (!elmt) {
+            return {};
+        }
+    var keys                    = Object.keys (elmt.dataset);
+    var row                     = {};
+        for (var i=0;i<keys.length;i++) {
+            row[keys[i]]        = elmt.dataset[keys[i]];
+        }
+        return row;
+    }
+
     navigators ( ) {
         // Override this method in extension class
         return {
@@ -2158,11 +2291,18 @@ console.log ('HISTORY = '+JSON.stringify(this.data.history,null,'    '));
     navigatorsElement (templateName) {
     var nav                         = document.createElement ('nav');
         nav.classList.add ('navigator');
-        for (var i=0;this.cfg.navigatorOptions[i];i++) {
+    var opts                        = Object.keys (this.cfg.navigatorOptions);
+        for (var i=0;opts[i];i++) {
         var item                    = document.createElement ('a');
-            item.classList.add (this.cfg.navigatorOptions[i]);
-            if (this.cfg.navigatorOptions[i] in this) {
-                item.addEventListener ('click',this[this.cfg.navigatorOptions[i]].bind(this));
+            item.classList.add (opts[i]);
+            if (opts[i] in this) {
+                item.addEventListener ('click',this[opts[i]].bind(this));
+                if (this.cfg.navigatorOptions[opts[i]]) {
+                var s               = this.qs (document,this.cfg.navigatorOptions[opts[i]]);
+                    if (s) {
+                        s.addEventListener ('focusout',this[opts[i]].bind(this));
+                    }
+                }
             }
             nav.appendChild (item);
         }
@@ -3086,7 +3226,7 @@ console.log ('HISTORY = '+JSON.stringify(this.data.history,null,'    '));
         tech.dataset.insert                     = 'tech';
         tech.dataset.target                     = 'gui-tech';
         if (this.cfg.diagnostic.data) {
-            this.restricted.innerHTML          += this.templates['data'] (this.data);
+            this.restricted.innerHTML          += this.templates.data (this.data);
         }
         this.data.currentScreen                 = this.currentScreen;
 // this.logSummary ();
@@ -3194,10 +3334,10 @@ console.log ('HISTORY = '+JSON.stringify(this.data.history,null,'    '));
     }
 
     screenUnlocked () {
-        if (this.restricted.style.display=='block') {
-            return true;
+        if (this.restricted.style.display=='none') {
+            return false;
         }
-        return false;
+        return true;
     }
 
     scrollToScoped (container) {
@@ -3328,7 +3468,7 @@ console.log ('HISTORY = '+JSON.stringify(this.data.history,null,'    '));
     }
 
     splashMessage (box,data) {
-        box.innerHTML   += this.templates['splash'] (data);
+        box.innerHTML   += this.templates.splash (data);
     }
 
     statePush ( ) {
