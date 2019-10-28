@@ -130,7 +130,7 @@ export class Generic extends Hpapi {
     authOk ( ) {
         this.loggedOut      = 0;
         this.cookieWrite ('lo',0);
-        this.access.email.value
+        this.historyLoad ();
         for (var i=0;this.currentUser.templates[i];i++) {
             if (this.currentUser.templates[i] in this.currentTemplates) {
                 continue;
@@ -1508,8 +1508,6 @@ This looks unused
             }
         }
         if (this.cfg.history) {
-            // Recall history from local storage
-            this.historyLoad ();
             // Handle browser back/forward buttons
             window.addEventListener ('popstate',this.historyHandle.bind(this));
         }
@@ -1714,8 +1712,10 @@ This looks unused
     historyLoad ( ) {
         this.data.history   = this.storageRead ('history');
         if (this.data.history) {
+console.log ('FOUND HISTORY '+JSON.stringify(this.data.history,null,'    '));
             return;
         }
+console.log ('INITIALISING HISTORY');
         this.data.history   = [];
         this.storageWrite ('history',this.data.history);
     }
@@ -1764,6 +1764,7 @@ This looks unused
         }
         this.data.history               = this.historyTop (this.data.history,state);
         this.storageWrite ('history',this.data.history);
+console.log ('NEW HISTORY '+JSON.stringify(this.data.history,null,'    '));
     }
 
     hotkeyEvent (evt) {
