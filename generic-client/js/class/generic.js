@@ -195,8 +195,12 @@ export class Generic extends Hpapi {
             console.log ('burger(): '+e.message);
             return;
         }
-        this.insertRender ('menu',container);
+        await this.insertRender ('menu',container);
         container.classList.add ('visible');
+    var os = this.qsa (container,'a[data-options]');
+        for (var o of os) {
+            o.addEventListener ('click',this.menuOptionsListen.bind(this));
+        }
         container.focus ();
     }
 
@@ -1503,9 +1507,10 @@ This looks unused
                 }
             }
         }
-        // Handle browser back/forward buttons
         if (this.cfg.history) {
+            // Recall history from local storage
             this.historyLoad ();
+            // Handle browser back/forward buttons
             window.addEventListener ('popstate',this.historyHandle.bind(this));
         }
         this.hotkeyListen ();
@@ -2209,6 +2214,7 @@ This looks unused
             dfn                 = this.qs (dfn,'[data-menu]');
             this.data.menuName  = dfn.dataset.menu;
             this.data.menu      = this.menuData (dfn);
+//console.log (JSON.stringify(this.data.menu,null,'    '));
         }
         catch (e) {
             throw new Error ('menu(): '+e.message);
@@ -2271,7 +2277,7 @@ This looks unused
             if (state) {
                 keys    = Object.keys (state.ps);
                 for (var i=0;i<keys.length;i++) {
-                    this.parameterParse (keys[i],state.ps[keys[i]]);
+                    this.parameterWrite (keys[i],state.ps[keys[i]]);
                 }
             }
         }
@@ -2290,9 +2296,25 @@ This looks unused
             console.log ('menuListen(): no menu container "'+selector+'"');
             return;
         }
-    var links = this.qsa (container,'[data-menu] a');
+    var links = this.qsa (container,'[data-menu] a[data-screen]');
         for (var link of links) {
             link.addEventListener ('click',this.menuGo.bind(this));
+        }
+    }
+
+    menuOptionsListen (evt) {
+        if (!this.cfg.navigatorOptions.burger) {
+            console.log ('menuOptionsListen(): no configured menu selector this.cfg.navigatorOptions.burger');
+            return;
+        }
+    var os = this.qsa (document,this.cfg.navigatorOptions.burger+' [data-menu] section.menu-options');
+        for (var o of os) {
+            if (o.dataset.screen==evt.target.dataset.options) {
+                o.classList.add ('visible');
+            }
+            else {
+                o.classList.remove ('visible');
+            }
         }
     }
 
@@ -3524,7 +3546,8 @@ This looks unused
             id : Date.now (),
             tt : f.dataset.title,
             sc : this.currentScreen,
-            lg : f.dataset.history,
+            lg : f.dataset.legend,
+            dt : f.dataset.history,
             ps : {}
         };
         if (ps) {
