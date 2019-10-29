@@ -974,7 +974,6 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
                 this.log ('Updated successfully');
             }
             else {
-//                this.splash (0,'Updated successfully','Success','Continue');
                 this.statusShow ('Field updated successfully');
             }
             data[inputElmt.name]    = val;
@@ -1278,6 +1277,19 @@ This looks unused
             }
         }
         return false;
+    }
+
+    findAll (arrayOfObjects,key,val,strict=true) {
+    var all = [];
+        for (var i=0;i<arrayOfObjects.length;i++) {
+            if (strict && arrayOfObjects[i][key]===val) {
+                return arrayOfObjects[i];
+            }
+            if (!strict && arrayOfObjects[i][key]==val) {
+                all.push (arrayOfObjects[i]);
+            }
+        }
+        return all;
     }
 
     formElementNext (elmt) {
@@ -1680,18 +1692,35 @@ This looks unused
         );
     }
 
-    historyForScreens (screens) {
-    var history = [];
+    historyForScope (grp,cols) {
         if (!this.data.history) {
-            return history;
+            return [];
         }
+    var history = [], h = {}, keys = [], k, grps;
         for (var i=0;i<this.data.history.length;i++) {
-            for (var j=0;j<screens.length;j++) {
-                if (this.data.history[i].sc==screens[j]) {
-                    history.push (this.data.history[i]);
-                    break;
+            if (this.data.history[i].gs.includes(grp)) {
+                k                               = grp + '-';
+                k                              += this.parameterString (this.data.history[i].ps);
+                if (!keys.includes(k)) {
+                    keys.push (k);
+                }
+                if (!(k in h)) {
+                    h[k]                        = {};
+                    h[k].state                  = this.data.history[i];
+                    h[k].screens                = {};
+                }
+                for (var j=0;j<cols.length;j++) {
+                    if (!(cols[j] in h[k].screens)) {
+                        h[k].screens[cols[j].screen] = this.clone (cols[j]);
+                    }
+                    if (this.data.history[i].sc==cols[j].screen) {
+                        h[k].screens[cols[j].screen].visited = true;
+                    }
                 }
             }
+        }
+        for (var i=0;i<keys.length;i++) {
+            history.push (h[keys[i]]);
         }
         return history;
     }
@@ -2215,7 +2244,7 @@ console.log ('NEW HISTORY '+JSON.stringify(this.data.history,null,'    '));
             dfn                 = this.qs (dfn,'[data-menu]');
             this.data.menuName  = dfn.dataset.menu;
             this.data.menu      = this.menuData (dfn);
-//console.log (JSON.stringify(this.data.menu,null,'    '));
+console.log (JSON.stringify(this.data.menu,null,'    '));
         }
         catch (e) {
             throw new Error ('menu(): '+e.message);
@@ -2227,7 +2256,7 @@ console.log ('NEW HISTORY '+JSON.stringify(this.data.history,null,'    '));
         elmt.setAttribute ('data-top','1');
     var items                       = this.qsa (elmt,'[data-top] > li');
     var data                        = [];
-    var row, list, history, group, screens, hc;
+    var row, list, history, group, hc;
         for (var item of items) {
             item.setAttribute ('data-top','1');
             row                     = this.menuDataset (item);
@@ -2235,17 +2264,12 @@ console.log ('NEW HISTORY '+JSON.stringify(this.data.history,null,'    '));
             if (history) {
                 row.history         = this.menuDataset (history);
                 row.history.columns = [];
-                screens             = [];
                 list                = this.qsa (item,'[data-top] > ul[data-history] > li');
                 for (var li of list) {
                     hc              = this.menuDataset (li);
                     row.history.columns.push (hc);
-                    if ('nohistory' in hc) {
-                        continue;
-                    }
-                    screens.push (hc.screen);
                 }
-                row.history.items   = this.historyForScreens (screens);
+                row.history.items   = this.historyForScope (row.scope,row.history.columns);
             }
             group                   = this.qs (item,'[data-top] > ul[data-group]');
             if (group) {
@@ -2269,12 +2293,12 @@ console.log ('NEW HISTORY '+JSON.stringify(this.data.history,null,'    '));
     }
 
     menuGo (evt) {
-        if (!evt.target.dataset.screen) {
+        if (!evt.currentTarget.dataset.screen) {
             console.log ('Link has no data-screen');
         }
     var state,keys;
-        if (evt.target.dataset.state) {
-            state   = this.historyRead (evt.target.dataset.state);
+        if (evt.currentTarget.dataset.state) {
+            state   = this.historyRead (evt.currentTarget.dataset.state);
             if (state) {
                 keys    = Object.keys (state.ps);
                 for (var i=0;i<keys.length;i++) {
@@ -2283,7 +2307,7 @@ console.log ('NEW HISTORY '+JSON.stringify(this.data.history,null,'    '));
             }
         }
         this.qs (document,this.cfg.navigatorOptions.burger).classList.remove ('visible');
-        this.screenRender (evt.target.dataset.screen);
+        this.screenHandle (evt);
     }
 
     menuListen ( ) {
@@ -2310,7 +2334,7 @@ console.log ('NEW HISTORY '+JSON.stringify(this.data.history,null,'    '));
         }
     var os = this.qsa (document,this.cfg.navigatorOptions.burger+' [data-menu] section.menu-options');
         for (var o of os) {
-            if (o.dataset.screen==evt.target.dataset.options) {
+            if (o.dataset.scope==evt.target.dataset.options) {
                 o.classList.add ('visible');
             }
             else {
@@ -2729,6 +2753,16 @@ console.log ('NEW HISTORY '+JSON.stringify(this.data.history,null,'    '));
         this.sessionWrite ('parameters',this.parameters);
     }
 
+    parameterString (params) {
+    var keys    = Object.keys (params);
+    var parts   = [];
+        keys.sort ();
+        for (var i=0;i<keys.length;i++) {
+            parts.push (keys[i]+'-'+params[keys[i]]);
+        }
+        return parts.join ('-');
+    }
+
     parametersRead ( ) {
         this.parameters = this.sessionRead ('parameters');
         if (!this.parameters) {
@@ -3122,10 +3156,6 @@ console.log ('NEW HISTORY '+JSON.stringify(this.data.history,null,'    '));
         }
         console.log ('screenHandle(): rendering "'+target.dataset.screen+'"');
         evt.currentTargetWas = target;
-        if (target.dataset.nohistory>0) {
-            this.screenRender (target.dataset.screen,evt,false);
-            return;
-        }
         this.screenRender (target.dataset.screen,evt);
     }
 
@@ -3541,11 +3571,16 @@ console.log ('NEW HISTORY '+JSON.stringify(this.data.history,null,'    '));
             ps                  = this.qsa (f,'form[data-history] input');
         }
         else {
-            f                   = {dataset:{title:window.title,history:'No history name'}};
+            f                   = {dataset:{title:window.title,legend:"No legend",history:'No history name'}};
+        }
+    var gs                      = [];
+        if (f.dataset.groups && f.dataset.groups.length) {
+            gs                  = f.dataset.groups.split (',');
         }
     var sn = {
             id : Date.now (),
             tt : f.dataset.title,
+            gs : gs,
             sc : this.currentScreen,
             lg : f.dataset.legend,
             dt : f.dataset.history,
