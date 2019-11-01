@@ -1758,8 +1758,6 @@ This looks unused
     }
 
     historyRead (stateId=null) {
-this.log ('NULL? '+(stateId===null));
-this.log ('UNDEFINED? '+(stateId===undefined));
     var histories = this.storageRead ('history');
         if (stateId===null) {
             return histories;
