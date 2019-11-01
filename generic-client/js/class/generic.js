@@ -130,7 +130,7 @@ export class Generic extends Hpapi {
     authOk ( ) {
         this.loggedOut      = 0;
         this.cookieWrite ('lo',0);
-        this.historyLoad ();
+        this.historyInit ();
         for (var i=0;this.currentUser.templates[i];i++) {
             if (this.currentUser.templates[i] in this.currentTemplates) {
                 continue;
@@ -1464,7 +1464,6 @@ This looks unused
         if ('globalLoaded' in this) {
             return true;
         }
-        // Warn before leaving the app
         window.addEventListener ('beforeunload',this.unloadHandle.bind(this));
         window.name                     = 'w-' + Date.now();
         this.loginTried                 = 0;
@@ -1693,27 +1692,26 @@ This looks unused
     }
 
     historyForScope (grp,cols) {
-        if (!this.data.history) {
-            return [];
-        }
-    var history = [], h = {}, keys = [], k, grps;
-        for (var i=0;i<this.data.history.length;i++) {
-            if (this.data.history[i].gs.includes(grp)) {
+        // Variables
+    var histories, history = [], h = {}, keys = [], k, grps;
+        histories = this.historyRead ();
+        for (var i=0;i<histories.length;i++) {
+            if (histories[i].gs.includes(grp)) {
                 k                               = grp + '-';
-                k                              += this.parameterString (this.data.history[i].ps);
+                k                              += this.parameterString (histories[i].ps);
                 if (!keys.includes(k)) {
                     keys.push (k);
                 }
                 if (!(k in h)) {
                     h[k]                        = {};
-                    h[k].state                  = this.data.history[i];
+                    h[k].state                  = histories[i];
                     h[k].screens                = {};
                 }
                 for (var j=0;j<cols.length;j++) {
                     if (!(cols[j] in h[k].screens)) {
                         h[k].screens[cols[j].screen] = this.clone (cols[j]);
                     }
-                    if (this.data.history[i].sc==cols[j].screen) {
+                    if (histories[i].sc==cols[j].screen) {
                         h[k].screens[cols[j].screen].visited = true;
                     }
                 }
@@ -1730,6 +1728,9 @@ This looks unused
             return;
         }
     var s = this.historyRead (window.history.state);
+        if (!s) {
+            return;
+        }
         console.log ('SETTING STATE '+JSON.stringify(s),null,'    ');
     var ps = Object.keys (s);
         for (var i=0;i<ps.length;i++) {
@@ -1738,15 +1739,11 @@ This looks unused
         this.screenRender (s.sc,null,false);
     }
 
-    historyLoad ( ) {
-        this.data.history   = this.storageRead ('history');
-        if (this.data.history) {
-console.log ('FOUND HISTORY '+JSON.stringify(this.data.history,null,'    '));
+    historyInit ( ) {
+        if (this.storageRead('history')) {
             return;
         }
-console.log ('INITIALISING HISTORY');
-        this.data.history   = [];
-        this.storageWrite ('history',this.data.history);
+        this.storageWrite ('history',[]);
     }
 
     historyPush (state) {
@@ -1760,40 +1757,35 @@ console.log ('INITIALISING HISTORY');
         this.historyUpdate (this.currentScreen,state);
     }
 
-    historyRead (stateId) {
-        if (!this.data.history) {
-            return false;
+    historyRead (stateId=null) {
+this.log ('NULL? '+(stateId===null));
+this.log ('UNDEFINED? '+(stateId===undefined));
+    var histories = this.storageRead ('history');
+        if (stateId===null) {
+            return histories;
         }
-        for (var i=0;i<this.data.history.length;i++) {
-            if (this.data.history[i].id==stateId) {
-                return this.data.history[i];
+        for (var i=0;i<histories.length;i++) {
+            if (histories[i].id==stateId) {
+                return histories[i];
             }
         }
         return false;
     }
 
-    historyTop (stack,state) {
-    var nw = [state];
-    var ps = JSON.stringify (state.ps);
-        for (var i=0;i<stack.length;i++) {
-            if (stack[i].sc==state.sc) {
-                if (JSON.stringify(stack[i].ps)==ps) {
+    historyUpdate (screen,state) {
+    var was = this.historyRead ();
+    var now = [state];
+    var pms = JSON.stringify (state.ps);
+        for (var i=0;i<was.length;i++) {
+            if (was[i].sc==state.sc) {
+                if (JSON.stringify(was[i].ps)==pms) {
                     // Already at top of stack
                     continue;
                 }
             }
-            nw.push (stack[i]);
+            now.push (was[i]);
         }
-        return nw;
-    }
-
-    historyUpdate (screen,state) {
-        if (!this.data.history) {
-            this.data.history           = [];
-        }
-        this.data.history               = this.historyTop (this.data.history,state);
-        this.storageWrite ('history',this.data.history);
-console.log ('NEW HISTORY '+JSON.stringify(this.data.history,null,'    '));
+        this.storageWrite ('history',now);
     }
 
     hotkeyEvent (evt) {
@@ -2244,7 +2236,6 @@ console.log ('NEW HISTORY '+JSON.stringify(this.data.history,null,'    '));
             dfn                 = this.qs (dfn,'[data-menu]');
             this.data.menuName  = dfn.dataset.menu;
             this.data.menu      = this.menuData (dfn);
-console.log (JSON.stringify(this.data.menu,null,'    '));
         }
         catch (e) {
             throw new Error ('menu(): '+e.message);
@@ -3812,10 +3803,11 @@ console.log (JSON.stringify(this.data.menu,null,'    '));
     }
 
     unloadHandle (evt) {
+    // Needs to check if data is unsaved - otherwise unnecessary
         // Cancel the event
-        evt.preventDefault ();
+    //    evt.preventDefault ();
         // Chrome requires returnValue to be set
-        evt.returnValue = '';
+    //    evt.returnValue = '';
     }
 
     unstickers ( ) {
