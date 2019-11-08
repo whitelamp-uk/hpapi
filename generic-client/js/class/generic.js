@@ -199,8 +199,9 @@ export class Generic extends Hpapi {
         container.classList.add ('visible');
     var os = this.qsa (container,'a[data-options]');
         for (var o of os) {
-            o.addEventListener ('click',this.menuOptionsListen.bind(this));
+            o.addEventListener ('click',this.menuOptionSelect.bind(this));
         }
+        this.menuOptionSelect ();
         container.focus ();
     }
 
@@ -2316,19 +2317,27 @@ This looks unused
         }
     }
 
-    menuOptionsListen (evt) {
+    menuOptionSelect (evt) {
         if (!this.cfg.navigatorOptions.burger) {
-            console.log ('menuOptionsListen(): no configured menu selector this.cfg.navigatorOptions.burger');
+            console.log ('menuOptionsSelect(): no configured menu selector this.cfg.navigatorOptions.burger');
             return;
         }
     var os = this.qsa (document,this.cfg.navigatorOptions.burger+' [data-menu] section.menu-options');
+    var gp = this.qs (this.restricted,'form[data-groups]');
         for (var o of os) {
+            if (!evt) {
+                if (gp && o.dataset.scope==gp.dataset.groups) {
+                    o.classList.add ('visible');
+                    continue;
+                }
+                o.classList.remove ('visible');
+                continue;
+            }
             if (o.dataset.scope==evt.target.dataset.options) {
                 o.classList.add ('visible');
+                continue;
             }
-            else {
-                o.classList.remove ('visible');
-            }
+            o.classList.remove ('visible');
         }
     }
 
