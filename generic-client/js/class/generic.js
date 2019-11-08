@@ -190,6 +190,7 @@ export class Generic extends Hpapi {
     var os = this.qsa (container,'a[data-options]');
         for (var o of os) {
             o.addEventListener ('click',this.menuOptionSelect.bind(this));
+            o.addEventListener ('dblclick',this.menuOptionSelect.bind(this));
         }
         this.menuOptionSelect ();
         window.setTimeout (this.burgerListen.bind(this),500);
@@ -2336,12 +2337,27 @@ This looks unused
     }
 
     menuOptionSelect (evt) {
+        if (evt && evt.type=='dblclick') {
+            if ('screen' in evt.currentTarget) {
+                return;
+            }
+            link = this.qs (evt.target.parentElement,'[data-icon=find-add]');
+            if (!link) {
+                return;
+            }
+            link.classList.add ('selected');
+            window.setTimeout(function(){link.classList.remove('selected');},200);
+            window.setTimeout(function(){link.classList.add('selected');},400);
+            window.setTimeout(function(){link.click();},600);
+            return;
+        }
         if (!this.cfg.navigatorOptions.burger) {
             console.log ('menuOptionsSelect(): no configured menu selector this.cfg.navigatorOptions.burger');
             return;
         }
     var os = this.qsa (document,this.cfg.navigatorOptions.burger+' [data-menu] section.menu-options');
     var gp = this.qs (this.restricted,'form[data-groups]');
+    var link;
         for (var o of os) {
             if (!evt) {
                 if (gp && o.dataset.scope==gp.dataset.groups) {
