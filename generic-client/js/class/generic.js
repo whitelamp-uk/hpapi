@@ -162,6 +162,9 @@ export class Generic extends Hpapi {
     }
 
     async burger (evt) {
+        if (evt.type=='focusout') {
+            return;
+        }
         if (!this.cfg.navigatorOptions.burger) {
             console.log ('burger(): no configured burger selector');
             return;
@@ -172,37 +175,48 @@ export class Generic extends Hpapi {
             console.log ('burger(): no menu container "'+selector+'"');
             return;
         }
-        // Close if opened
         if (container.classList.contains('visible')) {
-            if (evt.type=='focusout') {
-                this.burgerFocusout = true;
-            var obj = this;
-                window.setTimeout (function(){obj.burgerFocusout=false;},600);
-            }
-            container.classList.remove ('visible');
-            return;
-        }
-        if (evt.type=='focusout') {
-            return;
-        }
-        if (evt.type=='click' && this.burgerFocusout) {
             return;
         }
         try {
             await this.menu ();
+            await this.insertRender ('menu',container);
         }
         catch (e) {
             console.log ('burger(): '+e.message);
             return;
         }
-        await this.insertRender ('menu',container);
         container.classList.add ('visible');
     var os = this.qsa (container,'a[data-options]');
         for (var o of os) {
             o.addEventListener ('click',this.menuOptionSelect.bind(this));
         }
         this.menuOptionSelect ();
-        container.focus ();
+        window.setTimeout (this.burgerListen.bind(this),500);
+    }
+
+    burgerClose (evt=null) {
+        if (!this.cfg.navigatorOptions.burger) {
+            console.log ('burger(): no configured burger selector');
+            return;
+        }
+    var selector            = this.cfg.navigatorOptions.burger;
+    var container           = this.qs (document,selector);
+        if (!container) {
+            console.log ('burger(): no menu container "'+selector+'"');
+            return;
+        }
+        if (evt && container.contains(evt.target)) {
+            // Event target is inside the menu
+            return;
+        }
+        document.removeEventListener ('click',this.burgerCloser);
+        container.classList.remove ('visible');
+    }
+
+    burgerListen ( ) {
+        this.burgerCloser   = this.burgerClose.bind (this);
+        document.addEventListener ('click',this.burgerCloser);
     }
 
     clicks (targetElmt) {
@@ -2230,11 +2244,11 @@ This looks unused
         try {
             await this.templateFetch ('menudfn');
             await this.templateFetch ('menu');
-        var dfn                 = document.createElement ('div');
-            dfn.innerHTML       = this.templates.menudfn ();
-            dfn                 = this.qs (dfn,'[data-menu]');
-            this.data.menuName  = dfn.dataset.menu;
-            this.data.menu      = this.menuData (dfn);
+        var dfn                     = document.createElement ('div');
+            dfn.innerHTML           = this.templates.menudfn ();
+            dfn                     = this.qs (dfn,'[data-menu]');
+            this.data.menuName      = dfn.dataset.menu;
+            this.data.menu          = this.menuData (dfn);
         }
         catch (e) {
             throw new Error ('menu(): '+e.message);
@@ -2296,7 +2310,7 @@ This looks unused
                 }
             }
         }
-        this.qs (document,this.cfg.navigatorOptions.burger).classList.remove ('visible');
+        this.burgerClose ();
         this.screenHandle (evt);
     }
 
@@ -2317,6 +2331,10 @@ This looks unused
         }
     }
 
+    menuOptionButton (optionsElement) {
+        return this.qs(optionsElement.parentElement,'a[data-options]');
+    }
+
     menuOptionSelect (evt) {
         if (!this.cfg.navigatorOptions.burger) {
             console.log ('menuOptionsSelect(): no configured menu selector this.cfg.navigatorOptions.burger');
@@ -2328,16 +2346,20 @@ This looks unused
             if (!evt) {
                 if (gp && o.dataset.scope==gp.dataset.groups) {
                     o.classList.add ('visible');
+                    this.menuOptionButton(o).classList.add ('selected');
                     continue;
                 }
                 o.classList.remove ('visible');
+                this.menuOptionButton(o).classList.remove ('selected');
                 continue;
             }
             if (o.dataset.scope==evt.target.dataset.options) {
                 o.classList.add ('visible');
+                this.menuOptionButton(o).classList.add ('selected');
                 continue;
             }
             o.classList.remove ('visible');
+            this.menuOptionButton(o).classList.remove ('selected');
         }
     }
 
