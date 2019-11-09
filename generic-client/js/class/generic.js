@@ -1707,14 +1707,40 @@ This looks unused
         );
     }
 
+    historyForgetStates (states) {
+    var was         = this.historyRead ();
+    var now         = [];
+        for (var i=0;i<was.length;i++) {
+            if (states.includes(was[i].id)) {
+                // Forget this state
+                continue;
+            }
+            now.push (was[i]);
+        }
+        this.storageWrite ('history',now);
+    }
+
     historyForScope (grp,cols) {
         // Variables
     var histories, history = [], h = {}, keys = [], k, grps;
-        histories = this.historyRead ();
+    var now = Date.now (), then = 0, length = 0;
+    var count = 0, forgets = [];
+        if (this.cfg.history.storageLength) {
+            length  = this.cfg.history.storageLength;
+        }
+        if (this.cfg.history.sessionDuration) {
+            then    = now - 1000*this.cfg.history.sessionDuration;
+        }
+        // Get history and loop
+        histories   = this.historyRead ();
         for (var i=0;i<histories.length;i++) {
             if (histories[i].gs.includes(grp)) {
-                k                               = grp + '-';
-                k                              += this.parameterString (histories[i].ps);
+                count++;
+                if (count>length) {
+                    forgets.push (histories[i].id);
+                    continue;
+                }
+                k                               = grp + '-' + histories[i].ps;
                 if (!keys.includes(k)) {
                     keys.push (k);
                 }
@@ -1724,10 +1750,10 @@ This looks unused
                     h[k].screens                = {};
                 }
                 for (var j=0;j<cols.length;j++) {
-                    if (!(cols[j] in h[k].screens)) {
+                    if (!(cols[j].screen in h[k].screens)) {
                         h[k].screens[cols[j].screen] = this.clone (cols[j]);
                     }
-                    if (histories[i].sc==cols[j].screen) {
+                    if (histories[i].sc==cols[j].screen && histories[i].id>then) {
                         h[k].screens[cols[j].screen].visited = true;
                     }
                 }
@@ -1735,6 +1761,9 @@ This looks unused
         }
         for (var i=0;i<keys.length;i++) {
             history.push (h[keys[i]]);
+        }
+        if (forgets.length>0) {
+            this.historyForgetStates (forgets);
         }
         return history;
     }
@@ -1747,6 +1776,7 @@ This looks unused
         if (!s) {
             return;
         }
+        s.ps = this.parametersDecode (s.ps);
         console.log ('SETTING STATE '+JSON.stringify(s),null,'    ');
     var ps = Object.keys (s);
         for (var i=0;i<ps.length;i++) {
@@ -1787,13 +1817,20 @@ This looks unused
     }
 
     historyUpdate (screen,state) {
-    var was = this.historyRead ();
-    var now = [state];
-    var pms = JSON.stringify (state.ps);
+    var was         = this.historyRead ();
+    var now         = [state];
+    var then        = 0;
+        if (this.cfg.history.storageDuration) {
+            then    = Date.now() - 1000*this.cfg.history.storageDuration;
+        }
         for (var i=0;i<was.length;i++) {
             if (was[i].sc==state.sc) {
-                if (JSON.stringify(was[i].ps)==pms) {
+                if (was[i].ps==state.ps) {
                     // Already at top of stack
+                    continue;
+                }
+                if (state.id<then) {
+                    // Earlier than history duration
                     continue;
                 }
             }
@@ -2303,7 +2340,8 @@ This looks unused
         }
     var state,keys;
         if (evt.currentTarget.dataset.state) {
-            state   = this.historyRead (evt.currentTarget.dataset.state);
+            state       = this.historyRead (evt.currentTarget.dataset.state);
+            state.ps    = this.parametersDecode (state.ps);
             if (state) {
                 keys    = Object.keys (state.ps);
                 for (var i=0;i<keys.length;i++) {
@@ -2789,14 +2827,18 @@ This looks unused
         this.sessionWrite ('parameters',this.parameters);
     }
 
-    parameterString (params) {
-    var keys    = Object.keys (params);
-    var parts   = [];
-        keys.sort ();
-        for (var i=0;i<keys.length;i++) {
-            parts.push (keys[i]+'-'+params[keys[i]]);
+    parametersDecode (pms) {
+        // Complements parametersStringify()
+        pms             = JSON.parse (pms);
+    var k, ps = {};
+        while (pms.length) {
+            k           = pms.shift ();
+            ps[k]       = null;
+            if (pms.length) {
+                ps[k]   = pms.shift ();
+            }
         }
-        return parts.join ('-');
+        return ps;
     }
 
     parametersRead ( ) {
@@ -2804,6 +2846,18 @@ This looks unused
         if (!this.parameters) {
             this.parameters = {};
         }
+    }
+
+    parametersStringify (params) {
+        // Stringify parameters in a consistent order
+    var keys    = Object.keys (params);
+        keys.sort ();
+    var parts   = [];
+        for (var i=0;i<keys.length;i++) {
+            parts.push (keys[i]);
+            parts.push (params[keys[i]]);
+        }
+        return JSON.stringify (parts);
     }
 
     parameterWrite (key,val) { 
@@ -3590,49 +3644,47 @@ This looks unused
     }
 
     statePush ( ) {
-    var changed                 = false;
-    var so                      = null;
-        if (window.history.state) {
-            so                  = this.historyRead (window.history.state);
+        // Push state if no previous state or screen/parameters changed
+    var so, form, params, p, ps = {}, gs = [], sn;
+        so                  = this.historyRead (window.history.state);
+        form                = this.qs (this.restricted,'form[data-history]');
+        if (form) {
+            params          = this.qsa (form,'form[data-history] input');
+            form            = form.dataset;
         }
         else {
-            changed             = true;
+            form            = {
+                title   : window.title,
+                legend  : "No legend",
+                history : 'No history name',
+                groups  : ''
+            };
         }
-        if (!so || this.currentScreen!=so.sc) {
-            changed             = true;
+        if (form.groups.length) {
+            gs              = form.groups.split (',');
         }
-    var f                       = this.qs (this.restricted,'form[data-history]');
-    var ps                      = null;
-        if (f) {
-            ps                  = this.qsa (f,'form[data-history] input');
-        }
-        else {
-            f                   = {dataset:{title:window.title,legend:"No legend",history:'No history name'}};
-        }
-    var gs                      = [];
-        if (f.dataset.groups && f.dataset.groups.length) {
-            gs                  = f.dataset.groups.split (',');
-        }
-    var sn = {
-            id : Date.now (),
-            tt : f.dataset.title,
-            gs : gs,
-            sc : this.currentScreen,
-            lg : f.dataset.legend,
-            dt : f.dataset.history,
-            ps : {}
-        };
-        if (ps) {
-            for (var p of ps) {
-                if (!changed && so.ps[p.name]!=this.parameters[p.name]) {
-                    changed     = true;
-                }
-                sn.ps[p.name]   = this.parameters[p.name];
+        if (params) {
+            for (p of params) {
+                ps[p.name]  = this.parameters[p.name];
             }
         }
-        if (changed) {
-            this.historyPush (sn);
+        ps                  = this.parametersStringify (ps);
+/*
+        if (window.history.state && so && this.currentScreen==so.sc && ps==so.ps) {
+            return;
         }
+*/
+        this.historyPush (
+            {
+                id : Date.now (),
+                tt : form.title,
+                gs : gs,
+                sc : this.currentScreen,
+                lg : form.legend,
+                dt : form.history,
+                ps : ps
+            }
+        );
     }
 
     statusClick (evt) {
@@ -3848,11 +3900,14 @@ This looks unused
     }
 
     unloadHandle (evt) {
-    // Needs to check if data is unsaved - otherwise unnecessary
-        // Cancel the event
-    //    evt.preventDefault ();
-        // Chrome requires returnValue to be set
-    //    evt.returnValue = '';
+        // TODO: Needs to check if data is unsaved but for now:
+    var unsaved = false;
+        if (!this.cfg.history || unsaved) {
+            // Cancel the event
+            evt.preventDefault ();
+            // Chrome requires returnValue to be set
+            evt.returnValue = '';
+        }
     }
 
     unstickers ( ) {
