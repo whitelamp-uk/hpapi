@@ -169,6 +169,7 @@ export class Generic extends Hpapi {
             console.log ('burger(): no configured burger selector');
             return;
         }
+    var os, o, ls, l;
     var selector            = this.cfg.navigatorOptions.burger;
     var container           = this.qs (document,selector);
         if (!container) {
@@ -187,12 +188,16 @@ export class Generic extends Hpapi {
             return;
         }
         container.classList.add ('visible');
-    var os = this.qsa (container,'a[data-options]');
-        for (var o of os) {
+        os = this.qsa (container,'a[data-options]');
+        for (o of os) {
             o.addEventListener ('click',this.menuOptionSelect.bind(this));
             o.addEventListener ('dblclick',this.menuOptionSelect.bind(this));
         }
         this.menuOptionSelect ();
+        ls = this.qsa (container,'a.history-legend');
+        for (l of ls) {
+            l.addEventListener ('click',this.menuLegendSelect.bind(this));
+        }
         window.setTimeout (this.burgerListen.bind(this),500);
     }
 
@@ -1295,6 +1300,24 @@ This looks unused
         return false;
     }
 
+    findadd (evt) {
+        // Variables
+        var group;
+        // Find group
+        group = this.qs (this.restricted,'form[data-groups]');
+        if (!group || !group.dataset.groups) {
+            this.burger (evt);
+            return;
+        }
+        group = group.dataset.groups.split(',')[0];
+        if (!group || group==this.currentScreen) {
+            this.burger (evt);
+            return;
+        }
+        evt.currentTarget.dataset.screen = group;
+        this.screenHandle (evt);
+    }
+
     findAll (arrayOfObjects,key,val,strict=true) {
     var all = [];
         for (var i=0;i<arrayOfObjects.length;i++) {
@@ -2032,9 +2055,9 @@ This looks unused
             delete this.templates[target.dataset.insert];
             console.log ('Deleted insert template "'+target.dataset.insert+'.hbs"');
             console.log ('Awaiting reload');
-            await this.templateFetch (target.dataset.insert);
-            this.log ('Template reloaded');
         }
+        await this.templateFetch (target.dataset.insert);
+        console.log ('Template "'+target.dataset.insert+'.hbs" ready');
         console.log ('insertHandle(): rendering "'+target.dataset.insert+'.hbs" into "#'+target.dataset.target+'"');
         evt.currentTargetWas = target;
         this.insertRender (target.dataset.insert,this.qs(document,'#'+target.dataset.target),event);
@@ -2353,19 +2376,110 @@ This looks unused
         this.screenHandle (evt);
     }
 
+    async menuGroupTitle ( ) {
+        // Variables
+        var gp, group,title;
+        // Find groups
+        group = this.qs (this.restricted,'form[data-groups]');
+        if (!group || !group.dataset.groups) {
+            return false;
+        }
+        group = group.dataset.groups.split(',')[0];
+        if (group!=this.currentScreen) {
+            return false;
+        }
+        try {
+            // Get menu
+            await this.templateFetch ('menudfn');
+            gp                      = document.createElement ('div');
+            gp.innerHTML            = this.templates.menudfn ();
+            gp                      = this.qs (gp,'[data-menu] [data-scope='+group+']');
+        }
+        catch (e) {
+            throw new Error ('menuGroupTitle(): '+e.message);
+            return false;
+        }
+        if (!gp) {
+            return false;
+        }
+        title                       = document.createElement ('h2');
+        title.classList.add ('nav-title');
+        title.innerHTML             = this.escapeForHtml (gp.dataset.legend);
+        return title;
+    }
+
+    menuLegendSelect (evt) {
+        if (!evt) {
+            return;
+        }
+    var link = this.qs (evt.target.parentElement,'.history-screens a[data-screen]');
+        if (!link) {
+            return;
+        }
+        link.classList.add ('selected');
+        window.setTimeout(function(){link.classList.remove('selected');},200);
+        window.setTimeout(function(){link.classList.add('selected');},400);
+        window.setTimeout(function(){link.click();},600);
+    }
+
+    async menuLinks ( ) {
+        // Variables
+        var btn, btns = [], gp, gps, groups, lk, lks;
+        // Find groups
+        groups = this.qs (this.restricted,'form[data-groups]');
+        if (!groups || !groups.dataset.groups) {
+            return false;
+        }
+        groups = groups.dataset.groups.split (',');
+        if (groups[0]==this.currentScreen) {
+            return false;
+        }
+        try {
+            // Get menu
+            await this.templateFetch ('menudfn');
+            gps                     = document.createElement ('div');
+            gps.innerHTML           = this.templates.menudfn ();
+            gps                     = this.qsa (gps,'[data-menu] [data-scope]');
+            // Find links
+            for (gp of gps) {
+                lks                 = this.qsa (gp,'[data-history] li');
+                if (!groups.includes(gp.dataset.scope)) {
+                    continue;
+                }
+                for (lk of lks) {
+                    btn              = document.createElement ('button');
+                    btn.classList.add ('navigator');
+                    btn.dataset.screen = lk.dataset.screen;
+                    btn.dataset.event = 'click';
+                    if (this.cfg.contextMenu) {
+                        btn.setAttribute ('contextmenu',this.cfg.contextMenu);
+                    }
+                    btn.innerHTML   = this.escapeForHtml (lk.dataset.legend);
+                    btns.push (btn);
+                }
+            }
+        }
+        catch (e) {
+            throw new Error ('menuLinks(): '+e.message);
+            return false;
+        }
+        return btns;
+    }
+
     menuListen ( ) {
+        var container, link, links, selector;
         if (!this.cfg.navigatorOptions.burger) {
             console.log ('menuListen(): no configured menu selector this.cfg.navigatorOptions.burger');
             return;
         }
-    var selector            = this.cfg.navigatorOptions.burger;
-    var container           = this.qs (document,selector);
+        selector            = this.cfg.navigatorOptions.burger;
+        container           = this.qs (document,selector);
         if (!container) {
             console.log ('menuListen(): no menu container "'+selector+'"');
             return;
         }
-    var links = this.qsa (container,'[data-menu] a[data-screen]');
-        for (var link of links) {
+        links = this.qsa (container,'[data-menu] a[data-screen]');
+        for (link of links) {
             link.addEventListener ('click',this.menuGo.bind(this));
         }
     }
@@ -2375,11 +2489,12 @@ This looks unused
     }
 
     menuOptionSelect (evt) {
+        var gp, link, o, os;
         if (evt && evt.type=='dblclick') {
             if ('screen' in evt.currentTarget) {
                 return;
             }
-            link = this.qs (evt.target.parentElement,'[data-icon=find-add]');
+            link = this.qs (evt.target.parentElement,'[data-icon=findadd]');
             if (!link) {
                 return;
             }
@@ -2393,10 +2508,10 @@ This looks unused
             console.log ('menuOptionsSelect(): no configured menu selector this.cfg.navigatorOptions.burger');
             return;
         }
-    var os = this.qsa (document,this.cfg.navigatorOptions.burger+' [data-menu] section.menu-options');
-    var gp = this.qs (this.restricted,'form[data-groups]');
-    var link;
-        for (var o of os) {
+        os = this.qsa (document,this.cfg.navigatorOptions.burger+' [data-menu] section.menu-options');
+        gp = this.qs (this.restricted,'form[data-groups]');
+        link;
+        for (o of os) {
             if (!evt) {
                 if (gp && o.dataset.scope==gp.dataset.groups) {
                     o.classList.add ('visible');
@@ -2438,17 +2553,20 @@ This looks unused
         }
     }
 
-    navigatorsElement (templateName) {
-    var nav                         = document.createElement ('nav');
+    async navigatorsElement (templateName) {
+        // Variables
+        var blk, block, button, crumbs, i, nav, navs, opts, item, s, template, title;
+        // Cross-screen interface controls
+        nav                         = document.createElement ('nav');
         nav.classList.add ('navigator');
-    var opts                        = Object.keys (this.cfg.navigatorOptions);
-        for (var i=0;opts[i];i++) {
-        var item                    = document.createElement ('a');
-            item.classList.add (opts[i]);
+        opts                        = Object.keys (this.cfg.navigatorOptions);
+        for (i=0;opts[i];i++) {
+            item                    = document.createElement ('a');
+            item.dataset.icon       = opts[i];
             if (opts[i] in this) {
                 item.addEventListener ('click',this[opts[i]].bind(this));
                 if (this.cfg.navigatorOptions[opts[i]]) {
-                var s               = this.qs (document,this.cfg.navigatorOptions[opts[i]]);
+                    s               = this.qs (document,this.cfg.navigatorOptions[opts[i]]);
                     if (s) {
                         s.addEventListener ('focusout',this[opts[i]].bind(this));
                     }
@@ -2456,8 +2574,21 @@ This looks unused
             }
             nav.appendChild (item);
         }
-    var block                       = null;
-    var navs                        = this.navigators ();
+        // Use burger menu
+        if ('burger' in this.cfg.navigatorOptions) {
+            navs = await this.menuLinks ();
+            for (i=0;i<navs.length;i++) {
+                nav.appendChild (navs[i]);
+            }
+            title = await this.menuGroupTitle ();
+            if (title) {
+                nav.appendChild (title);
+            }
+            return nav;
+        }
+        // Or use enforcer class
+        block                       = null;
+        navs                        = this.navigators ();
         for (blk in navs.blocks) {
             if (templateName in navs.blocks[blk].templates) {
                 block = blk;
@@ -2467,15 +2598,15 @@ This looks unused
         if (!block) {
             return nav;
         }
-    var crumbs                      = {};
+        crumbs                      = {};
         if (block in navs.crumbs) {
-            for (var i=0;navs.crumbs[block].back[i];i++) {
-            var blk                     = navs.crumbs[block].back[i];
+            for (i=0;navs.crumbs[block].back[i];i++) {
+                blk                     = navs.crumbs[block].back[i];
                 if (!(blk in navs.blocks)) {
                     console.log ('Block "'+blk+'" not in blocks [1]');
                     continue;
                 }
-                for (var template in navs.blocks[blk].templates) {
+                for (template in navs.blocks[blk].templates) {
                     crumbs[template]    = {
                         type: 'back',
                         scope: navs.blocks[blk].scope,
@@ -2490,7 +2621,7 @@ This looks unused
             return nav;
         }
         if (block in navs.blocks) {
-            for (var template in navs.blocks[block].templates) {
+            for (template in navs.blocks[block].templates) {
                 crumbs[template]        = {
                     type: 'this',
                     scope: navs.blocks[block].scope,
@@ -2506,13 +2637,13 @@ This looks unused
             console.log ('Block "'+block+'" not in blocks [2]');
             return nav;
         }
-        for (var i=0;navs.crumbs[block].forward[i];i++) {
-        var blk                     = navs.crumbs[block].forward[i];
+        for (i=0;navs.crumbs[block].forward[i];i++) {
+            blk                     = navs.crumbs[block].forward[i];
             if (!(blk in navs.blocks)) {
                 console.log ('Block "'+blk+'" not in blocks [3]');
                 continue;
             }
-            for (var template in navs.blocks[blk].templates) {
+            for (template in navs.blocks[blk].templates) {
                 crumbs[template]    = {
                     type: 'forward',
                     scope: navs.blocks[blk].scope,
@@ -2521,11 +2652,11 @@ This looks unused
                 };
             }
         }
-        for (var template in crumbs) {
+        for (template in crumbs) {
             if (crumbs[template].scope && !this.parameters[crumbs[template].scope]) {
                 continue;
             }
-        var button                  = document.createElement ('button');
+            button                  = document.createElement ('button');
             button.textContent      = this.escapeForHtml (crumbs[template].name);
             if (crumbs[template].selected) {
                 button.setAttribute ('class','current-screen');
@@ -2570,7 +2701,9 @@ This looks unused
     navigatorsListen (targetElmt) {
     var navs                        = this.qsa (targetElmt,this.navigatorsSelector());
         for (var nav of navs) {
-            nav.setAttribute ('contextmenu','gui-context');
+            if (this.cfg.contextMenu) {
+                nav.setAttribute ('contextmenu',this.cfg.contextMenu);
+            }
             if (!nav.dataset.event) {
                 nav.dataset.event   = 'click';
             }
@@ -3241,9 +3374,9 @@ This looks unused
             delete this.templates[target.dataset.screen];
             console.log ('Deleted screen template "'+target.dataset.screen+'.hbs"');
             console.log ('Awaiting reload');
-            await this.templateFetch (target.dataset.screen);
-            this.log ('Template reloaded');
         }
+        await this.templateFetch (target.dataset.screen);
+        console.log ('Template "'+target.dataset.screen+'.hbs" ready');
         console.log ('screenHandle(): rendering "'+target.dataset.screen+'"');
         evt.currentTargetWas = target;
         this.screenRender (target.dataset.screen,evt);
@@ -3403,7 +3536,8 @@ This looks unused
         this.data.currentScreen                 = this.currentScreen;
 // this.logSummary ();
         // Add automatic navigation defined by navigators()
-        this.restricted.insertBefore (this.navigatorsElement(this.currentScreen),this.restricted.childNodes[0]);
+    var nav                                     = await this.navigatorsElement (this.currentScreen);
+        this.restricted.insertBefore (nav,this.restricted.childNodes[0]);
         // Override loaders() to run methods after template is loaded
         this.loaders (evt,screen);
         // Set current date
