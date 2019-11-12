@@ -63,13 +63,13 @@ INSERT IGNORE INTO `hpapi_pattern` (`pattern`, `constraints`, `expression`, `inp
 ('yyyymmdd',	'HPAPI_PATTERN_DESC_YYYYMMDD',	'^[0-9]{8}$',	'text',	'',	0,	0,	'20000101',	'99991231');
 
 
-INSERT IGNORE INTO `hpapi_usergroup` (`usergroup`, `level`, `name`, `remote_addr_pattern`, `notes`) VALUES
-('system',	1,	'System',	'^::1$',	'Automated system routines.'),
-('admin',	2,	'Administrators',	'^.*$',	'Users performing high level administration of business data within the model.'),
-('agent',	10000,	'Client Agents',	'^.*$',	'Custom user group for users acting on behalf of a company client. They may or may not be operating via a third party agency organsiation (eg. a lottery provider).'),
-('anon',	10000000,	'Unknown Users',	'^.*$',	'Users having no identity.'),
-('field',	1000,	'Field staff',	'^.*$',	'Staff at off-site locations'),
-('manager',	10,	'Managers',	'^.*$',	'Admin users with relatively high privileges'),
-('staff',	100,	'Office staff',	'^.*$',	'Admin users with limited privileges'),
-('sysadmin',	3,	'System Administrators',	'^.*$',	'Users performing high level administration of configuration data within the model.');
+INSERT IGNORE INTO `hpapi_usergroup` (`usergroup`, `level`, `name`, `password_self_manage`, `remote_addr_pattern`, `notes`) VALUES
+('system',	1,	'System',	0,	'^::1$',	'Automated system routines.'),
+('admin',	2,	'Administrators',	0,	'^.*$',	'Users performing high level administration of business data within the model.'),
+('agent',	10000,	'Client Agents',	1,	'^.*$',	'Custom user group for users acting on behalf of a company client. They may or may not be operating via a third party agency organsiation (eg. a lottery provider).'),
+('anon',	10000000,	'Unknown Users',	1,	'^.*$',	'Users having no identity.'),
+('field',	1000,	'Field staff',	1,	'^.*$',	'Staff at off-site locations'),
+('manager',	10,	'Managers',	'^.*$',	0,	'Admin users with relatively high privileges'),
+('staff',	100,	'Office staff',	'^.*$',	0,	'Admin users with limited privileges'),
+('sysadmin',	3,	'System Administrators',	0,	'^.*$',	'Users performing high level administration of configuration data within the model.');
 
