@@ -3028,8 +3028,9 @@ This looks unused
                 verify    : this.qs (this.access,'#gui-verify-check')
             }
         }
+        this.reset.message.innerHTML                    = '';
         if (evt.type!='click') {
-            this.reset.message.innerHTML                = '';
+            return;
         }
         var auth, cancel, i, inputs, response;
         if (evt.target==this.reset.reset) {
@@ -3073,7 +3074,7 @@ This looks unused
         if (evt.target==this.reset.continue) {
             if (evt.target.dataset.continue=='email') {
                 if (!this.reset.fEmail.checkValidity()) {
-                    this.reset.message.innerHTML        = 'Invalid input';
+                    this.passwordAuthMessage (this.escapeForHtml('Invalid input'));
                     return;
                 }
                 this.reset.user.style.display           = 'none';
@@ -3083,15 +3084,16 @@ This looks unused
             }
             if (evt.target.dataset.continue=='phone') {
                 if (!this.reset.fPhone.checkValidity()) {
-                    this.reset.message.innerHTML        = 'Invalid input';
+                    this.passwordAuthMessage (this.escapeForHtml('Invalid input'));
                     return;
                 }
                 try {
                     response = await this.secretQuestionRequest (this.reset.fPhone.value);
                 }
                 catch (e) {
+                    console.log ('passwordAuthListen(): '+e.message);
                     this.reset.fPhone.value             = '';
-                    this.reset.message.innerHTML        = 'Not found';
+                    this.passwordAuthMessage (this.escapeForHtml('Not found'));
                     return;
                 }
                 this.reset.fQuestion.innerHTML          = this.escapeForHtml (response);
@@ -3102,7 +3104,7 @@ This looks unused
             }
             if (evt.target.dataset.continue=='answer') {
                 if (!this.reset.fAnswer.checkValidity()) {
-                    this.reset.message.innerHTML        = 'Invalid input';
+                    this.passwordAuthMessage (this.escapeForHtml('Invalid input'));
                     return;
                 }
                 this.reset.answer.style.display         = 'none';
@@ -3115,7 +3117,8 @@ This looks unused
                     response = await this.verifyRequest ();
                 }
                 catch (e) {
-                    this.reset.message.innerHTML        = 'Sorry try again';
+                    console.log ('passwordAuthListen(): '+e.message);
+                    this.passwordAuthMessage (this.escapeForHtml('Sorry try again'));
                     return;
                 }
                 this.reset.sms.style.display            = 'none';
@@ -3124,13 +3127,6 @@ This looks unused
                 return;
             }
             if (evt.target.dataset.continue=='verify') {
-                try {
-                    response = await this.verifyRequest ();
-                }
-                catch (e) {
-                    this.reset.message.innerHTML        = 'Sorry try again';
-                    return;
-                }
                 this.reset.verify.style.display         = 'none';
                 this.reset.password.style.display       = 'block';
                 evt.target.dataset.continue             = 'password';
@@ -3139,26 +3135,24 @@ This looks unused
             }
             if (evt.target.dataset.continue=='password') {
                 if (!this.reset.fPwdNew.checkValidity()) {
-                    this.reset.message.innerHTML        = '8 characters minimum';
+                    this.passwordAuthMessage (this.escapeForHtml('8 characters minimum'));
                     return;
                 }
                 if (this.reset.fPwdCnf.value!=this.reset.fPwdNew.value) {
-                    this.reset.message.innerHTML        = 'Does not match';
+                    this.passwordAuthMessage (this.escapeForHtml('Does not match'));
                     return;
                 }
                 try {
                     response = await this.passwordResetRequest (
                         this.reset.fAnswer.value,
+                        this.reset.fVerify.value,
                         this.reset.fPwdNew.value
                     );
                 }
                 catch (e) {
-                    this.reset.fAnswer.value            = '';
-                    this.reset.password.style.display   = 'none';
-                    this.reset.answer.style.display     = 'block';
-                    evt.target.dataset.continue         = 'answer';
-                    evt.target.innerHTML                = 'Continue';
-                    this.reset.message.innerHTML        = 'Failed';
+                    this.reset.fPwdNew.value            = '';
+                    this.reset.fPwdCnf.value            = '';
+                    this.passwordAuthMessage (this.escapeForHtml(e.message));
                     return;
                 }
                 this.reset.password.style.display       = 'none';
@@ -3169,8 +3163,26 @@ This looks unused
         }
     }
 
-    passwordResetCancel (evt) {
-        evt.preventDefault ();
+    passwordAuthMessage (msg) {
+        var fnoff, fnon;
+        fnoff     = function ( ) {
+                        document.querySelector('#gui-password-reset-message').innerHTML = '';
+                    };
+        fnon      = function ( ) {
+                        document.querySelector('#gui-password-reset-message').innerHTML = msg;
+                    };
+        setTimeout (
+            fnon,
+            800
+        );
+        setTimeout (
+            fnoff,
+            1000
+        );
+        setTimeout (
+            fnon,
+            1200
+        );
     }
 
     async placeChange (evtOrTarget) {
