@@ -3028,7 +3028,9 @@ This looks unused
                 verify    : this.qs (this.access,'#gui-verify-check')
             }
         }
-        this.reset.message.innerHTML                    = '';
+        if (this.reset.message) {
+            this.reset.message.innerHTML                = '';
+        }
         if (evt.type!='click') {
             return;
         }
