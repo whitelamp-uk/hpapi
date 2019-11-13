@@ -86,7 +86,7 @@ export class Hpapi {
         return url;
     }
 
-    hpapi (timeoutSecs,url,reqObj) {
+    hpapi (timeoutSecs,url,reqObj,anon=false) {
     var errorSplit                          = this.errorSplit;
         try {
             timeoutSecs                     = this.filterTimeout (timeoutSecs);
@@ -98,6 +98,9 @@ export class Hpapi {
             }
             else if ('token' in reqObj) {
                 request.token               = reqObj.token;
+            }
+            else if (anon) {
+                request.password            = '';
             }
             else {
                 throw new Error ('999 400 Missing both password and token');

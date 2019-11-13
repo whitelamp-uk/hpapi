@@ -1509,6 +1509,9 @@ This looks unused
         this.loggedOut                  = 1;
         this.handlebarsHelpers ();
         this.access                     = this.qs (document,'#gui-access');
+        this.access.addEventListener ('click',this.passwordAuthListen.bind(this));
+        this.access.addEventListener ('keyup',this.passwordAuthListen.bind(this));
+        this.access.addEventListener ('change',this.passwordAuthListen.bind(this));
         this.restricted                 = this.qs (document,'#gui-restricted');
         this.restricted.style.display   = 'none';
         this.status                     = this.qs (document,'#gui-status');
@@ -2994,8 +2997,180 @@ This looks unused
     }
 
     parameterWrite (key,val) { 
-        this.parameters[key] = val;
+        this.parameters[key]    = val;
         this.sessionWrite ('parameters',this.parameters);
+    }
+
+    async passwordAuthListen (evt) {
+        evt.preventDefault ();
+        if (!this.reset) {
+            this.reset = {
+                answer    : this.qs (this.access,'#gui-answer-check'),
+                auth      : this.qs (this.access,'#gui-auth'),
+                block     : this.qs (this.access,'#gui-password-reset'),
+                cancel    : this.qs (this.access,'#gui-password-reset-cancel'),
+                continue  : this.qs (this.access,'#gui-password-reset-continue'),
+                fAnswer   : this.qs (this.access,'#gui-answer'),
+                fEmail    : this.qs (this.access,'#gui-email'),
+                fPhone    : this.qs (this.access,'#gui-phone'),
+                fPwdAuth  : this.qs (this.access,'#gui-password'),
+                fPwdCnf   : this.qs (this.access,'#gui-password-confirm'),
+                fPwdNew   : this.qs (this.access,'#gui-password-new'),
+                fQuestion : this.qs (this.access,'#gui-question'),
+                fVerify   : this.qs (this.access,'#gui-verify'),
+                message   : this.qs (this.access,'#gui-password-reset-message'),
+                password  : this.qs (this.access,'#gui-password-change'),
+                phone     : this.qs (this.access,'#gui-phone-check'),
+                reset     : this.qs (this.access,'#gui-password-reset-start'),
+                unlock    : this.qs (this.access,'#gui-unlock'),
+                user      : this.qs (this.access,'#gui-user'),
+                sms       : this.qs (this.access,'#gui-sms-check'),
+                verify    : this.qs (this.access,'#gui-verify-check')
+            }
+        }
+        if (evt.type!='click') {
+            this.reset.message.innerHTML                = '';
+        }
+        var auth, cancel, i, inputs, response;
+        if (evt.target==this.reset.reset) {
+            this.reset.unlock.disabled                  = true;
+            this.reset.auth.style.display               = 'none';
+            this.reset.block.style.display              = 'block';
+            this.reset.cancel.style.display             = 'inline';
+            this.reset.reset.parentElement.style.display = 'none';
+            this.reset.fAnswer.value                    = '';
+            this.reset.fPhone.value                     = '';
+            this.reset.fPwdCnf.value                    = '';
+            this.reset.fPwdNew.value                    = '';
+            return;
+        }
+        if (evt.target==this.reset.cancel) {
+            inputs = this.qsa (
+                evt.target.form,
+                'input[type=text],input[type=number],input[type=password]'
+            );
+            for (i of inputs) {
+                if (this.reset.user.contains(i)) {
+                    continue;
+                }
+                i.value = '';
+            }
+            this.reset.answer.style.display             = 'none';
+            this.reset.auth.style.display               = 'block';
+            this.reset.block.style.display              = 'none';
+            this.reset.cancel.style.display             = 'none';
+            this.reset.password.style.display           = 'none';
+            this.reset.phone.style.display              = 'none';
+            this.reset.reset.parentElement.style.display = 'inline';
+            this.reset.sms.style.display                = 'none';
+            this.reset.user.style.display               = 'block';
+            this.reset.verify.style.display             = 'none';
+            this.reset.unlock.disabled                  = false;
+            this.reset.continue.innerHTML               = 'Continue';
+            this.reset.continue.dataset.continue        = 'email';
+            return;
+        }
+        if (evt.target==this.reset.continue) {
+            if (evt.target.dataset.continue=='email') {
+                if (!this.reset.fEmail.checkValidity()) {
+                    this.reset.message.innerHTML        = 'Invalid input';
+                    return;
+                }
+                this.reset.user.style.display           = 'none';
+                this.reset.phone.style.display          = 'block';
+                evt.target.dataset.continue             = 'phone';
+                return;
+            }
+            if (evt.target.dataset.continue=='phone') {
+                if (!this.reset.fPhone.checkValidity()) {
+                    this.reset.message.innerHTML        = 'Invalid input';
+                    return;
+                }
+                try {
+                    response = await this.secretQuestionRequest (this.reset.fPhone.value);
+                }
+                catch (e) {
+                    this.reset.fPhone.value             = '';
+                    this.reset.message.innerHTML        = 'Not found';
+                    return;
+                }
+                this.reset.fQuestion.innerHTML          = this.escapeForHtml (response);
+                this.reset.phone.style.display          = 'none';
+                this.reset.answer.style.display         = 'block';
+                evt.target.dataset.continue             = 'answer';
+                return;
+            }
+            if (evt.target.dataset.continue=='answer') {
+                if (!this.reset.fAnswer.checkValidity()) {
+                    this.reset.message.innerHTML        = 'Invalid input';
+                    return;
+                }
+                this.reset.answer.style.display         = 'none';
+                this.reset.sms.style.display            = 'block';
+                evt.target.dataset.continue             = 'sms';
+                return;
+            }
+            if (evt.target.dataset.continue=='sms') {
+                try {
+                    response = await this.verifyRequest ();
+                }
+                catch (e) {
+                    this.reset.message.innerHTML        = 'Sorry try again';
+                    return;
+                }
+                this.reset.sms.style.display            = 'none';
+                this.reset.verify.style.display         = 'block';
+                evt.target.dataset.continue             = 'verify';
+                return;
+            }
+            if (evt.target.dataset.continue=='verify') {
+                try {
+                    response = await this.verifyRequest ();
+                }
+                catch (e) {
+                    this.reset.message.innerHTML        = 'Sorry try again';
+                    return;
+                }
+                this.reset.verify.style.display         = 'none';
+                this.reset.password.style.display       = 'block';
+                evt.target.dataset.continue             = 'password';
+                evt.target.innerHTML                    = 'Set password';
+                return;
+            }
+            if (evt.target.dataset.continue=='password') {
+                if (!this.reset.fPwdNew.checkValidity()) {
+                    this.reset.message.innerHTML        = '8 characters minimum';
+                    return;
+                }
+                if (this.reset.fPwdCnf.value!=this.reset.fPwdNew.value) {
+                    this.reset.message.innerHTML        = 'Does not match';
+                    return;
+                }
+                try {
+                    response = await this.passwordResetRequest (
+                        this.reset.fAnswer.value,
+                        this.reset.fPwdNew.value
+                    );
+                }
+                catch (e) {
+                    this.reset.fAnswer.value            = '';
+                    this.reset.password.style.display   = 'none';
+                    this.reset.answer.style.display     = 'block';
+                    evt.target.dataset.continue         = 'answer';
+                    evt.target.innerHTML                = 'Continue';
+                    this.reset.message.innerHTML        = 'Failed';
+                    return;
+                }
+                this.reset.password.style.display       = 'none';
+                this.reset.cancel.click ();
+                this.reset.fPwdAuth.value               = this.reset.fPwdNew.value;
+                return;
+            }
+        }
+    }
+
+    passwordResetCancel (evt) {
+        evt.preventDefault ();
     }
 
     async placeChange (evtOrTarget) {
@@ -3264,8 +3439,8 @@ This looks unused
         return elmt.querySelectorAll (selectString);
     }
 
-    async request (request) {
-        if (!('password' in request)) {
+    async request (request,anon=false) {
+        if (!anon && !('password' in request)) {
             if (this.tokenExpired()) {
                 this.screenLock ();
                 this.authFail ();
@@ -3281,7 +3456,7 @@ This looks unused
             }
         }
         try {
-        var response = await this.hpapi (this.cfg.connectTO,this.cfg.url,request);
+        var response = await this.hpapi (this.cfg.connectTO,this.cfg.url,request,anon);
             if ('tokenExpires' in response) {
                 if ('token' in response) {
                     this.tokenSet (response.token);
