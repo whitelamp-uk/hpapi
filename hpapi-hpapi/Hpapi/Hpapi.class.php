@@ -71,7 +71,8 @@ class Hpapi {
         $this->object->response->timezone           = $this->tzName;
         $this->object->response->datetime           = null;
         $this->object->response->authStatus         = HPAPI_STR_AUTH_DEFAULT;
-        $this->object->response->passwordSelfManage = true;
+        $this->object->response->pwdSelfManage      = true;
+        $this->object->response->pwdScoreMinimum    = 0;
         $this->object->response->description        = HPAPI_META_DESCRIPTION;
         $this->object->response->splash             = array ();
         $this->object->response->error              = null;
@@ -230,7 +231,7 @@ class Hpapi {
             $this->end ();
         }
         foreach ($results as $g) {
-            array_push (
+             array_push (
                 $this->groupsAvailable,
                 array(
                     'usergroup'=>$g['usergroup'],
@@ -238,7 +239,10 @@ class Hpapi {
                 )
             );
             if (!$g['passwordSelfManage']) {
-                $this->object->response->passwordSelfManage = false;
+                $this->object->response->pwdSelfManage = false;
+            }
+            if (1*$g['passwordScoreMinimum']>$this->object->response->pwdScoreMinimum) {
+                $this->object->response->pwdScoreMinimum = 1 * $g['passwordScoreMinimum'];
             }
         }
         // Revoke old key releases

@@ -3074,7 +3074,7 @@ This looks unused
         if (evt.target==this.reset.continue) {
             if (evt.target.dataset.continue=='email') {
                 if (!this.reset.fEmail.checkValidity()) {
-                    this.passwordAuthMessage (this.escapeForHtml('Invalid input'));
+                    this.passwordAuthMessage ('Invalid input');
                     return;
                 }
                 this.reset.user.style.display           = 'none';
@@ -3084,7 +3084,7 @@ This looks unused
             }
             if (evt.target.dataset.continue=='phone') {
                 if (!this.reset.fPhone.checkValidity()) {
-                    this.passwordAuthMessage (this.escapeForHtml('Invalid input'));
+                    this.passwordAuthMessage ('Invalid input');
                     return;
                 }
                 try {
@@ -3093,7 +3093,7 @@ This looks unused
                 catch (e) {
                     console.log ('passwordAuthListen(): '+e.message);
                     this.reset.fPhone.value             = '';
-                    this.passwordAuthMessage (this.escapeForHtml('Not found'));
+                    this.passwordAuthMessage ('Not found');
                     return;
                 }
                 this.reset.fQuestion.innerHTML          = this.escapeForHtml (response);
@@ -3104,7 +3104,7 @@ This looks unused
             }
             if (evt.target.dataset.continue=='answer') {
                 if (!this.reset.fAnswer.checkValidity()) {
-                    this.passwordAuthMessage (this.escapeForHtml('Invalid input'));
+                    this.passwordAuthMessage ('Invalid input');
                     return;
                 }
                 this.reset.answer.style.display         = 'none';
@@ -3118,15 +3118,20 @@ This looks unused
                 }
                 catch (e) {
                     console.log ('passwordAuthListen(): '+e.message);
-                    this.passwordAuthMessage (this.escapeForHtml('Sorry try again'));
+                    this.passwordAuthMessage ('Sorry try again');
                     return;
                 }
+                this.passwordAuthMessage ('Enter code from SMS message');
                 this.reset.sms.style.display            = 'none';
                 this.reset.verify.style.display         = 'block';
                 evt.target.dataset.continue             = 'verify';
                 return;
             }
             if (evt.target.dataset.continue=='verify') {
+                if (!this.reset.fVerify.checkValidity()) {
+                    this.passwordAuthMessage ('Invalid input');
+                    return;
+                }
                 this.reset.verify.style.display         = 'none';
                 this.reset.password.style.display       = 'block';
                 evt.target.dataset.continue             = 'password';
@@ -3135,11 +3140,11 @@ This looks unused
             }
             if (evt.target.dataset.continue=='password') {
                 if (!this.reset.fPwdNew.checkValidity()) {
-                    this.passwordAuthMessage (this.escapeForHtml('8 characters minimum'));
+                    this.passwordAuthMessage ('8 characters minimum');
                     return;
                 }
                 if (this.reset.fPwdCnf.value!=this.reset.fPwdNew.value) {
-                    this.passwordAuthMessage (this.escapeForHtml('Does not match'));
+                    this.passwordAuthMessage ('Does not match');
                     return;
                 }
                 try {
@@ -3152,12 +3157,13 @@ This looks unused
                 catch (e) {
                     this.reset.fPwdNew.value            = '';
                     this.reset.fPwdCnf.value            = '';
-                    this.passwordAuthMessage (this.escapeForHtml(e.message));
+                    this.passwordAuthMessage (e.splash[0]);
                     return;
                 }
                 this.reset.password.style.display       = 'none';
                 this.reset.cancel.click ();
                 this.reset.fPwdAuth.value               = this.reset.fPwdNew.value;
+                this.statusShow ('Success! You may now use your new password');
                 return;
             }
         }
@@ -3165,6 +3171,8 @@ This looks unused
 
     passwordAuthMessage (msg) {
         var fnoff, fnon;
+        msg       = this.escapeForHtml (msg);
+        this.statusShow (msg);
         fnoff     = function ( ) {
                         document.querySelector('#gui-password-reset-message').innerHTML = '';
                     };
@@ -3452,6 +3460,7 @@ This looks unused
     }
 
     async request (request,anon=false) {
+        var response, splash, status;
         if (!anon && !('password' in request)) {
             if (this.tokenExpired()) {
                 this.screenLock ();
@@ -3468,7 +3477,7 @@ This looks unused
             }
         }
         try {
-        var response = await this.hpapi (this.cfg.connectTO,this.cfg.url,request,anon);
+            response = await this.hpapi (this.cfg.connectTO,this.cfg.url,request,anon);
             if ('tokenExpires' in response) {
                 if ('token' in response) {
                     this.tokenSet (response.token);
@@ -3484,19 +3493,16 @@ This looks unused
         catch (e) {
             if ('authStatus' in e) {
                 // Hpapi error object
-            var status   = e.authStatus.split (' ');
+                status   = e.authStatus.split (' ');
                 if (status[0]!='068') {
                     this.passwordExpired = false;
                     if (status[0]=='065') {
                         this.passwordExpired = true;
                     }
-                    this.log ('Authentication failure - authStatus='+e.authStatus);
+                    console.log ('request(): authentication failure - authStatus='+e.authStatus);
                     this.screenLock ();
-                    throw new Error (e.error);
-                    return false;
                 }
             }
-            // An error string
             throw e;
             return false;
         }

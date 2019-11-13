@@ -87,11 +87,12 @@ export class Hpapi {
     }
 
     hpapi (timeoutSecs,url,reqObj,anon=false) {
-    var errorSplit                          = this.errorSplit;
+        var errorSplit, hpapi, json, request;
+        errorSplit                          = this.errorSplit;
         try {
             timeoutSecs                     = this.filterTimeout (timeoutSecs);
             url                             = this.filterUrl (url);
-        var request                         = this.filterRequest (reqObj);
+            request                         = this.filterRequest (reqObj);
             request.datetime                = new Date().toUTCString ();
             if ('password' in reqObj) {
                 request.password            = reqObj.password;
@@ -113,26 +114,28 @@ export class Hpapi {
         }
         console.log ('hpapi(): request object = '+JSON.stringify(request,null,'    '));
         try {
-        var json                            = JSON.stringify (request);
+            json                            = JSON.stringify (request);
         }
         catch (e) {
             throw new Error (e.message);
             return false;
         }
         try {
-        var hpapi                           = this;
+            hpapi                           = this;
             return new Promise (
                 function (succeeded,failed) {
-                var xhr                     = new XMLHttpRequest ();
+                    var xhr;
+                    xhr                     = new XMLHttpRequest ();
                     xhr.timeout             = 1000 * timeoutSecs;
                     xhr.onerror             = function ( ) {
                         failed (new Error('997 502 Could not connect or unknown error'));
                     };
                     xhr.onload              = function ( ) {
-                        var fail            = false;
+                        var err, errObj, fail, returned;
+                        fail                = false;
                         if (xhr.status==200) {
                             try {
-                            var returned    = JSON.parse (xhr.responseText);
+                                returned    = JSON.parse (xhr.responseText);
                                 console.log ('hpapi(): returned object = '+JSON.stringify(returned,null,'    '));
                             }
                             catch (e) {
@@ -143,10 +146,9 @@ export class Hpapi {
                                 failed (new Error('995 502 Server is borked: '+xhr.responseText));
                             }
                             else {
-                            var err         = returned.response.error;
+                                err                         = returned.response.error;
                                 if (err) {
-                                var errObj  = new Error (err);
-                                    errObj.error            = err;
+                                    errObj                  = new Error (err);
                                     errObj.authStatus       = returned.response.authStatus;
                                     errObj.splash           = returned.response.splash;
                                     failed (errObj);

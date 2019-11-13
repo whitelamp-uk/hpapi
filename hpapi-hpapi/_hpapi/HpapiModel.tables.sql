@@ -248,6 +248,7 @@ CREATE TABLE IF NOT EXISTS `hpapi_usergroup` (
   `level` int(11) unsigned NOT NULL,
   `name` varchar(64) NOT NULL,
   `password_self_manage` tinyint(1) unsigned NOT NULL DEFAULT 1,
+  `password_score_minimum` tinyint(3) unsigned NOT NULL DEFAULT 50,
   `token_duration_minutes` int(11) unsigned NOT NULL DEFAULT 60,
   `remote_addr_pattern` varchar(255) CHARACTER SET ascii NOT NULL DEFAULT '^.*$',
   `notes` text NOT NULL,

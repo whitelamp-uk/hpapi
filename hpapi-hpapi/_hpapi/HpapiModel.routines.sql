@@ -27,6 +27,7 @@ BEGIN
    ,INET6_NTOA(`hpapi_user`.`token_remote_addr`) AS `tokenRemoteAddr`
    ,`hpapi_usergroup`.`usergroup`
    ,`hpapi_usergroup`.`password_self_manage` AS `passwordSelfManage`
+   ,`hpapi_usergroup`.`password_score_minimum` AS `passwordScoreMinimum`
    ,`hpapi_usergroup`.`token_duration_minutes` AS `tokenDurationMinutes`
    ,`hpapi_usergroup`.`remote_addr_pattern` AS `groupRemoteAddrPattern`
   FROM `hpapi_user`
