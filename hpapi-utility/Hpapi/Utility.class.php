@@ -182,6 +182,10 @@ class Utility {
         return true;
     }
 
+    public function ping ( ) {
+        return true;
+    }
+
     public function update ($table,$column,$value,$primaryKeys) {
         // Get column permission and details
         if (!($c=$this->hpapi->permissionToUpdate($table,$column))) {
