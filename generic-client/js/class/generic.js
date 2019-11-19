@@ -476,8 +476,10 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     }
 
     editModeReset ( ) {
-    var toggle                      = this.qs (this.restricted,'#edit-mode');
+        var elmt, form, forms, toggle;
+        toggle                      = this.qs (this.restricted,'#edit-mode');
         if (!toggle) {
+            this.editModeScreen     = null;
             return;
         }
         if (!this.editModeHelper) {
@@ -488,18 +490,18 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
         }
         toggle.removeEventListener ('click',this.editModeToggler);
         toggle.addEventListener ('click',this.editModeToggler);
-    var forms                       = this.qsa (this.restricted,'form[data-editmode]');
+        forms                       = this.qsa (this.restricted,'form[data-editmode]');
         if (!forms.length) {
             return;
         }
-        for (var form of forms) {
+        for (form of forms) {
             if (form.classList.contains('masked') && form.nextElementSibling) {
                 if (form.nextElementSibling.classList.contains('mask')) {
                     form.nextElementSibling.addEventListener ('click',this.editModeHelper);
                     form.nextElementSibling.classList.add ('active');
                 }
             }
-            for (var elmt of form.elements) {
+            for (elmt of form.elements) {
                 if (this.inhibitByDisable(elmt)) {
                     elmt.setAttribute ('disabled','disabled');
                     continue;
@@ -519,9 +521,10 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     }
 
     editModeToggle (evt) {
-    var forms               = this.qsa (this.restricted,'form[data-editmode]');
+        var elmt, form, forms;
+        forms               = this.qsa (this.restricted,'form[data-editmode]');
         if (this.editMode) {
-            for (var form of forms) {
+            for (form of forms) {
                 if (form.classList.contains('masked') && form.nextElementSibling) {
                     if (form.nextElementSibling.classList.contains('mask')) {
                         form.nextElementSibling.addEventListener ('click',this.editModeHelper);
@@ -529,7 +532,7 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
                     }
                 }
                 form.classList.remove ('edit-mode');
-                for (var elmt of form.elements) {
+                for (elmt of form.elements) {
                     if (this.inhibitByDisable(elmt)) {
                         elmt.setAttribute ('disabled','disabled');
                         continue;
@@ -541,7 +544,7 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
             this.editMode   = false;
         }
         else {
-            for (var form of forms) {
+            for (form of forms) {
                 if (form.classList.contains('masked') && form.nextElementSibling) {
                     if (form.nextElementSibling.classList.contains('mask')) {
                         form.nextElementSibling.removeEventListener ('click',this.editModeHelper);
@@ -549,7 +552,7 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
                     }
                 }
                 form.classList.add ('edit-mode');
-                for (var elmt of form.elements) {
+                for (elmt of form.elements) {
                     if ('prohibit' in elmt.dataset) {
                         continue;
                     }
@@ -1575,11 +1578,13 @@ This looks unused
     }
 
     handlebarsHelpers ( ) {
-    var equalsFn = this.equals;
+        var equalsFn;
+        equalsFn                        = this.equals;
         Handlebars.registerHelper (
             'centsToUnits',
             function (cents,prefix) {
-            var centsInt = parseInt (cents);
+                var centsInt;
+                centsInt                = parseInt (cents);
                 if (centsInt!=cents) {
                     return cents;
                 }
@@ -1595,8 +1600,9 @@ This looks unused
         Handlebars.registerHelper (
             'csvIncludes',
             function (csv,match,opts) {
+                var i;
                 csv = csv.split (',');
-                for (var i=0;csv[i]!==undefined;i++) {
+                for (i=0;csv[i]!==undefined;i++) {
                     if (csv[i]===(''+match)) {
                         return opts.fn (this);
                     }
@@ -1607,19 +1613,34 @@ This looks unused
         Handlebars.registerHelper (
             'dateReadable',
             function (dt) {
-            var dt = new Date (dt);
+                var dt;
+                dt                      = new Date (dt);
                 return dt.toDateString ();
+            }
+        );
+        Handlebars.registerHelper (
+            'datetimeReadable',
+            function (dt) {
+                var dt, dtr;
+                dt                      = new Date (dt);
+                dtr                     = dt.toDateString ();
+                dtr                    += ' ';
+                dtr                    += (''+dt.getHours()).padStart (2,'0');
+                dtr                    += ':';
+                dtr                    += (''+dt.getMinutes()).padStart (2,'0');
+                return dtr;
             }
         );
         Handlebars.registerHelper (
             'eachReverse',
             function (context) {
-            var options     = arguments[arguments.length - 1];
-            var rtn         = '';
+                var i, options, rtn;
+                options     = arguments[arguments.length - 1];
+                rtn         = '';
                 if (!context || context.length==0) {
                     return options.inverse (this);
                 }
-                for (var i=context.length-1;i>=0;i--) {
+                for (i=context.length-1;i>=0;i--) {
                     rtn    += options.fn (context[i]);
                 }
                 return rtn;
@@ -1637,10 +1658,11 @@ This looks unused
         Handlebars.registerHelper (
             'found',
             function (arr,k,v,opts) {
+                var i;
                 if (!arr) {
                     return opts.inverse (this);
                 }
-                for (var i=0;arr[i];i++) {
+                for (i=0;arr[i];i++) {
                     if (k==='' && arr[i]===v) {
                         return opts.fn (this);
                     }
@@ -1654,10 +1676,11 @@ This looks unused
         Handlebars.registerHelper (
             'foundAvailable',
             function (arr,k,v,opts) {
+                var i;
                 if (!arr) {
                     return opts.inverse (this);
                 }
-                for (var i=0;arr[i];i++) {
+                for (i=0;arr[i];i++) {
                     if (k==='' && arr[i]===v && !arr[i].deleted) {
                         return opts.fn (this);
                     }
@@ -3036,6 +3059,13 @@ This looks unused
         }
         var auth, cancel, i, inputs, response;
         if (evt.target==this.reset.reset) {
+            try {
+                await this.passwordResetAllow ();
+            }
+            catch (e) {
+                this.statusShow ('Password reset not allowed - contact your administrator');
+                return;
+            }
             this.reset.unlock.disabled                  = true;
             this.reset.auth.style.display               = 'none';
             this.reset.block.style.display              = 'block';
@@ -3159,7 +3189,13 @@ This looks unused
                 catch (e) {
                     this.reset.fPwdNew.value            = '';
                     this.reset.fPwdCnf.value            = '';
-                    this.passwordAuthMessage (e.splash[0]);
+                    if ('splash' in e) {
+                        this.passwordAuthMessage (e.splash[0]);
+                    }
+                    else {
+                        console.log (e.message);
+                        this.passwordAuthMessage ('Password reset process failed');
+                    }
                     return;
                 }
                 this.reset.password.style.display       = 'none';
@@ -3193,6 +3229,32 @@ This looks unused
             fnon,
             1200
         );
+    }
+
+    async passwordResetAllow ( ) {
+        var request, response;
+        request     = {
+            "email" : this.access.email.value
+           ,"method": {
+                "vendor": "whitelamp-uk"
+               ,"package": "hpapi-utility"
+               ,"class": "\\Hpapi\\Utility"
+               ,"method": "ping"
+               ,"arguments": [
+                ]
+            }
+        }
+        try {
+            response = await this.request (request,true);
+        }
+        catch (e) {
+            return true;
+        }
+        if (response.pwdSelfManage) {
+            return true;
+        }
+        throw new Error ('Password self-management not permitted for this user');
+        return false;
     }
 
     async placeChange (evtOrTarget) {

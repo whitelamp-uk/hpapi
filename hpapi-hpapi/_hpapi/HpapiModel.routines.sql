@@ -22,6 +22,7 @@ BEGIN
    ,`hpapi_user`.`remote_addr_pattern` AS `userRemoteAddrPattern`
    ,`hpapi_user`.`password_hash` AS `passwordHash`
    ,UNIX_TIMESTAMP(`hpapi_user`.`password_expires`) AS `passwordExpires`
+   ,UNIX_TIMESTAMP(`hpapi_user`.`password_self_manage_until`) AS `passwordSelfManageUntil`
    ,`hpapi_user`.`token`
    ,UNIX_TIMESTAMP(`hpapi_user`.`token_expires`) AS `tokenExpires`
    ,INET6_NTOA(`hpapi_user`.`token_remote_addr`) AS `tokenRemoteAddr`

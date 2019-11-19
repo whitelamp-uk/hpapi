@@ -210,9 +210,9 @@ define ( 'HPAPI_DG_TOKEN_EXPIRY',           'Token expired'                     
 define ( 'HPAPI_DG_REM_ADDR',               'Remote address mismatch'                                                               );
 define ( 'HPAPI_DG_TOKEN_EXTEND',           'Token extend error'                                                                    );
 define ( 'HPAPI_DG_TOKEN',                  'Token error'                                                                           );
-
 define ( 'HPAPI_DG_ACCESS_GRP',             'Privilege user group mismatch'                                                         );
 define ( 'HPAPI_DG_ACCESS_GRP_REM_ADDR',    'User group remote address mismatch'                                                    );
+define ( 'HPAPI_DG_RESET',                  'User cannot self-manage password'                                                      );
 
 
 

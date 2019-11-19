@@ -241,6 +241,9 @@ class Hpapi {
             if (!$g['passwordSelfManage']) {
                 $this->object->response->pwdSelfManage = false;
             }
+            if ($g['passwordSelfManageUntil']>$this->timestamp) {
+                $this->object->response->pwdSelfManage = true;
+            }
             if (1*$g['passwordScoreMinimum']>$this->object->response->pwdScoreMinimum) {
                 $this->object->response->pwdScoreMinimum = 1 * $g['passwordScoreMinimum'];
             }
@@ -278,6 +281,7 @@ class Hpapi {
             $this->end ();
         }
         if (!$auth['active']) {
+            $this->object->response->pwdSelfManage  = false;
             $this->diagnostic (HPAPI_DG_USER_ACTIVE);
             $this->object->response->authStatus     = HPAPI_STR_AUTH_ACTIVE;
             $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
