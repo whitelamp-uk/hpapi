@@ -124,6 +124,8 @@ export class Generic extends Hpapi {
         this.loggedOut      = 1;
         this.cookieWrite ('lo',1);
         this.tokenPurge ();
+        this.restricted.innerHTML = '';
+        this.currentScreen = null;
         this.init ();
     }
 
@@ -4257,7 +4259,7 @@ This looks unused
         return this.cookieRead ('tk');
     }
 
-    tokenPurge (token,timestamp) {
+    tokenPurge ( ) {
         console.log ('Hpapi purging token');
         this.cookieWrite ('tk','');
         this.cookieWrite ('ex',0);
@@ -4279,7 +4281,7 @@ This looks unused
     var then                = 1000 * this.cookieRead('ex');
     var ms                  = then - now;
         console.log ('tokenTOSet(): '+ms+'ms');
-        this.tokenTO = setTimeout (this.tokenPurge.bind(this),ms);
+        this.tokenTO = setTimeout (this.authForget.bind(this),ms);
     }
 
     tokenTOClear ( ) {
