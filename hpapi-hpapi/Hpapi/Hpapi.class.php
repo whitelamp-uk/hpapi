@@ -154,6 +154,9 @@ class Hpapi {
     }
 
     protected function access ($privilege,$key) {
+        if (HPAPI_DANGER_MODE) {
+            return $privilege;
+        }
         $method                                     = $this->object->method->vendor;
         $method                                    .= '::';
         $method                                    .= $this->object->method->package;
@@ -504,28 +507,38 @@ class Hpapi {
             throw new \Exception (HPAPI_STR_DB_SPR_NO_SPR);
             return false;
         }
-        if (!array_key_exists($spr,$this->privilege['sprs'])) {
-            throw new \Exception (HPAPI_STR_DB_SPR_AVAIL.': `'.$spr.'`');
-            return false;
-        }
-        if (count($arguments)!=count($this->privilege['sprs'][$spr]['arguments'])) {
-            $this->diagnostic (HPAPI_STR_DB_SPR_ARGS.': `'.$spr.'`');
-            throw new \Exception (HPAPI_STR_DB_SPR_ARGS.': `'.$spr.'`');
-            return false;
-        }
-        foreach ($this->privilege['sprs'][$spr]['arguments'] AS $count=>$arg) {
-            try {
-                $this->validation ($spr,$count,$arguments[$count-1],$arg);
-            }
-            catch (\Exception $e) {
-                $this->diagnostic (HPAPI_STR_DB_SPR_ARG_VAL.': `'.$spr.'`');
-                throw new \Exception (HPAPI_STR_DB_SPR_ARG_VAL.': '.$e->getMessage());
+        if (HPAPI_DANGER_MODE) {
+            if (!property_exists($this->object,'sprModel')) {
+                throw new \Exception (HPAPI_STR_DB_SPR_DANGER_MODEL);
                 return false;
             }
-            $count++;
+            $model          = $this->object->sprModel;
+        }
+        else {
+            if (!array_key_exists($spr,$this->privilege['sprs'])) {
+                throw new \Exception (HPAPI_STR_DB_SPR_AVAIL.': `'.$spr.'`');
+                return false;
+            }
+            if (count($arguments)!=count($this->privilege['sprs'][$spr]['arguments'])) {
+                $this->diagnostic (HPAPI_STR_DB_SPR_ARGS.': `'.$spr.'`');
+                throw new \Exception (HPAPI_STR_DB_SPR_ARGS.': `'.$spr.'`');
+                return false;
+            }
+            foreach ($this->privilege['sprs'][$spr]['arguments'] AS $count=>$arg) {
+                try {
+                    $this->validation ($spr,$count,$arguments[$count-1],$arg);
+                }
+                catch (\Exception $e) {
+                    $this->diagnostic (HPAPI_STR_DB_SPR_ARG_VAL.': `'.$spr.'`');
+                    throw new \Exception (HPAPI_STR_DB_SPR_ARG_VAL.': '.$e->getMessage());
+                    return false;
+                }
+                $count++;
+            }
+            $model          = $this->privilege['sprs'][$spr]['model'];
         }
         try {
-            $db             = new \Hpapi\Db ($this,$this->models->{$this->privilege['sprs'][$spr]['model']});
+            $db             = new \Hpapi\Db ($this,$this->models->$model);
         }
         catch (\Exception $e) {
             throw new \Exception ($e->getMessage());
@@ -724,20 +737,22 @@ class Hpapi {
             $this->object->response->error          = HPAPI_STR_METHOD_ARGS_ARR;
             $this->end ();
         }
-        if (count($m->arguments)!=count($this->privilege['arguments'])) {
-              $this->object->response->error        = HPAPI_STR_DB_MTD_ARGS;
-              $this->end ();
-        }
-        foreach ($this->privilege['arguments'] AS $count=>$arg) {
-            try {
-                $this->validation ($m->method,$count,$m->arguments[$count-1],$arg);
+        if (!HPAPI_DANGER_MODE) {
+            if (count($m->arguments)!=count($this->privilege['arguments'])) {
+                  $this->object->response->error        = HPAPI_STR_DB_MTD_ARGS;
+                  $this->end ();
             }
-            catch (\Exception $e) {
-                $this->diagnostic ($e->getMessage());
-                $this->object->response->error      = HPAPI_STR_DB_MTD_ARG_VAL;
-                $this->end ();
+            foreach ($this->privilege['arguments'] AS $count=>$arg) {
+                try {
+                    $this->validation ($m->method,$count,$m->arguments[$count-1],$arg);
+                }
+                catch (\Exception $e) {
+                    $this->diagnostic ($e->getMessage());
+                    $this->object->response->error      = HPAPI_STR_DB_MTD_ARG_VAL;
+                    $this->end ();
+                }
+                $count++;
             }
-            $count++;
         }
         foreach ($this->definitionPath($package_path) as $package_dfn) {
             try {

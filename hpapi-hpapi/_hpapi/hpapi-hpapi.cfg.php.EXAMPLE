@@ -1,9 +1,14 @@
 <?php
 
+// UNIT TESTING - DO NOT RESTRICT WITH hpapi_run OR hpapi_call; REQUIRES sprModel IN REQUEST
+define ( 'HPAPI_DANGER_MODE',               false                                                                                   );
+
+
 // DIAGNOSTIC
 define ( 'HPAPI_DIAGNOSTIC_EMAIL_REGEXP',   '^(sysadmin|orgadmin|test\.1)@no\.where$'                                               );
 // Under normal circumstances this should be null. It is an argument to new \DateTime() to fake data time eg. '@1534487400'
 define ( 'HPAPI_DIAGNOSTIC_FAKE_NOW',       null                                                                                    );
+
 
 // AUDIT
 // Use this column name (if it exists) to store the user ID
