@@ -34,5 +34,28 @@ BEGIN
 END$$
 
 
+DELIMITER $$
+DROP FUNCTION IF EXISTS `hpapiSplitNth`$$
+CREATE FUNCTION `hpapiSplitNth` (
+  joinedString varchar(255)
+ ,splitter varchar(16)
+ ,positionIndex int(4)
+) RETURNS varchar(255) CHARSET latin1 DETERMINISTIC
+BEGIN
+  RETURN REPLACE(
+    SUBSTRING(
+      SUBSTRING_INDEX(joinedString,splitter,positionIndex)
+     ,LENGTH(
+        SUBSTRING_INDEX(joinedString,splitter,positionIndex-1)
+      ) + 1
+    )
+   ,splitter
+   ,''
+  )
+  ;
+END$$
+
+
+
 DELIMITER ;
 
