@@ -1570,7 +1570,6 @@ This looks unused
             window.addEventListener ('popstate',this.historyHandle.bind(this));
         }
         this.hotkeyListen ();
-        this.queueInit ();
         this.contexts                   = {};
     var cm                              = this.qs (document,'#gui-context');
         if (cm) {
@@ -4136,6 +4135,7 @@ This looks unused
     }
 
     storageRead (key) {
+console.log ('storageRead(): '+key);
         return JSON.parse (this.storage.getItem(this.saveKey('persistent-'+key)));
     }
 

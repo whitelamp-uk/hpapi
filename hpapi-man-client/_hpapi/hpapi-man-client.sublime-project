@@ -1,0 +1,38 @@
+{
+	"folders":
+	[
+		{
+			"file_include_patterns":
+			[
+				"*hpapi-man*"
+			],
+			"path": "/home/think/snowy/home/mark/hpapi/_hpapi-config/whitelamp-uk"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				".git*",
+				"data.hbs",
+				"lock.hbs",
+				"login.hbs",
+				"pinpad.hbs",
+				"splash.hbs"
+			],
+			"file_include_patterns":
+			[
+				"*.EXAMPLE",
+				"*.md",
+				"*.html",
+				"style.css",
+				"index.js",
+				"plugins.js",
+				"global.js",
+				"hpapi-man-enforcer.js",
+				"hpapi-man-gui.js",
+				"hpapi-man.js",
+				"*.hbs"
+			],
+			"path": "/home/think/snowy/home/mark/hpapi/whitelamp-uk/hpapi-man-client"
+		}
+	]
+}

@@ -142,6 +142,7 @@ define ( 'HPAPI_STR_DB_SPR_ARG_VAL',        '204 500 Invalid stored procedure ar
 define ( 'HPAPI_STR_DB_SPR_ARG_TYPE',       '205 500 Illegal data type for stored procedure argument'                               );
 define ( 'HPAPI_STR_DB_SPR_ERROR',          '206 500 Stored procedure execution error'                                              );
 define ( 'HPAPI_STR_DB_SPR_DANGER_MODEL',   '207 400 Danger mode requires request property "sprModel"'                              );
+define ( 'HPAPI_STR_DB_CALL',               '208 500 Stored procedure failed'                                                       );
 
 // Inserting data
 define ( 'HPAPI_STR_DB_INSERT_COLS',        '211 400 No columns were given'                                                         );

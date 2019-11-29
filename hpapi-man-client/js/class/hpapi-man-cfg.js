@@ -1,0 +1,1 @@
+../../../../_hpapi-config/whitelamp-uk/hpapi-man-cfg.js

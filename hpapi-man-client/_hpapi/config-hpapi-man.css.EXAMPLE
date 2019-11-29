@@ -1,0 +1,11 @@
+
+/* Overrides global-client/css/config-generic.css */
+
+
+/* Variables */
+
+:root {
+    --color-background-formsection-preamble: rgb(255,255,255);
+    --url-logo-app: url('../media/logo-hpapi-man.png');
+}
+

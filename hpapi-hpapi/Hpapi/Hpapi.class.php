@@ -547,14 +547,14 @@ class Hpapi {
         try {
             $return         = $db->call ($spr,...$arguments);
             $db->close ();
+            return $return;
         }
         catch (\Exception $e) {
+            $db->close ();
             $this->diagnostic ($e->getMessage());
-            throw new \Exception ($e->getMessage());
+            throw new \Exception (HPAPI_STR_DB_CALL);
             return false;
         }
-        $db->close ();
-        return $return;
     }
 
     public function decodePost ( ) {

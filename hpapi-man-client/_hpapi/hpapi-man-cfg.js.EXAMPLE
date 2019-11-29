@@ -1,0 +1,69 @@
+
+/* Copyright 2019 Whitelamp  http://www.whitelamp.com/ */
+
+export class HpapiManCfg {
+
+    constructor ( ) {
+        this.connectTO              = 10;           // seconds
+        this.contextMenu            = 'context-menu';
+        this.diagnostic             = {
+            data                    : true
+        };
+        this.enforceLocalStorage    = false;
+        this.environment            = "development";
+        this.forceTemplateLoad      = true;
+        this.history                = {
+            sessionDuration         : 7200,         // seconds to flag screens
+            storageDuration         : 604800,       // seconds to remember states
+            storageLength           : 25            // items per group
+        };
+        this.inBodyLoggerId         = 'logger';
+        this.mediaUrl               = '/media';
+        this.navigatorOptions       = {
+            lock                    : '#gui-splash',
+            burger                  : '#gui-menu',
+            findadd                 : null
+        };
+        this.papaparse              = {
+            export                  : {
+                quotes              : false,        // or array of booleans
+                quoteChar           : '"',
+                escapeChar          : '"',
+                delimiter           : ",",
+                header              : true,
+                newline             : "\r\n",
+                skipEmptyLines      : false,        // or 'greedy',
+                columns             : null          // or array of strings
+            },
+            import                  : {
+                delimiter           : "",           // auto-detect
+                newline             : "",           // auto-detect
+                quoteChar           : '"',
+                escapeChar          : '"',
+                header              : true,
+                transformHeader     : undefined,
+                dynamicTyping       : true,
+                preview             : 0,
+                encoding            : "",
+                comments            : false,
+                skipEmptyLines      : true,
+                fastMode            : undefined,    // only works if no fields are quoted
+                error               : undefined,    // callback for FileReader errors
+                download            : false,        // parse argument is a string at this URL
+                withCredentials     : undefined,    // XMLHttpRequest.withCredentials
+                delimitersToGuess   : [',', '\t', '|', ';', Papa.RECORD_SEP, Papa.UNIT_SEP],
+                worker              : false,        // parse asynchronously
+                beforeFirstChunk    : undefined,    // streaming callback function before first chunk
+                chunk               : undefined,    // EITHER: streaming callback function for every chunk
+                step                : undefined,    // OR:     streaming callback function for every row
+                transform           : undefined,    // function to transform each value
+                complete            : undefined     // worker callback function
+            }
+        };
+        this.screenTO               = 3600;         // seconds
+        this.templateTO             = 4;            // seconds
+        this.url                    = 'https://dev.burdenandburden.co.uk/some/api/';
+    }
+
+}
+

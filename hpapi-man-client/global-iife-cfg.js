@@ -1,0 +1,1 @@
+../generic-client/js/iife/global-iife-cfg.js

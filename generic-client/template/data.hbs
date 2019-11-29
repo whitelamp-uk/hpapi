@@ -1,0 +1,51 @@
+<p>Passed parameters:</p>
+{{#each parameters}}
+  <div>{{@key}} = {{this}}</div>
+{{/each}}
+
+<p>Current data:</p>
+<pre>
+{{#each this}}
+    {{@key}} => {{this}}
+{{#hasProperties this}}
+{{#each this}}
+        {{@key}} => {{this}}
+{{#hasProperties this}}
+{{#each this}}
+            {{@key}} => {{this}}
+{{#hasProperties this}}
+{{#each this}}
+                {{@key}} => {{this}}
+{{#hasProperties this}}
+{{#each this}}
+                    {{@key}} => {{this}}
+{{#hasProperties this}}
+{{#each this}}
+                        {{@key}} => {{this}}
+{{#hasProperties this}}
+{{#each this}}
+                            {{@key}} => {{this}}
+{{#hasProperties this}}
+{{#each this}}
+                                {{@key}} => {{this}}
+{{#hasProperties this}}
+{{#each this}}
+                                    {{@key}} => {{this}}
+{{/each}}
+{{/hasProperties}}
+{{/each}}
+{{/hasProperties}}
+{{/each}}
+{{/hasProperties}}
+{{/each}}
+{{/hasProperties}}
+{{/each}}
+{{/hasProperties}}
+{{/each}}
+{{/hasProperties}}
+{{/each}}
+{{/hasProperties}}
+{{/each}}
+{{/hasProperties}}
+{{/each}}
+</pre>
