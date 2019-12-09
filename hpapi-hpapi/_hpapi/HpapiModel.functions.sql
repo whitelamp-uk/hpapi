@@ -56,6 +56,44 @@ BEGIN
 END$$
 
 
+DELIMITER $$
+DROP FUNCTION IF EXISTS `hpapiUUID`$$
+CREATE FUNCTION `hpapiUUID` (
+) RETURNS binary(16) DETERMINISTIC
+BEGIN
+  RETURN UNHEX(
+    REPLACE(UUID(),'-','')
+  );
+END$$
+
+
+DELIMITER $$
+DROP FUNCTION IF EXISTS `hpapiUUIDStandard`$$
+CREATE FUNCTION `hpapiUUIDStandard` (
+  uuidBinary binary(16)
+) RETURNS char(36) DETERMINISTIC
+BEGIN
+  SET @Hexed = HEX(uuidBinary);
+  RETURN CONCAT_WS(
+    '-'
+   ,LOWER(SUBSTR(@Hexed,1,8))
+   ,LOWER(SUBSTR(@Hexed,9,4))
+   ,LOWER(SUBSTR(@Hexed,13,4))
+   ,LOWER(SUBSTR(@Hexed,17,4))
+   ,LOWER(SUBSTR(@Hexed,21,12))
+  );
+END$$
+
+
+DELIMITER $$
+DROP FUNCTION IF EXISTS `hpapiUUIDString`$$
+CREATE FUNCTION `hpapiUUIDString` (
+  uuidBinary binary(16)
+) RETURNS char(32) DETERMINISTIC
+BEGIN
+  RETURN HEX(uuidBinary);
+END$$
+
 
 DELIMITER ;
 
