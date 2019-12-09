@@ -19,14 +19,14 @@ CREATE TABLE IF NOT EXISTS `hpapi_man` (
 
 
 CREATE TABLE IF NOT EXISTS `hpapi_mancommit` (
-  `deleted` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `deleted` tinyint(1) unsigned NOT NULL DEFAULT 0,
   `manual_id` int(11) unsigned NOT NULL,
   `vendor` varchar(64) CHARACTER SET ascii NOT NULL,
   `package` varchar(64) CHARACTER SET ascii NOT NULL,
   `class` varchar(64) CHARACTER SET ascii NOT NULL,
   `method` varchar(64) CHARACTER SET ascii NOT NULL,
   `head_id` int(11) unsigned NOT NULL,
-  `reference` varchar(64) CHARACTER SET ascii DEFAULT NULL,
+  `reference` binary(16) DEFAULT NULL,
   `markdown` text,
   `created` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
@@ -52,13 +52,14 @@ CREATE TABLE IF NOT EXISTS `hpapi_manhead` (
 
 
 CREATE TABLE IF NOT EXISTS `hpapi_manpage` (
-  `deleted` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `deleted` tinyint(1) unsigned NOT NULL DEFAULT 0,
   `manual_id` int(11) unsigned NOT NULL,
   `vendor` varchar(64) CHARACTER SET ascii NOT NULL,
   `package` varchar(64) CHARACTER SET ascii NOT NULL,
   `class` varchar(64) CHARACTER SET ascii NOT NULL,
   `method` varchar(64) CHARACTER SET ascii NOT NULL,
-  `reference` varchar(64) CHARACTER SET ascii DEFAULT NULL,
+  `reference` binary(16) DEFAULT NULL,
+  `overrides_base_class` int(1) unsigned NOT NULL DEFAULT 0,
   `api_usergroups` text CHARACTER SET ascii NOT NULL,
   `created` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,

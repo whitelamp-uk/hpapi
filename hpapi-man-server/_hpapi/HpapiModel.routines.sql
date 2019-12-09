@@ -8,28 +8,33 @@ SET time_zone = '+00:00';
 DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiManBrowse`$$
 CREATE PROCEDURE `hpapiManBrowse`(
-  IN        `mid` INT(11) UNSIGNED
- ,IN        `v` VARCHAR(64) CHARSET ascii
- ,IN        `p` VARCHAR(64) CHARSET ascii
- ,IN        `c` VARCHAR(64) CHARSET ascii
- ,IN        `m` VARCHAR(64) CHARSET ascii
+  IN        `ofs` INT(11) unsigned
  ,IN        `lim` INT(11) unsigned
  ,IN        `apiOnly` TINYINT(1) unsigned
  ,IN        `includeDeleted` TINYINT(1) unsigned
  ,IN        `includeDrafts` TINYINT(1) unsigned
- ,IN        `headId` INT(11) UNSIGNED
+ ,IN        `hId` INT(11) UNSIGNED
+ ,IN        `mId` INT(11) UNSIGNED
+ ,IN        `v` VARCHAR(64) CHARSET ascii
+ ,IN        `p` VARCHAR(64) CHARSET ascii
+ ,IN        `c` VARCHAR(64) CHARSET ascii
+ ,IN        `m` VARCHAR(64) CHARSET ascii
 )
 BEGIN
   SELECT
-    `p`.`deleted` AS `methodGone`
+    `p`.`reference` AS `pageReference`
+   ,`p`.`deleted` AS `methodGone`
    ,`p`.`manual_id` AS `manualId`
    ,`p`.`vendor`
    ,`p`.`package`
    ,`p`.`class`
    ,`p`.`method`
+   ,`p`.`overrides_base_class` AS `overridesBaseClass`
    ,`p`.`api_usergroups` AS `apiUsergroups`
    ,`p`.`created`
    ,`p`.`updated`
+   ,`c2`.`head_id` AS `headId`
+   ,`c2`.`reference` AS `versionReference`
    ,`c2`.`markdown`
   FROM `hpapi_manpage` AS `p`
   LEFT JOIN (
@@ -41,24 +46,24 @@ BEGIN
      ,`method`
      ,MAX(`head_id`) AS `head_id`
     FROM `hpapi_mancommit`
-    WHERE headId IS NULL
-       OR `head_id`<=headId
+    WHERE hId IS NULL
+       OR `head_id`<=hId
     GROUP BY `manual_id`,`vendor`,`package`,`class`,`method`
   ) AS `c1`
     USING (`manual_id`,`vendor`,`package`,`class`,`method`)
   LEFT JOIN `hpapi_mancommit` AS `c2`
     USING (`manual_id`,`vendor`,`package`,`class`,`method`,`head_id`)
-  WHERE `manual_id`=mid
+  WHERE `manual_id`=mId
     AND ( `p`.`deleted` =0  OR includeDeleted>0 )
     AND ( `p`.`vendor`  =v  OR (v IS NULL AND `p`.`vendor`  !='') )
     AND ( `p`.`package` =p  OR (p IS NULL AND `p`.`package` !='') )
     AND ( `p`.`class`   =c  OR (c IS NULL AND `p`.`class`   !='') )
     AND ( `p`.`method`  =m  OR (m IS NULL AND `p`.`method`  !='') )
     AND ( LENGTH(`p`.`api_usergroups`)>0 OR apiOnly=0 )
-    AND ( `c`.`head_id` IS NOT NULL OR includeDrafts>0 )
+    AND ( `c2`.`head_id` IS NOT NULL OR includeDrafts>0 )
   GROUP BY `vendor`,`package`,`class`,`method`
   ORDER BY `vendor`,`package`,`class`,`method`
-  LIMIT 0,lim
+  LIMIT ofs,lim
   ;
 END$$
 
@@ -73,7 +78,7 @@ BEGIN
     *
   FROM `hpapi_man`
   WHERE mid IS NULL
-     OR `manual_id`=mid
+     OR `id`=mid
   ORDER BY `id`
   ;
 END$$
@@ -93,6 +98,7 @@ BEGIN
    ,`p`.`package`
    ,`p`.`class`
    ,`p`.`method`
+   ,`p`.`overrides_base_class` AS `overridesBaseClass`
    ,`p`.`api_usergroups` AS `apiUsergroups`
    ,`p`.`created`
    ,`p`.`updated`
@@ -116,23 +122,25 @@ CREATE PROCEDURE `hpapiManPageInsertIgnore`(
  ,IN        `p` VARCHAR(64) CHARSET ascii
  ,IN        `c` VARCHAR(64) CHARSET ascii
  ,IN        `m` VARCHAR(64) CHARSET ascii
- ,IN        `apiUsers` TEXT CHARSET ascii
+ ,IN        `overridesBaseClass` TINYINT(1) UNSIGNED
+ ,IN        `apiUsergroups` TEXT CHARSET ascii
 )
 BEGIN
-  SET @ref = UUID();
+  SET @ref = hpapiUUID();
   INSERT IGNORE INTO `hpapi_manpage`
     SET
-     ,`manual_id`=mid
+      `manual_id`=mid
      ,`vendor`=v
      ,`package`=p
      ,`class`=c
      ,`method`=m
      ,`reference`=@ref
-     ,`api_users`=apiUsers
   ;
   UPDATE `hpapi_manpage`
     SET
       `deleted`=0
+     ,`overrides_base_class`=overridesBaseClass
+     ,`api_usergroups`=apiUsergroups
   WHERE `manual_id`=mid
     AND `vendor`=v
     AND `package`=p
@@ -147,23 +155,9 @@ BEGIN
        ,`package`=p
        ,`class`=c
        ,`method`=m
-       ,`reference`=UUID()
+       ,`reference`=hpapiUUID()
   ;
   END IF;
-END$$
-
-
-DELIMITER $$
-DROP PROCEDURE IF EXISTS `hpapiManPagesReset`$$
-CREATE PROCEDURE `hpapiManPagesReset`(
-  IN        `mid` INT(11) UNSIGNED
-)
-BEGIN
-  UPDATE `hpapi_manpage`
-    SET
-      `deleted`=1
-  WHERE `manual_id`=mid
-  ;
 END$$
 
 
@@ -180,6 +174,7 @@ BEGIN
    ,`p`.`package`
    ,`p`.`class`
    ,`p`.`method`
+   ,`p`.`overrides_base_class` AS `overridesBaseClass`
    ,`p`.`api_usergroups` AS `apiUsergroups`
    ,`p`.`created`
    ,`p`.`updated`
@@ -223,7 +218,7 @@ END$$
 DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiManVersionInsert`$$
 CREATE PROCEDURE `hpapiManVersionInsert`(
- ,IN        `mid` int(11) unsigned
+  IN        `mid` int(11) unsigned
  ,IN        `v` varchar(64) CHARSET ascii
  ,IN        `p` varchar(64) CHARSET ascii
  ,IN        `c` varchar(64) CHARSET ascii
@@ -231,7 +226,7 @@ CREATE PROCEDURE `hpapiManVersionInsert`(
  ,IN        `md` text CHARSET utf8
 )
 BEGIN
-  SET @ref = UUID();
+  SET @ref = hpapiUUID();
   INSERT INTO `hpapi_mancommit`
   SET
     `manual_id`=mid

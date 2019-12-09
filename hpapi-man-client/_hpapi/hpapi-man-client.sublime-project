@@ -2,13 +2,6 @@
 	"folders":
 	[
 		{
-			"file_include_patterns":
-			[
-				"*hpapi-man*"
-			],
-			"path": "/home/think/snowy/home/mark/hpapi/_hpapi-config/whitelamp-uk"
-		},
-		{
 			"file_exclude_patterns":
 			[
 				".git*",
@@ -33,6 +26,13 @@
 				"*.hbs"
 			],
 			"path": "/home/think/snowy/home/mark/hpapi/whitelamp-uk/hpapi-man-client"
+		},
+		{
+			"file_include_patterns":
+			[
+				"*hpapi-man*"
+			],
+			"path": "/home/think/snowy/home/mark/hpapi/_hpapi-config/whitelamp-uk"
 		}
 	]
 }

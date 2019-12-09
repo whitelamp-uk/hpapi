@@ -1,0 +1,13 @@
+{
+    "email" : "development@burdenandburden.co.uk",
+    "password" : "password",
+    "method": {
+        "vendor": "whitelamp-uk",
+        "package": "hpapi-man-server",
+        "class": "\\Hpapi\\Man",
+        "method": "reflectSystemAsManual",
+        "arguments": [
+            1
+        ]
+    }
+}

@@ -1,5 +1,9 @@
 <?php
 
+// Browsing
+define ( 'HPAPIMAN_OPT_DEFAULT_LIMIT',  25                                                              );
+
+
 // Status messages
 define ( 'HPAPIMAN_STR_MAN_REF',        '303 400 Manual reference not found'                            );
 define ( 'HPAPIMAN_STR_PAGE_REF',       '301 400 Manual page reference not found'                       );
