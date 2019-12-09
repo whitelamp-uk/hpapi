@@ -4,10 +4,8 @@
 SET NAMES utf8;
 SET time_zone = '+00:00';
 
+
 DELIMITER $$
-
-
-
 DROP PROCEDURE IF EXISTS `hpapiMyMethods`$$
 CREATE PROCEDURE `hpapiMyMethods`(
   IN        `userId` INT(11) UNSIGNED
@@ -32,6 +30,7 @@ BEGIN
 END$$
 
 
+DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiMyUsergroups`$$
 CREATE PROCEDURE `hpapiMyUsergroups`(
   IN        `userId` INT(11) UNSIGNED
@@ -60,12 +59,13 @@ BEGIN
 END$$
 
 
-DROP PROCEDURE IF EXISTS `hpapiUUID`$$
-CREATE PROCEDURE `hpapiUUID`(
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `hpapiUUIDGenerate`$$
+CREATE PROCEDURE `hpapiUUIDGenerate`(
 )
 BEGIN
   SELECT
-    UUID() AS `uuid`
+    hpapiUUIDStandard(hpapiUUID()) AS `uuid`
   ;
 END$$
 

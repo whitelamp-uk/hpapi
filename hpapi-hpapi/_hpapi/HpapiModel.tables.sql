@@ -221,7 +221,7 @@ CREATE TABLE IF NOT EXISTS `hpapi_user` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `active` int(1) unsigned NOT NULL DEFAULT '1',
   `verified` int(1) unsigned NOT NULL DEFAULT '0',
-  `uuid` varchar(64) CHARACTER SET ascii DEFAULT NULL,
+  `uuid` binary(16) DEFAULT NULL,
   `key` varchar(64) CHARACTER SET ascii DEFAULT NULL,
   `key_expired` int(1) unsigned NOT NULL DEFAULT '0',
   `key_release` int(1) unsigned NOT NULL DEFAULT '0',

@@ -112,7 +112,7 @@ class Utility {
     public function keyRelease ($userId) {
         try {
             $uuid                           = $this->hpapi->dbCall (
-                'hpapiUUID'
+                'hpapiUUIDGenerate'
             );
         }
         catch (\Exception $e) {
@@ -223,7 +223,7 @@ class Utility {
     public function uuid ( ) {
         try {
             $uuid                               = $this->hpapi->dbCall (
-                'hpapiUUID'
+                'hpapiUUIDGenerate'
             );
         }
         catch (\Exception $e) {

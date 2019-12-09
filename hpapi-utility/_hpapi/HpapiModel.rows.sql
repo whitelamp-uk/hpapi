@@ -44,7 +44,7 @@ INSERT IGNORE INTO `hpapi_spr` (`model`, `spr`, `notes`) VALUES
 ('HpapiModel',	'hpapiMyMethods',	'List of methods for a user UUID (authenticated or not).'),
 ('HpapiModel',	'hpapiMyUsergroups',	'Usergroups for a given user ID.'),
 ('HpapiModel',	'hpapiPasswordEmpty',	'Remove password hash for a given user ID'),
-('HpapiModel',	'hpapiUUID',	'Return a new UUID');
+('HpapiModel',	'hpapiUUIDGenerate',	'Return a new UUID v4');
 
 INSERT IGNORE INTO `hpapi_sprarg` (`model`, `spr`, `argument`, `name`, `empty_allowed`, `pattern`) VALUES
 ('HpapiModel',	'hpapiKeyrelease',	1,	'User ID',	0,	'int-11-positive'),
@@ -61,7 +61,7 @@ INSERT IGNORE INTO `hpapi_call` (`model`, `spr`, `vendor`, `package`, `class`, `
 ('HpapiModel',	'hpapiMyMethods',	'whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'methods'),
 ('HpapiModel',	'hpapiMyUsergroups',	'whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'usergroups'),
 ('HpapiModel',	'hpapiPasswordEmpty',	'whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'passwordClear'),
-('HpapiModel',	'hpapiUUID',	'whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'keyRelease'),
-('HpapiModel',	'hpapiUUID',	'whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'uuid');
+('HpapiModel',	'hpapiUUIDGenerate',	'whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'keyRelease'),
+('HpapiModel',	'hpapiUUIDGenerate',	'whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'uuid');
 
 
