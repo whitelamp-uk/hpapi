@@ -41,6 +41,7 @@ INSERT IGNORE INTO `hpapi_methodarg` (`vendor`, `package`, `class`, `method`, `a
 
 INSERT IGNORE INTO `hpapi_spr` (`model`, `spr`, `notes`) VALUES
 ('HpapiModel',	'hpapiKeyrelease',	'Change key and release until expiry time'),
+('HpapiModel',	'hpapiList',	'Lists (paginated) a given table by reference and legend columns'),
 ('HpapiModel',	'hpapiMyMethods',	'List of methods for a user UUID (authenticated or not).'),
 ('HpapiModel',	'hpapiMyUsergroups',	'Usergroups for a given user ID.'),
 ('HpapiModel',	'hpapiPasswordEmpty',	'Remove password hash for a given user ID'),
@@ -50,6 +51,12 @@ INSERT IGNORE INTO `hpapi_sprarg` (`model`, `spr`, `argument`, `name`, `empty_al
 ('HpapiModel',	'hpapiKeyrelease',	1,	'User ID',	0,	'int-11-positive'),
 ('HpapiModel',	'hpapiKeyrelease',	2,	'Key',	0,	'varchar-64'),
 ('HpapiModel',	'hpapiKeyrelease',	3,	'Until timestamp',	0,	'int-11-positive'),
+('HpapiModel',	'hpapiList',	1,	'Reference column',	0,	'varchar-64'),
+('HpapiModel',	'hpapiList',	2,	'Legend column',	0,	'varchar-64'),
+('HpapiModel',	'hpapiList',	3,	'Database name',	0,	'varchar-64'),
+('HpapiModel',	'hpapiList',	4,	'Table name',	0,	'varchar-64'),
+('HpapiModel',	'hpapiList',	5,	'Offset',	0,	'int-11-positive'),
+('HpapiModel',	'hpapiList',	6,	'Limit',	0,	'int-11-positive'),
 ('HpapiModel',	'hpapiMyMethods',	1,	'User ID',	0,	'int-11-positive'),
 ('HpapiModel',	'hpapiMyMethods',	2,	'Fully authenticated?',	0,	'db-boolean'),
 ('HpapiModel',	'hpapiMyUsergroups',	1,	'User ID',	0,	'int-11-positive'),
