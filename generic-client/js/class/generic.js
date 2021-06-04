@@ -100,13 +100,13 @@ export class Generic extends Hpapi {
             }
             else {
                 this.log ('authCheck(): hpapi status = '+status[0]);
-                this.screenLock ();
+                this.screenLock (this.cfg.label.login);
                 this.authFail (status[0]);
             }
         }
         catch (e) {
             this.log ('authCheck(): '+e.message);
-            this.screenLock ();
+            this.screenLock (this.cfg.label.login);
             this.authFail ();
         }
     }
@@ -120,13 +120,18 @@ export class Generic extends Hpapi {
     }
 
     async authForget ( ) {
-        this.qs(document,'#gui-unlock').innerHTML = 'Log in';
+        this.qs(document,'#gui-unlock').innerHTML = this.cfg.label.login;
         this.loggedOut      = 1;
         this.cookieWrite ('lo',1);
         this.tokenPurge ();
         this.restricted.innerHTML = '';
         this.currentScreen = null;
         this.init ();
+    }
+
+    async authForgetLogout ( ) {
+        await this.authForget ();
+        this.screenLock (this.cfg.label.login);
     }
 
     authOk ( ) {
@@ -2243,13 +2248,13 @@ This looks unused
 
     lockLock (evt) {
         this.lockClose (evt);
-        this.screenLock ();
+        this.screenLock (this.cfg.label.unlock);
     }
 
     lockLogOut (evt) {
         this.authForget ();
         this.lockClose (evt);
-        this.screenLock ();
+        this.screenLock (this.cfg.label.login);
     }
 
     logClear ( ) {
@@ -2582,10 +2587,14 @@ This looks unused
 
     async navigatorsElement (templateName) {
         // Variables
-        var blk, block, button, crumbs, i, nav, navs, opts, item, s, template, title;
+        var blk, block, button, crumbs, doctitle, i, nav, navs, opts, item, s, template, title;
         // Cross-screen interface controls
         nav                         = document.createElement ('nav');
         nav.classList.add ('navigator');
+        doctitle                    = this.qs (document,'title');
+        if (doctitle) {
+            nav.setAttribute ('title',doctitle.getAttribute('title'));
+        }
         opts                        = Object.keys (this.cfg.navigatorOptions);
         for (i=0;opts[i];i++) {
             item                    = document.createElement ('a');
@@ -3528,7 +3537,7 @@ This looks unused
         var response, splash, status;
         if (!anon && !('password' in request)) {
             if (this.tokenExpired()) {
-                this.screenLock ();
+                this.screenLock (this.cfg.label.login);
                 this.authFail ();
                 this.queueStop ();
                 this.log ('Screen locked, queuer stopped; request has no password, token expired');
@@ -3565,7 +3574,7 @@ This looks unused
                         this.passwordExpired = true;
                     }
                     console.log ('request(): authentication failure - authStatus='+e.authStatus);
-                    this.screenLock ();
+                    this.screenLock (this.cfg.label.login);
                 }
             }
             throw e;
@@ -3641,14 +3650,14 @@ This looks unused
     }
 
     screenLock (label) {
-        console.log ('super.screenLock()');
-        if (label) {
+        console.log ('super.screenLock() with label '+label);
+        if ((typeof label)=='string') {
             label   = this.escapeForHtml (label);
-        var btn     = this.qs (document,'#gui-unlock');
-            if (btn.innerHTML!=label) {
-                btn.innerHTML = label;
-            }
         }
+        else {
+            label   = this.escapeForHtml (this.cfg.label.unlock);
+        }
+        this.qs(document,'#gui-unlock').innerHTML = label;
         if (!this.screenUnlocked()) {
             console.log ('super.screenLock(): already locked');
         }
@@ -3690,7 +3699,7 @@ This looks unused
                 if (this.authAutoPermit<1) {
 //this.log ('screenLockRefresh(): not qualified for auto auth');
                     // ... and does not qualify for automatic first authentication
-                    this.screenLock ('Unlock');
+                    this.screenLock ();
                     return;
                 }
             }
@@ -3699,8 +3708,8 @@ This looks unused
                 // Already unlocked
                 return;
             }
-            // Label access button ready for local log out
-            this.qs(document,'#gui-unlock').innerHTML = 'Unlock';
+            // Label access button ready for local login
+            this.qs(document,'#gui-unlock').innerHTML = this.cfg.label.login;
             // Automatically authenticate with token
 //this.log ('screenLockRefresh(): auto auth');
             this.authAuto ();
@@ -3710,7 +3719,7 @@ This looks unused
         if (this.cookieRead('lo')>0) {
             if (this.loggedOut<1) {
 //this.log ('screenLockRefresh(): windows are logged out');
-                this.screenLock ('Log in');
+                this.screenLock (this.cfg.label.login);
                 this.authForget ();
                 this.init ();
             }
@@ -3718,7 +3727,7 @@ This looks unused
         }
         // Windows are locked but not logged out
 //this.log ('screenLockRefresh(): windows are locked but not logged out');
-        this.screenLock ('Unlock');
+        this.screenLock ();
     }
 
     async screenRender (screen,evt=null,storeState=true,bounceScreen=null) {
@@ -4281,7 +4290,7 @@ console.log ('storageRead(): '+key);
     var then                = 1000 * this.cookieRead('ex');
     var ms                  = then - now;
         console.log ('tokenTOSet(): '+ms+'ms');
-        this.tokenTO = setTimeout (this.authForget.bind(this),ms);
+        this.tokenTO = setTimeout (this.authForgetLogout.bind(this),ms);
     }
 
     tokenTOClear ( ) {

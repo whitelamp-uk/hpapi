@@ -421,6 +421,32 @@ END $$
 
 
 DELIMITER $$
+DROP PROCEDURE IF EXISTS `hpapiList`$$
+CREATE PROCEDURE `hpapiList`(
+  IN        `ref` VARCHAR(64) CHARSET ascii
+ ,IN        `lgd` VARCHAR(64) CHARSET ascii
+ ,IN        `dbs` VARCHAR(64) CHARSET ascii
+ ,IN        `tbl` VARCHAR(64) CHARSET ascii
+ ,IN        `ost` INT(11) unsigned
+ ,IN        `lmt` INT(11) unsigned
+)
+BEGIN
+  SET @sql = CONCAT(
+    'SELECT `'
+   ,ref,'`,`',lgd
+   ,'` FROM `'
+   ,dbs,'`.`',tbl
+   ,'` WHERE `deleted`=0 LIMIT '
+   ,ost,',',lmt
+  )
+  ;
+  PREPARE stmt FROM @sql;
+  EXECUTE stmt;
+  DEALLOCATE PREPARE stmt;
+END $$
+
+
+DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiLogRequest`$$
 CREATE PROCEDURE `hpapiLogRequest`(
   IN        `ts` INT(11) unsigned
