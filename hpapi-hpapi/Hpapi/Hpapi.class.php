@@ -1070,6 +1070,17 @@ class Hpapi {
         return $drv[0];
     }
 
+    public function pdoDatabase ($dsn) {
+        $parts = explode (';',$dsn);
+        foreach ($parts as $p) {
+            if (strpos($p,'dbname=')===0) {
+                $db = explode ('=',$p);
+                return $db[1];
+            }
+        }
+        return false;
+    }
+
     public function permissionForColumn ($table,$column) {
         $this->fetchPermissions ();
         $key                                    = $table.'.'.$column;
