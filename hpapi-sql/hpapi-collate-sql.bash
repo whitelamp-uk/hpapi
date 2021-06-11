@@ -1,3 +1,9 @@
+# To collate the initialisation SQL for ~/hpapi/whitelamp-uk:
+#   bash ~/hpapi/whitelamp-uk/hpapi-sql/hpapi-collate-sql.bash
+# To collate the initialisation SQL for any given vendor
+#   bash ~/hpapi/whitelamp-uk/hpapi-sql/hpapi-collate-sql.bash ~/hpapi/some-vendor/some-sql
+# To collate the entire initialisation SQL for the entire Hpapi system
+#   bash ~/hpapi/whitelamp-uk/hpapi-sql/hpapi-collate-sql.bash ~/hpapi
 if [ "$1" ]
 then
     if [ ! -d "$1" ]
