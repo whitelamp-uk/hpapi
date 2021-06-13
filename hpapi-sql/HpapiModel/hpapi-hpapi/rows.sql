@@ -6,6 +6,10 @@ SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
+
+INSERT IGNORE INTO `_readme` (`project`, `location`) VALUES
+('hpapi/whitelamp-uk',	'https://github.com/whitelamp-uk/hpapi.git');
+
 INSERT IGNORE INTO `hpapi_level` (`level`, `name`, `notes`) VALUES
 (0,	'This',	'The user group being tested and no other.'),
 (1,	'System',	'Background process user with unconstrained omnipotence.'),
