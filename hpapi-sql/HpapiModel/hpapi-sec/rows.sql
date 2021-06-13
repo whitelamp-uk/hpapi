@@ -17,7 +17,7 @@ INSERT IGNORE INTO `hpapi_call` (`model`, `spr`, `vendor`, `package`, `class`, `
 INSERT IGNORE INTO `hpapi_method` (`vendor`, `package`, `class`, `method`, `label`, `notes`) VALUES
 ('whitelamp-uk',	'hpapi-sec',	'\\Hpapi\\Security',	'job',	'Security monitoring jobs',	'');
 
-INSERT INTO `hpapi_methodarg` (`vendor`, `package`, `class`, `method`, `argument`, `name`, `empty_allowed`, `pattern`) VALUES
+INSERT IGNORE INTO `hpapi_methodarg` (`vendor`, `package`, `class`, `method`, `argument`, `name`, `empty_allowed`, `pattern`) VALUES
 ('whitelamp-uk',	'hpapi-sec',	'\\Hpapi\\Security',	'job',	1,	'Job handle',	0,	'varchar-64');
 
 INSERT IGNORE INTO `hpapi_package` (`vendor`, `package`, `requires_key`, `notes`) VALUES
