@@ -23,12 +23,12 @@ cat access.sql
 
 ```
 
-# The key rules for SQL are:
+### The key rules for SQL are:
  * tables.sql files should always be non-destructive and tolerant of columns added later
  * rows.sql files should be tolerant of existing rows and never delete rows
  * functions.sql and routines.sql files should be destructive but tolerant of missing routines
 
-# In other words use these SQL forms:
+### In other words use these SQL forms:
  * tables.sql     - CREATE TABLE IF NOT EXISTS
  * tables.sql     - ALTER TABLE ADD COLUMN IF NOT EXISTS
  * rows.sql       - INSERT IGNORE INTO
@@ -40,8 +40,10 @@ The idea is that, without damage, one can execute the SQL over and again to keep
 
 In production, however, one would tend to freshly install in a staging area with new database clones, do a fresh install and execute the SQL on the new databases. Rollback is achieved by simple reverting the live instance to the previous staging area. Only SQL activity since the upgrade is left orphaned in the old database requiring manual action and nothing gets lost.
 
-# Upgrade Hpapi model
-# Before running:
+
+## Upgrade Hpapi model
+
+### Before running:
  * reconfigure stage 3 to use new databases
  * clone the new databases from the old
 
