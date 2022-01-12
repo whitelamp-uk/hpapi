@@ -6,20 +6,22 @@ import {Hpapi} from './hpapi.js';
 export class Generic extends Hpapi {
 
     aa (elmt) {
+        var name,rtn;
         // All attributes by id or element
         elmt                    = this.ge (elmt);
-    var rtn = {};
-        for (var name of elmt.getAttributeNames()) {
+        rtn                     = {};
+        for (name of elmt.getAttributeNames()) {
            rtn[name]            = elmt.getAttribute (name);
         }
         return rtn;
     }
 
     ac (parent,tag,attributes) {
+        var attr,child,parent;
         // For a parent or a parent id, create, append and return a child element
-    var parent                  = this.ge (parent);objectToCsv
-    var child                   = document.createElement (tag);
-        for (var attr in attributes) {
+        parent                  = this.ge (parent);objectToCsv
+        child                   = document.createElement (tag);
+        for (attr in attributes) {
             child.setAttribute (attr,attributes[attr]);
         }
         parent.appendChild (child);
@@ -33,7 +35,8 @@ export class Generic extends Hpapi {
 
     actorsListen (defns) {
         console.log ('actorsListen(): '+defns.length+' actors');
-        for (var i=0;i<defns.length;i++) {
+        var elmt,elmts,i;
+        for (i=0;i<defns.length;i++) {
             if (!defns[i].event) {
                 console.log ('actorsListen(): ['+(i+1)+'] missing event property');
                 continue;
@@ -48,7 +51,7 @@ export class Generic extends Hpapi {
             }
             try {
                 if ('id' in defns[i]) {
-                var elmt        = this.qs (this.restricted,'#'+defns[i].id);
+                    elmt        = this.qs (this.restricted,'#'+defns[i].id);
                     // console.log ('actorsListen(): ['+(i+1)+'] id='+defns[i].id+' - '+defns[i].event);
                     elmt.addEventListener (
                         defns[i].event,
@@ -57,8 +60,8 @@ export class Generic extends Hpapi {
                     continue;
                 }
                 if ('class' in defns[i]) {
-                var elmts       = this.qsa (this.restricted,'.'+defns[i].class);
-                    for (var elmt of elmts) {
+                    elmts       = this.qsa (this.restricted,'.'+defns[i].class);
+                    for (elmt of elmts) {
                         // console.log ('actorsListen(): ['+(i+1)+'] class='+defns[i].class+' - '+defns[i].event);
                         elmt.addEventListener (
                             defns[i].event,
@@ -68,8 +71,8 @@ export class Generic extends Hpapi {
                     continue;
                 }
                 if ('name' in defns[i]) {
-                var elmts       = this.qsa (this.restricted,'[name='+defns[i].name+']');
-                    for (var elmt of elmts) {
+                    elmts       = this.qsa (this.restricted,'[name='+defns[i].name+']');
+                    for (elmt of elmts) {
                         // console.log ('actorsListen(): ['+(i+1)+'] name='+defns[i].name+' - '+defns[i].event);
                         elmt.addEventListener (
                             defns[i].event,
@@ -89,8 +92,9 @@ export class Generic extends Hpapi {
     }
 
     authCheck (response) {
+        var status;
         try {
-        var status              = response.authStatus.split (' ');
+            status = response.authStatus.split (' ');
             if (status[0]=='068') {
                 console.log ('authCheck(): setting this.currentUser');
                 this.currentUser = response.returnValue;
@@ -135,10 +139,11 @@ export class Generic extends Hpapi {
     }
 
     authOk ( ) {
+        var i;
         this.loggedOut      = 0;
         this.cookieWrite ('lo',0);
         this.historyInit ();
-        for (var i=0;this.currentUser.templates[i];i++) {
+        for (i=0;this.currentUser.templates[i];i++) {
             if (this.currentUser.templates[i] in this.currentTemplates) {
                 continue;
             }
@@ -147,7 +152,8 @@ export class Generic extends Hpapi {
     }
 
     autoscopeClick (evt) {
-    var scoped = this.qs (document,'.scoped');
+        var scoped;
+        scoped = this.qs (document,'.scoped');
         if (scoped) {
             scoped.classList.remove ('scoped');
         }
@@ -162,13 +168,15 @@ export class Generic extends Hpapi {
     }
 
     autoscopeListen (targetElmt) {
-    var elmts = this.qsa (targetElmt,'[data-autoscope]');
-        for (var elmt of elmts) {
+        var elmt,elmts;
+        elmts = this.qsa (targetElmt,'[data-autoscope]');
+        for (elmt of elmts) {
             elmt.addEventListener ('click',this.autoscopeClick.bind(this));
         }
     }
 
     async burger (evt) {
+        var container,l,ls,o,os,selector;
         if (evt.type=='focusout') {
             return;
         }
@@ -176,9 +184,8 @@ export class Generic extends Hpapi {
             console.log ('burger(): no configured burger selector');
             return;
         }
-    var os, o, ls, l;
-    var selector            = this.cfg.navigatorOptions.burger;
-    var container           = this.qs (document,selector);
+        selector            = this.cfg.navigatorOptions.burger;
+        container           = this.qs (document,selector);
         if (!container) {
             console.log ('burger(): no menu container "'+selector+'"');
             return;
@@ -209,12 +216,13 @@ export class Generic extends Hpapi {
     }
 
     burgerClose (evt=null) {
+        var container,selector;
         if (!this.cfg.navigatorOptions.burger) {
             console.log ('burger(): no configured burger selector');
             return;
         }
-    var selector            = this.cfg.navigatorOptions.burger;
-    var container           = this.qs (document,selector);
+        selector            = this.cfg.navigatorOptions.burger;
+        container           = this.qs (document,selector);
         if (!container) {
             console.log ('burger(): no menu container "'+selector+'"');
             return;
@@ -233,8 +241,9 @@ export class Generic extends Hpapi {
     }
 
     clicks (targetElmt) {
-    var elmts = this.qsa (targetElmt,'.auto-click');
-        for (var elmt of elmts) {
+        var elmt,elmts;
+        elmts = this.qsa (targetElmt,'.auto-click');
+        for (elmt of elmts) {
             elmt.click ();
         }
     }
@@ -271,8 +280,9 @@ export class Generic extends Hpapi {
     }
 
     contextHandle (evt) {
+        var i,url;
         if (evt.target.id=='gui-new-window') {
-        var url = this.contextUrl (this.userScope().value);
+            url = this.contextUrl (this.userScope().value);
             if (url) {
                 window.open (url);
                 return true;
@@ -280,9 +290,9 @@ export class Generic extends Hpapi {
             return false;
         }
         if (evt.target.id=='gui-copy-url') {
-        var url = this.contextUrl ();
+            url = this.contextUrl ();
             if (url) {
-            var i               = document.createElement ('input');
+                i               = document.createElement ('input');
                 i.value         = url;
                 i.classList.add ('clipboard');
                 document.body.appendChild (i);
@@ -302,6 +312,7 @@ export class Generic extends Hpapi {
     }
 
     contextUrl (user,screen) {
+            var obj,prm,prms,url;
             if (!user) {
                 user            = '';
             }
@@ -309,7 +320,7 @@ export class Generic extends Hpapi {
                 this.parameterParse (this.contextTarget);
                 screen          = this.contextTarget.dataset.screen;
             }
-        var url                 = window.location.protocol + '//';
+            url                 = window.location.protocol + '//';
             url                += window.location.host + window.location.pathname ;
             url                += '?' + encodeURI(user);
             url                += '?' + encodeURI(screen);
@@ -317,9 +328,9 @@ export class Generic extends Hpapi {
                 this.log ('contextUrl(): "'+screen+'.hbs" not available');
                 return false;
             }
-        var obj                = {};
+            obj                = {};
             try {
-            var prms           = document.createElement ('div');
+                prms           = document.createElement ('div');
                 prms.innerHTML = this.templates[screen] (this.data);
                 prms           = this.qsa (prms,'form[data-history] input');
             }
@@ -328,7 +339,7 @@ export class Generic extends Hpapi {
                 return false;
             }
             try {
-                for (var prm of prms) {
+                for (prm of prms) {
                     obj[prm.name] = this.parameters[prm.name];
                 }
             }
@@ -346,20 +357,21 @@ export class Generic extends Hpapi {
     }
 
     cookiesBeginning (prefix) {
-    var matches             = {};
+        var c,i,key,matches,p,v;
+        matches             = {};
         if (prefix.length==0) {
             console.log ('cookiesBeginning(): no prefix given');
             return matches;
         }
-    var c                   = document.cookie.split (';');
-    var p                   = this.saveKey (prefix);
+        c                   = document.cookie.split (';');
+        p                   = this.saveKey (prefix);
         if (p.length==0) {
             console.log ('cookiesBeginning(): no save key available');
             return matches;
         }
-        for (var i=0;i<c.length;i++) {
-        var v                   = c[i].split ('=');
-        var key                 = decodeURIComponent (v[0].trim());
+        for (i=0;i<c.length;i++) {
+            v                   = c[i].split ('=');
+            key                 = decodeURIComponent (v[0].trim());
             if (key.indexOf(p)===0) {
                 key             = key.substr (p.length);
                 matches[key]    = decodeURIComponent (v[1].trim());
@@ -369,14 +381,15 @@ export class Generic extends Hpapi {
     }
 
     cookieExpire (key,val,exp) {
+    var date,k;
 // Not working
 return false;
-    var date = new Date ();
+        date = new Date ();
         if (key.length==0) {
             console.log ('cookieExpire(): no key given');
             return false;
         }
-    var k                   = this.saveKey (key);
+        k                   = this.saveKey (key);
         if (k.length==0) {
             return false;
         }
@@ -386,17 +399,18 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     }
 
     cookieRead (key) {
+        var c,i,k,p;
         if (key.length==0) {
             console.log ('cookieRead(): no key given');
             return '';
         }
-    var c                   = document.cookie.split (';');
-    var k                   = this.saveKey (key);
+        c                   = document.cookie.split (';');
+        k                   = this.saveKey (key);
         if (k.length==0) {
             return '';
         }
-        for (var i=0;i<c.length;i++) {
-        var p               = c[i].split ('=');
+        for (i=0;i<c.length;i++) {
+            p               = c[i].split ('=');
             if (decodeURIComponent(p[0].trim())==k) {
                 return decodeURIComponent(p[1].trim());
             }
@@ -405,11 +419,12 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     }
 
     cookieWrite (key,val) {
+        var k;
         if (key.length==0) {
             console.log ('cookieWrite(): no key given');
             return false;
         }
-    var k                   = this.saveKey (key);
+        k                   = this.saveKey (key);
         if (k.length==0) {
             return false;
         }
@@ -432,13 +447,14 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     }
 
     downloadHtml (html,templateName) {
-    var url         = window.location.protocol;
+        var datetime,html,link,url;
+        url         = window.location.protocol;
         url        += window.location.hostname;
         url        += window.location.pathname.substring (0,window.location.pathname.lastIndexOf('/'));
-    var datetime    = new Date ();
+        datetime    = new Date ();
         datetime    = datetime.toISOString().split ('T');
         datetime[1] = datetime[1].substring (0,datetime[1].lastIndexOf('.'));
-    var html        = this.templates[templateName] (
+        html        = this.templates[templateName] (
             {
                 date : datetime[0],
                 time : datetime[1],
@@ -446,7 +462,7 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
                 html : html
             }
         );
-    var link        = this.downloadLink (
+        link        = this.downloadLink (
             'Here is your download'
            ,templateName+'-'+datetime[0]+'.html'
            ,'text/html'
@@ -456,7 +472,8 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     }
 
     downloadLink (linkText,fileName,fileType,fileContents,immediate=false) {
-    var link                        = document.createElement ('a');
+        var link;
+        link                        = document.createElement ('a');
         link.innerHTML              = this.escapeForHtml (linkText);
         link.setAttribute ('download',fileName);
         link.setAttribute ('type',fileType);
@@ -483,7 +500,7 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     }
 
     editModeReset ( ) {
-        var elmt, form, forms, toggle;
+        var elmt,form,forms,toggle;
         toggle                      = this.qs (this.restricted,'#edit-mode');
         if (!toggle) {
             this.editModeScreen     = null;
@@ -528,7 +545,7 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     }
 
     editModeToggle (evt) {
-        var elmt, form, forms;
+        var elmt,form,forms;
         forms               = this.qsa (this.restricted,'form[data-editmode]');
         if (this.editMode) {
             for (form of forms) {
@@ -576,7 +593,8 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     }
 
     elementInView (elmt) {
-    var rect = elmt.getBoundingClientRect ();
+        var rect;
+        rect = elmt.getBoundingClientRect ();
         if (rect.left<0) {
             return false;
         }
@@ -593,11 +611,12 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     }
 
     async entryAdd (form) {
-    var item            = {};
-    var columns         = {};
-    var parameters      = [];
-    var count           = 0;
-        for (var elmt of form.elements) {
+        var autoValue,columns,count,data,elmt,i,item,parameters,primary,primaries;
+        item            = {};
+        columns         = {};
+        parameters      = [];
+        count           = 0;
+        for (elmt of form.elements) {
             if (!elmt.dataset.column) {
                 console.log ('entryAdd(): ignoring form element '+elmt.name+' which has no data-column');
                 continue;
@@ -627,14 +646,14 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
         }
         try {
             console.log ('entryAdd(): getting data for entry');
-        var data        = this.entryData (form);
+            data        = this.entryData (form);
         }
         catch (e) {
             throw new Error (`Could not identify local data: ${e.message}`);
             return false;
         }
         try {
-        var autoValue   = await this.insert (form.dataset.table,columns);
+            autoValue   = await this.insert (form.dataset.table,columns);
             this.statusShow ('Data added successfully');
         }
         catch (e) {
@@ -644,7 +663,7 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
                 return false;
             }
             if (('splash' in e) && e.splash.length>0) {
-                for (var i=0;i<e.splash.length;i++) {
+                for (i=0;i<e.splash.length;i++) {
                     this.splash (2,e.splash[i],'Server message','OK');
                 }
             }
@@ -654,11 +673,11 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
             throw new Error (e.message);
             return false;
         }
-    var primaries       = this.qs (form,'[data-primaries]');
+        primaries       = this.qs (form,'[data-primaries]');
         primaries       = primaries.content.cloneNode (true);
         primaries       = this.qsa (primaries,'input');
         console.log ('Found '+primaries.length+' primary keys');
-        for (var primary of primaries) {
+        for (primary of primaries) {
             if (!primary.name) {
                 console.log ('Primary key has no name');
                 continue;
@@ -671,7 +690,7 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
             console.log ('Writing primary parameter '+primary.name+'='+item[primary.name]);
             this.parameterWrite (primary.name,item[primary.name]);
         }
-        for (var i=0;parameters[i];i++) {
+        for (i=0;parameters[i];i++) {
             console.log ('Writing input parameter '+parameters[i][0]+'='+parameters[i][1]);
             this.parameterWrite (parameters[i][0],parameters[i][1]);
         }
@@ -690,7 +709,8 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     }
 
     entryAddToggle (evt) {
-    var form = this.qs (evt.currentTarget.parentElement,'form[data-add]');
+        var form;
+        form = this.qs (evt.currentTarget.parentElement,'form[data-add]');
         if (!form) {
             return;
         }
@@ -706,9 +726,10 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     }
 
     entryChange (inputElmt) {
+        var data;
         try {
-        console.log ('entryChange(): getting data for entry');
-        var data                    = this.entryData (inputElmt);
+            console.log ('entryChange(): getting data for entry');
+            data                    = this.entryData (inputElmt);
         }
         catch (e) {
             console.log ('entryChange(): '+e.message);
@@ -727,14 +748,15 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     }
 
     entryData (formOrInputElmt) {
-    var form                        = formOrInputElmt;
-    var inputElmt                   = null;
+        var data,form,inputElmt,key,keys;
+        form                        = formOrInputElmt;
+        inputElmt                   = null;
     if (form.tagName.toLowerCase()!='form') {
         inputElmt                   = formOrInputElmt;
         form                        = inputElmt.form;
     }
-    var data                        = this.data;
-    var keys                        = this.qs (form,'[data-keys]');
+        data                        = this.data;
+        keys                        = this.qs (form,'[data-keys]');
         if (!keys) {
             console.log ('entryData(): ignoring form containing no data-keys');
             return false;
@@ -742,7 +764,7 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
         keys                        = keys.content.cloneNode (true);
         keys                        = this.qsa (keys,'[data-key]');
         console.log ('Found '+keys.length+' data keys');
-        for (var key of keys) {
+        for (key of keys) {
             if (!key.dataset.key || !(key.dataset.key in data)) {
                 throw new Error ('Key "'+key.dataset.key+'" not found in data');
                 return false;
@@ -784,11 +806,12 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
 
     entryListen (targetElmt) {
         // Data insertion expander button
-    var buttons              = this.qsa (targetElmt,'button.new');
-        for (var button of buttons) {
+        var button,buttons,field,fields,form,forms;
+        buttons              = this.qsa (targetElmt,'button.new');
+        for (button of buttons) {
             button.addEventListener ('click',this.entryAddToggle.bind(this));
             // Insert forms
-        var form             = this.qs (button.parentElement,'form[data-add]');
+            form             = this.qs (button.parentElement,'form[data-add]');
             if (!form) {
                 continue;
             }
@@ -799,15 +822,15 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
             console.log ('entryListen(): found insert form for table "'+form.dataset.table+'"');
         }
         // Update forms
-    var forms                = this.qsa (targetElmt,'form[data-update]');
-        for (var form of forms) {
+        forms                = this.qsa (targetElmt,'form[data-update]');
+        for (form of forms) {
             if (!form.dataset.table) {
                 console.log ('entryListen(): update form attribute data-table has no value');
                 continue;
             }
             console.log ('entryListen(): found update form for table "'+form.dataset.table+'"');
-        var fields           = this.qsa (form,'[data-column]');
-            for (var field of fields) {
+            fields           = this.qsa (form,'[data-column]');
+            for (field of fields) {
                 console.log ('entryListen(): found <'+field.tagName+'>');
                 if (field.type=='checkbox' || field.type=='checkbox') {
                     field.addEventListener ('click',this.entrySelect.bind(this));
@@ -834,9 +857,10 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     }
 
     entryNext ( ) {
-    var elmt = document.activeElement;
+        var elmt,form,i,next;
+        elmt = document.activeElement;
         if ('form' in elmt && elmt.form) {
-        var next = this.formElementNext (elmt);
+            next = this.formElementNext (elmt);
             if (next) {
                 next.scrollIntoView (
                     {
@@ -849,11 +873,11 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
                 return;
             }
         }
-    var form = this.formNext (elmt);
+        form = this.formNext (elmt);
         if (!form) {
             return;
         }
-        for (var i=0;form.elements[i];i++) {
+        for (i=0;form.elements[i];i++) {
             if (form.elements[i].type=='hidden') {
                 continue;
             }
@@ -872,9 +896,10 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     }
 
     entryPrevious ( ) {
-    var elmt = document.activeElement;
+        var elmt,form,i,prev;
+        elmt = document.activeElement;
         if ('form' in elmt && elmt.form) {
-        var prev = this.formElementPrevious (elmt);
+            prev = this.formElementPrevious (elmt);
             if (prev) {
                 prev.scrollIntoView (
                     {
@@ -889,11 +914,11 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
                 return;
             }
         }
-    var form = this.formPrevious (elmt);
+        form = this.formPrevious (elmt);
         if (!form) {
             return;
         }
-        for (var i=form.elements.length-1;form.elements[i];i--) {
+        for (i=form.elements.length-1;form.elements[i];i--) {
             if (form.elements[i].type=='hidden') {
                 continue;
             }
@@ -912,15 +937,16 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     }
 
     entryPrimaries (inputElmt) {
-    var primaries                   = {};
-    var elmts                       = this.qsa (inputElmt.form,'[data-primary]');
+        var elmt,elmts,primaries,val;
+        primaries                   = {};
+        elmts                       = this.qsa (inputElmt.form,'[data-primary]');
         console.log ('Found '+elmts.length+' primary keys');
-        for (var elmt of elmts) {
+        for (elmt of elmts) {
             if (!elmt.dataset.column) {
                 throw new Error ('<input data-primary data-column="column_name"> not found');
                 return false;
             }
-        var val                     = elmt.value;
+            val                     = elmt.value;
             if (!val) {
                 throw new Error ('<input data-primary data-column="column_name" value="tuple_value"> not found');
                 return false;
@@ -931,9 +957,10 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     }
 
     entryRevert (inputElmt) {
+        var data;
         try {
-        console.log ('entryRevert(): getting data for entry');
-        var data                    = this.entryData (inputElmt);
+            console.log ('entryRevert(): getting data for entry');
+            data                    = this.entryData (inputElmt);
         }
         catch (e) {
             console.log ('entryRevert(): '+e.message);
@@ -948,9 +975,10 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
     }
 
     async entrySave (inputElmt,suppressInteraction=false) {
-        console.log ('entrySave(): getting data for entry');
+        var data,primaries,val;
         try {
-        var data                    = this.entryData (inputElmt);
+            console.log ('entrySave(): getting data for entry');
+            data                    = this.entryData (inputElmt);
         }
         catch (e) {
             console.log ('entrySave(): '+e.message);
@@ -961,26 +989,26 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
                 if (data[inputElmt.name]) {
                     return;
                 }
-            var val                 = 1;
+                val                 = 1;
             }
             else {
                 if (!data[inputElmt.name]) {
                     return;
                 }
-            var val                 = 0;
+                val                 = 0;
             }
         }
         else {
             if (this.equals(inputElmt.value,data[inputElmt.name])) {
                 return;
             }
-            var val                 = inputElmt.value;
+                val                 = inputElmt.value;
             if (('nullable' in inputElmt.dataset) && val==='') {
                 val                 = null;
             }
         }
         try {
-        var primaries               = this.entryPrimaries (inputElmt);
+            primaries               = this.entryPrimaries (inputElmt);
         }
         catch (e) {
             console.log ('entrySave(): '+e.message);
@@ -1113,8 +1141,9 @@ This looks unused
     }
 
     escapeForHtml (str) {
-    var ele                     = document.createElement ('p');
-    var txt                     = document.createTextNode (str);
+        var ele,txt;
+        ele                     = document.createElement ('p');
+        txt                     = document.createTextNode (str);
         ele.appendChild (txt);
         return ele.innerHTML;
     }
@@ -1122,11 +1151,12 @@ This looks unused
     fileRead (file,type) {
         return new Promise (
             function (succeeded,failed) {
+                var reader;
                 if (file.type!=type) {
                     failed (new Error ('File name '+file.name+' is inconsistent with MIME type '+type));
                     return;
                 }
-            var reader                  = new FileReader ();
+                reader                  = new FileReader ();
                 reader.onerror          = function ( ) {
                     failed (new Error('Could not read file '+file.name));
                 }
@@ -1139,7 +1169,7 @@ This looks unused
     }
 
     filter (evtOrForm) {
-    var form;
+        var count,form,i,is,items,j,matches,mesh,n,show,status,terms,warnings;
         if (evtOrForm instanceof HTMLFormElement) {
             form    = evtOrForm;
         }
@@ -1149,13 +1179,13 @@ This looks unused
             }
             form    = evtOrForm.currentTarget.form;
         }
-    var items       = this.qsa (document,form.dataset.selector);
-    var mesh        = form.elements;
-    var count       = 0;
-        for (var n=0;items[n];n++) {
-        var show    = true;
+        items       = this.qsa (document,form.dataset.selector);
+        mesh        = form.elements;
+        count       = 0;
+        for (n=0;items[n];n++) {
+            show    = true;
             meshes:
-            for (var i=0;mesh[i];i++) {
+            for (i=0;mesh[i];i++) {
                 if ('deleted' in mesh[i].dataset) {
                     if (mesh[i].value=='N' && items[n].classList.contains('deleted')) {
                         show = false;
@@ -1168,7 +1198,7 @@ This looks unused
                 }
                 else if ('warning' in mesh[i].dataset) {
                     if (mesh[i].checked) {
-                    var warnings = this.qsa (items[n],'.warning');
+                        warnings = this.qsa (items[n],'.warning');
                         if (warnings.length==0) {
                             show = false;
                             break meshes;
@@ -1177,7 +1207,7 @@ This looks unused
                 }
                 else if ('is' in mesh[i].dataset) {
                     if (!mesh[i].checked) {
-                    var is = this.qs (items[n],'[data-is='+mesh[i].dataset.is+']');
+                        is = this.qs (items[n],'[data-is='+mesh[i].dataset.is+']');
                         if (is) {
                             show = false;
                             break meshes;
@@ -1186,8 +1216,8 @@ This looks unused
                 }
                 else if ('freetext' in mesh[i].dataset) {
                     if (mesh[i].value.trim().length>0) {
-                    var terms = mesh[i].value.trim().toLowerCase().split (' ');
-                        for (var j=0;terms[j];j++) {
+                        terms = mesh[i].value.trim().toLowerCase().split (' ');
+                        for (j=0;terms[j];j++) {
                             if (terms[j].length && items[n].textContent.toLowerCase().indexOf(terms[j])<0) {
                                 show = false;
                                 break meshes;
@@ -1201,8 +1231,8 @@ This looks unused
                         continue;
                     }
                     show = false;
-                var matches = this.qsa (items[n],'[data-match='+mesh[i].dataset.match+']');
-                    for (var j=0;matches[j];j++) {
+                    matches = this.qsa (items[n],'[data-match='+mesh[i].dataset.match+']');
+                    for (j=0;matches[j];j++) {
                         if (matches[j].textContent.toLowerCase().indexOf(mesh[i].value.trim().toLowerCase())>=0) {
                             show = true;
                             break;
@@ -1222,7 +1252,7 @@ This looks unused
                 items[n].classList.add ('filtered-out');
             }
         }
-    var status      = this.qs (form,'.status');
+        status      = this.qs (form,'.status');
         if (status) {
             status.innerHTML = count+' results';
         }
@@ -1230,16 +1260,17 @@ This looks unused
     }
 
     filterHotkeyToggle ( ) {
-    var filters     = this.qsa (this.restricted,'span.filter');
+        var f,filter,filters,toggler;
+        filters     = this.qsa (this.restricted,'span.filter');
         // Target last filter found
-    var filter      = null;
-        for (var f of filters) {
+        filter      = null;
+        for (f of filters) {
             filter  = f;
         }
         if (!filter) {
             return;
         }
-    var toggler     = this.qs (filter.parentElement,'a.filter');
+        toggler     = this.qs (filter.parentElement,'a.filter');
         if (!toggler) {
             return;
         }
@@ -1257,8 +1288,9 @@ This looks unused
     }
 
     filterToggle (evt) {
-    var filter                                  = evt.currentTarget.parentElement;
-    var form                                    =  this.qs (filter,'form');
+        var filter,form;
+        filter                                  = evt.currentTarget.parentElement;
+        form                                    =  this.qs (filter,'form');
         if (filter.classList.contains('expanded')) {
             filter.classList.remove ('expanded');
             form.reset ();
@@ -3482,8 +3514,9 @@ This looks unused
     }
 
     prefetchers (targetElmt) {
-    var pfs             = this.qsa (targetElmt,'[data-prefetch]');
-        for (var pf of pfs) {
+        var pf,pfs;
+        pfs             = this.qsa (targetElmt,'[data-prefetch]');
+        for (pf of pfs) {
             if (!pf.dataset.prefetch) {
                 continue;
             }
@@ -3492,13 +3525,15 @@ This looks unused
     }
 
     async preload (target,templateName) {
-    var preloaders      = this.preloaders (templateName);
-        for (var i=0;preloaders[i];i++) {
-        var func        = preloaders[i].bind (this);
-            if (await func(target)) {
+        var func,i,preloaders,rtn;
+        preloaders      = this.preloaders (templateName);
+        for (i=0;preloaders[i];i++) {
+            func        = preloaders[i].bind (this);
+            rtn         = await func (target);
+            if (rtn) {
                 continue;
             }
-            this.log ('Preload['+i+'] failed for "'+templateName+'.hbs"');
+            this.log ('Preload['+i+'] failed for "'+templateName+'.hbs": '+rtn);
             return false;
         }
         return true;
