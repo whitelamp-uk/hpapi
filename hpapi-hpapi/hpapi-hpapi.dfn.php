@@ -202,7 +202,7 @@ define ( 'HPAPI_DG_ENABLED',                'Diagnostic enabled'                
 define ( 'HPAPI_DG_BLACKLIST_ARRAY',        'No blacklist array'                                                                    );
 define ( 'HPAPI_DG_PRIV_REM_ADDR',          'Privilege remote address mismatch'                                                     );
 define ( 'HPAPI_DG_PRIV_KEY',               'Privilege requires key which was not given'                                            );
-define ( 'HPAPI_DG_AUTH_RESULTS',           'No authentication results'                                                             );
+define ( 'HPAPI_DG_AUTH_RESULTS',           'No auth result [see hpapi.hpapiAuthDetails([email address])]'                                                             );
 define ( 'HPAPI_DG_BLACKLIST',              'Request blacklisted'                                                                   );
 define ( 'HPAPI_DG_USER_REM_ADDR',          'User remote address mismatch'                                                          );
 define ( 'HPAPI_DG_USER_ACTIVE',            'User inactive'                                                                         );
