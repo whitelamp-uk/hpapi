@@ -1,5 +1,5 @@
 
-/* Copyright 2018 Burden and Burden  http://www.burdenandburden.co.uk/ */
+/* Copyright 2018 Whitelamp http://www.whitelamp.co.uk/ */
 
 import {HpapiManGui} from './hpapi-man-gui.js';
 

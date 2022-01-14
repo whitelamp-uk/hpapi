@@ -1,5 +1,5 @@
 
-/* Copyright 2018 Burden and Burden  http://www.burdenandburden.co.uk/ */
+/* Copyright 2018 Whitelamp http://www.whitelamp.co.uk/ */
 
 import {HpapiMan} from './hpapi-man.js';
 
@@ -11,7 +11,7 @@ export class HpapiManGui extends HpapiMan {
         this.screenLockRefreshInhibit = 1;
         try {
             response = await super.authenticate (
-                this.qs(document,'#gui-email').value
+                this.qs(document.body,'#gui-email').value
                ,null
                ,'admin-server'
                ,'\\Bab\\Admin'

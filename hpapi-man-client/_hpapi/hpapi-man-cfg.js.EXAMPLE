@@ -62,7 +62,7 @@ export class HpapiManCfg {
         };
         this.screenTO               = 3600;         // seconds
         this.templateTO             = 4;            // seconds
-        this.url                    = 'https://dev.burdenandburden.co.uk/some/api/';
+        this.url                    = 'https://some.host/some/api/';
     }
 
 }

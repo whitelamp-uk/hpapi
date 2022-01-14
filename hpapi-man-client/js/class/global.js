@@ -1,5 +1,5 @@
 
-/* Copyright 2018 Burden and Burden  http://www.burdenandburden.co.uk/ */
+/* Copyright 2018 Whitelamp http://www.whitelamp.co.uk/ */
 
 import {Generic} from './generic.js';
 
@@ -92,7 +92,7 @@ export class Global extends Generic {
         this.dataRefresh ();
         this.globalLoad ();
         this.access.innerHTML       = this.templates.login ();
-        unlock                      = this.qs (document,'#gui-unlock');
+        unlock                      = this.qs (document.body,'#gui-unlock');
         unlock.addEventListener ('click',this.authenticate.bind(this));
         // Define user scope
         userScope                   = this.userScope ();

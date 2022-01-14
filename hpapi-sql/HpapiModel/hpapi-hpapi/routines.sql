@@ -678,6 +678,58 @@ BEGIN
 END$$
 
 DELIMITER $$
+DROP PROCEDURE IF EXISTS `hpapiReadme`$$
+CREATE PROCEDURE `hpapiReadme`(
+  IN        `dbName` VARCHAR(64) CHARSET ascii
+ ,IN        `originUrl` VARCHAR(255) CHARSET ascii
+ ,IN        `execRef` VARCHAR(255) CHARSET ascii
+ ,IN        `branchName` CHAR(64) CHARSET ascii
+ ,IN        `commitRef` CHAR(64) CHARSET ascii
+)
+BEGIN
+  SET @table = CONCAT('`',dbName,'`.`hpapi_readme`');
+  SET @cre = CONCAT(
+    'CREATE TABLE IF NOT EXISTS '
+   ,@table
+   ,' (`git_origin` varchar(255),
+    `git_branch` varchar(255),
+    `git_commit` char(64) NOT NULL,
+    `execute_ref` char(64) NOT NULL,
+    PRIMARY KEY (`git_origin`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=ascii;'
+  )
+  ;
+select @cre as `Create SQL`
+;
+  PREPARE stmt FROM @cre ; EXECUTE stmt ; DEALLOCATE PREPARE stmt
+  ;
+  SET @ins = CONCAT(
+    'INSERT IGNORE INTO '
+   ,@table
+   ,' (`git_origin`) VALUES (?);'
+  )
+  ;
+select @ins as `Insert SQL`
+;
+  SET @o = originUrl
+  ;
+  PREPARE stmt FROM @ins ; EXECUTE stmt USING @o; DEALLOCATE PREPARE stmt
+  ;
+  SET @upd = CONCAT(
+    'UPDATE '
+   ,@table
+   ,' SET git_branch=?, git_commit=?, execute_ref=? WHERE `git_origin`=? LIMIT 1;'
+  )
+  ;
+select @upd as `Update SQL`
+;
+  SET @bn = branchName ; SET @cr = commitRef ; SET @er = execRef
+  ;
+  PREPARE stmt FROM @upd ; EXECUTE stmt USING @er,@bn,@cr,@o; DEALLOCATE PREPARE stmt
+  ;
+END$$
+
+DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiSprPrivileges`$$
 CREATE PROCEDURE `hpapiSprPrivileges`(
 )
