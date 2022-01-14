@@ -1,5 +1,5 @@
 
-/* Copyright 2019 Whitelamp  http://www.whitelamp.co.uk/ */
+/* Copyright 2018 Whitelamp http://www.whitelamp.co.uk/ */
 
 import {Hpapi} from './hpapi.js';
 
@@ -52,7 +52,10 @@ export class Generic extends Hpapi {
             try {
                 if ('id' in defns[i]) {
                     elmt        = this.qs (this.restricted,'#'+defns[i].id);
-                    // console.log ('actorsListen(): ['+(i+1)+'] id='+defns[i].id+' - '+defns[i].event);
+                    if (!elmt) {
+                        console.log ('actorsListen(): id="'+defns[i].id+'" not found');
+                        continue;
+                    }
                     elmt.addEventListener (
                         defns[i].event,
                         defns[i].function.bind (this)
@@ -124,7 +127,7 @@ export class Generic extends Hpapi {
     }
 
     async authForget ( ) {
-        this.qs(document,'#gui-unlock').innerHTML = this.cfg.label.login;
+        this.qs(document.body,'#gui-unlock').innerHTML = this.cfg.label.login;
         this.loggedOut      = 1;
         this.cookieWrite ('lo',1);
         this.tokenPurge ();
@@ -153,7 +156,7 @@ export class Generic extends Hpapi {
 
     autoscopeClick (evt) {
         var scoped;
-        scoped = this.qs (document,'.scoped');
+        scoped = this.qs (document.body,'.scoped');
         if (scoped) {
             scoped.classList.remove ('scoped');
         }
@@ -185,7 +188,7 @@ export class Generic extends Hpapi {
             return;
         }
         selector            = this.cfg.navigatorOptions.burger;
-        container           = this.qs (document,selector);
+        container           = this.qs (document.body,selector);
         if (!container) {
             console.log ('burger(): no menu container "'+selector+'"');
             return;
@@ -222,7 +225,7 @@ export class Generic extends Hpapi {
             return;
         }
         selector            = this.cfg.navigatorOptions.burger;
-        container           = this.qs (document,selector);
+        container           = this.qs (document.body,selector);
         if (!container) {
             console.log ('burger(): no menu container "'+selector+'"');
             return;
@@ -1525,7 +1528,7 @@ This looks unused
             return id;
         }
         try {
-            this.qs (document,'#'+id);
+            this.qs (document.body,'#'+id);
         }
         catch (e) {
             throw new Error (e.message);
@@ -1550,13 +1553,13 @@ This looks unused
         this.loginTried                 = 0;
         this.loggedOut                  = 1;
         this.handlebarsHelpers ();
-        this.access                     = this.qs (document,'#gui-access');
+        this.access                     = this.qs (document.body,'#gui-access');
         this.access.addEventListener ('click',this.passwordAuthListen.bind(this));
         this.access.addEventListener ('keyup',this.passwordAuthListen.bind(this));
         this.access.addEventListener ('change',this.passwordAuthListen.bind(this));
-        this.restricted                 = this.qs (document,'#gui-restricted');
+        this.restricted                 = this.qs (document.body,'#gui-restricted');
         this.restricted.style.display   = 'none';
-        this.status                     = this.qs (document,'#gui-status');
+        this.status                     = this.qs (document.body,'#gui-status');
         if (this.cfg.inBodyLoggerId) {
             this.logger                 = this.loggerCreate (this.cfg.inBodyLoggerId);
         }
@@ -1608,7 +1611,7 @@ This looks unused
         }
         this.hotkeyListen ();
         this.contexts                   = {};
-    var cm                              = this.qs (document,'#gui-context');
+    var cm                              = this.qs (document.body,'#gui-context');
         if (cm) {
             cm.addEventListener ('click',this.contextHandle.bind(this));
         }
@@ -2124,7 +2127,7 @@ This looks unused
         console.log ('Template "'+target.dataset.insert+'.hbs" ready');
         console.log ('insertHandle(): rendering "'+target.dataset.insert+'.hbs" into "#'+target.dataset.target+'"');
         evt.currentTargetWas = target;
-        this.insertRender (target.dataset.insert,this.qs(document,'#'+target.dataset.target),event);
+        this.insertRender (target.dataset.insert,this.qs(document.body,'#'+target.dataset.target),event);
     }
 
     async insertRender (insert,containerElmt,evt=null) {
@@ -2255,7 +2258,7 @@ This looks unused
             return;
         }
     var selector                = this.cfg.navigatorOptions.lock;
-    var container               = this.qs (document,selector);
+    var container               = this.qs (document.body,selector);
         if (!container) {
             console.log ('lock(): no lock container "'+selector+'"');
             return;
@@ -2537,7 +2540,7 @@ This looks unused
             return;
         }
         selector            = this.cfg.navigatorOptions.burger;
-        container           = this.qs (document,selector);
+        container           = this.qs (document.body,selector);
         if (!container) {
             console.log ('menuListen(): no menu container "'+selector+'"');
             return;
@@ -2572,7 +2575,7 @@ This looks unused
             console.log ('menuOptionsSelect(): no configured menu selector this.cfg.navigatorOptions.burger');
             return;
         }
-        os = this.qsa (document,this.cfg.navigatorOptions.burger+' [data-menu] section.menu-options');
+        os = this.qsa (document.body,this.cfg.navigatorOptions.burger+' [data-menu] section.menu-options');
         gp = this.qs (this.restricted,'form[data-groups]');
         link;
         for (o of os) {
@@ -2634,7 +2637,7 @@ This looks unused
             if (opts[i] in this) {
                 item.addEventListener ('click',this[opts[i]].bind(this));
                 if (this.cfg.navigatorOptions[opts[i]]) {
-                    s               = this.qs (document,this.cfg.navigatorOptions[opts[i]]);
+                    s               = this.qs (document.body,this.cfg.navigatorOptions[opts[i]]);
                     if (s) {
                         s.addEventListener ('focusout',this[opts[i]].bind(this));
                     }
@@ -3692,7 +3695,7 @@ This looks unused
         else {
             label   = this.escapeForHtml (this.cfg.label.unlock);
         }
-        this.qs(document,'#gui-unlock').innerHTML = label;
+        this.qs(document.body,'#gui-unlock').innerHTML = label;
         if (!this.screenUnlocked()) {
             console.log ('super.screenLock(): already locked');
         }
@@ -3744,7 +3747,7 @@ This looks unused
                 return;
             }
             // Label access button ready for local login
-            this.qs(document,'#gui-unlock').innerHTML = this.cfg.label.login;
+            this.qs(document.body,'#gui-unlock').innerHTML = this.cfg.label.login;
             // Automatically authenticate with token
 //this.log ('screenLockRefresh(): auto auth');
             this.authAuto ();
@@ -4010,7 +4013,7 @@ This looks unused
         if (!(status in cssClass)) {
             status          = 2;
         }
-    var splash              = this.qs (document,'#gui-splash');
+    var splash              = this.qs (document.body,'#gui-splash');
         this.splashMessage (
             splash,
             {
@@ -4385,7 +4388,7 @@ console.log ('storageRead(): '+key);
     }
 
     userScope ( ) {
-        return this.qs(document,'#gui-email');
+        return this.qs(document.body,'#gui-email');
     }
 
     windowLog ( ) {
