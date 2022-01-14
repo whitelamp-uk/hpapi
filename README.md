@@ -3,25 +3,23 @@
 
 HTTP POST API for client-server JSON interactions.
 
-```bash
 
-# You can get the entire SQL required to initialise a data model:
-bash ~/hpapi/whitelamp-uk/hpapi-sql/hpapi-collate-sql.bash ~/hpapi BurdenAndBurden > bab.sql
+### You can get the entire SQL required to initialise a data model:
+bash ~/hpapi/whitelamp-uk/hpapi-sql/hpapi-collate-sql.bash ~/hpapi ModelName > execute.sql
 
-# Or just one vendor's contribution to one model:
-bash ~/hpapi/whitelamp-uk/hpapi-sql/hpapi-collate-sql.bash ~/hpapi/burden-and-burden HpapiModel > HpapiModel.burden-and-burden.sql
+### Or just one vendor's contribution to one model:
+bash ~/hpapi/whitelamp-uk/hpapi-sql/hpapi-collate-sql.bash ~/hpapi/some-vendor ModelName > execute.sql
 
-# Or just a file listing of either of the above:
-bash ~/hpapi/whitelamp-uk/hpapi-sql/hpapi-collate-sql.bash -q ~/hpapi HpapiModel
+### Or just a file listing:
+bash ~/hpapi/whitelamp-uk/hpapi-sql/hpapi-collate-sql.bash -q ~/hpapi ModelName
 
-# List of files that might contain Hpapi access permissions:
+### List of files that might contain Hpapi access permissions:
 bash ~/hpapi/whitelamp-uk/hpapi-sql/hpapi-collate-sql.bash -q ~/hpapi HpapiModel | grep rows.sql
 
-# To collate all SQL that might contain Hpapi access permissions:
+### To collate all SQL that might contain Hpapi access permissions:
 for file in $(bash ~/hpapi/whitelamp-uk/hpapi-sql/hpapi-collate-sql.bash -q ~/hpapi HpapiModel | grep rows.sql) ; do cat $file >> access.sql ; done
 cat access.sql
 
-```
 
 ### The key rules for SQL are:
  * tables.sql files should always be non-destructive and tolerant of columns added later
@@ -46,36 +44,36 @@ In production, however, one would tend to freshly install in a staging area with
 ### Before running:
  * reconfigure stage 3 to use new databases
  * clone the new databases from the old
+cd /home/some-user/hpapi-stage-3/whitelamp-uk
 
-```bash
+### Just in case branch has been changed:
+git checkout stable
 
-cd ~/hpapi-stage-3/whitelamp-uk
-# Just in case branch has been changed:
-git checkout stable
-# Update PHP and SQL:
+### Update PHP and SQL:
 git pull
-#
-# Update one or more data models
-cd ~/hpapi-stage-3/burden-and-burden
+
+### Update one or more data models
+cd /home/some-user/hpapi-stage-3/some-vendor
 git checkout stable
 git pull
-#
-# Collate SQL
-cd ~/hpapi-stage-3
+
+### Collate SQL
+cd /home/some-user/hpapi-stage-3
 bash ./whitelamp-uk/hpapi-sql/hpapi-collate-sql.bash . HpapiModel > /tmp/hpapi.sql
-bash ./whitelamp-uk/hpapi-sql/hpapi-collate-sql.bash . BurdenAndBurden > /tmp/bab.sql
-#
-# Execute SQL
-sudo mariadb hpapi < /tmp/hpapi.sqlsudo mariadb bab_model < /tmp/bab.sql
-#
-# Put stage 3 live
-cd /var/www/html
-sudo rm myservice
-sudo ln -s ~/hpapi-stage-3/whitelamp-uk/hpapi-server myservice
-#
-# Revert
-cd /var/www/html
-sudo rm myservice
-sudo ln -s ~/hpapi-stage-2/whitelamp-uk/hpapi-server myservice
+bash ./whitelamp-uk/hpapi-sql/hpapi-collate-sql.bash . ModelName > /tmp/model-name.sql
 
-```
+### Execute SQL
+sudo mariadb hpapi < /tmp/hpapi.sql
+sudo mariadb model_db < /tmp/model-name.sql
+
+### Put stage 3 live
+cd /var/www/html
+sudo rm myservice
+sudo ln -s /home/some-user/hpapi-stage-3/whitelamp-uk/hpapi-server myservice
+
+### Revert
+cd /var/www/html
+sudo rm myservice
+sudo ln -s /home/some-user/hpapi-stage-2/whitelamp-uk/hpapi-server myservice
+
+
