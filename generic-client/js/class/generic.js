@@ -1560,8 +1560,8 @@ This looks unused
         this.restricted                 = this.qs (document.body,'#gui-restricted');
         this.restricted.style.display   = 'none';
         this.status                     = this.qs (document.body,'#gui-status');
-        if (this.cfg.inBodyLoggerId) {
-            this.logger                 = this.loggerCreate (this.cfg.inBodyLoggerId);
+        if (this.cfg.inBodyLogger) {
+            this.logger                 = this.loggerCreate ();
         }
         else {
             if (window.location.search.substr(-1)=='?') {
@@ -2313,12 +2313,12 @@ This looks unused
         this.logger.value += label + ' ' + str + '\n';
     }
 
-    loggerCreate (id) {
+    loggerCreate ( ) {
         this.restricted.classList.add ('with-logger');
         this.status.classList.add ('with-logger');
     var form = document.createElement ('form');
     var logr = document.createElement ('textarea');
-        logr.setAttribute ('id',id);
+        logr.setAttribute ('id','logger');
         form.appendChild (logr);
         document.body.appendChild (form);
         return logr;
