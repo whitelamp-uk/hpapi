@@ -3830,11 +3830,6 @@ This looks unused
             this.currentTemplates[screen]       = {};
         }
         this.currentTemplates[screen].visited = true;
-    var tech                                    = document.createElement ('a');
-        this.restricted.appendChild (tech);
-        tech.classList.add ('navigator');
-        tech.dataset.insert                     = 'tech';
-        tech.dataset.target                     = 'gui-tech';
         if (this.cfg.diagnostic.data) {
             this.restricted.innerHTML          += this.templates.data (this.data);
         }
