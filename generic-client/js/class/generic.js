@@ -1290,36 +1290,9 @@ This looks unused
         document.documentElement.scrollTop      = this.filterScroll.y;
     }
 
-    filterToggle (evt) {
-        var filter,form;
-        filter                                  = evt.currentTarget.parentElement;
-        form                                    =  this.qs (filter,'form');
-        if (filter.classList.contains('expanded')) {
-            filter.classList.remove ('expanded');
-            form.reset ();
-            this.filter (form);
-            document.documentElement.scrollLeft = this.filterScroll.x;
-            document.documentElement.scrollTop  = this.filterScroll.y;
-            return;
-        }
-        this.filterScroll = {
-            x : document.documentElement.scrollLeft,
-            y : document.documentElement.scrollTop
-        };
-        filter.classList.add ('expanded');
-    var search                                  = this.qs (form,'[data-freetext]');
-        if (search) {
-            search.select ();
-        }
-    }
-
     filtersListen (targetElmt) {
-    var filters                     = this.qsa (targetElmt,'span.filter');
+    var filters                     = this.qsa (targetElmt,'div.filter');
         for (var filter of filters) {
-        var expander                = this.qs (filter,'a.filter');
-            if (expander) {
-                expander.addEventListener ('click',this.filterToggle.bind(this));
-            }
         var resetter                = this.qs (filter,'a.reset');
             if (resetter) {
                 resetter.addEventListener ('click',this.filterReset.bind(this));
@@ -2314,6 +2287,7 @@ This looks unused
     }
 
     loggerCreate ( ) {
+        this.access.classList.add ('with-logger');
         this.restricted.classList.add ('with-logger');
         this.status.classList.add ('with-logger');
     var form = document.createElement ('form');
@@ -2646,14 +2620,16 @@ This looks unused
             nav.appendChild (item);
         }
         // Use burger menu
-        if ('burger' in this.cfg.navigatorOptions) {
+        if (this.cfg.navigatorOptions.burger) {
             navs = await this.menuLinks ();
             for (i=0;i<navs.length;i++) {
                 nav.appendChild (navs[i]);
             }
-            title = await this.menuGroupTitle ();
-            if (title) {
-                nav.appendChild (title);
+            if (this.cfg.navigatorOptions.useListTitles) {
+                title = await this.menuGroupTitle ();
+                if (title) {
+                    nav.appendChild (title);
+                }
             }
             return nav;
         }
