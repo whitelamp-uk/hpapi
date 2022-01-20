@@ -118,12 +118,12 @@ a[download]:hover {
     text-decoration: none;
 }
 
-a[data-insert=tech] {
+a.gui-tech-opener {
     position: fixed;
     z-index: 1001;
     right: 2em;
     bottom: 1em;
-    display: block;
+    display: none;
     margin: 0;
     padding: 0;
     width: 1.6em;
@@ -132,7 +132,9 @@ a[data-insert=tech] {
     background-repeat: no-repeat;
     background-size: contain;
 }
-
+a.gui-tech-opener.authenticated {
+    display: block;
+}
 
 div.nugget.address {
     cursor: pointer;
@@ -212,9 +214,10 @@ div.subheading {
 nav.navigator {
     position: fixed;
     z-index: 40;
-    left: 0.5vw;
+    left: 0.5em;
     top: 0.5em;
-    width: 97vw;
+    width: calc(100vw - 3em);
+    min-width: var(--dim-width-navigator);
     min-height: 3.65em;
     box-shadow: var(--dim-shadow-box-main) var(--color-shadow-box-main);
     border-style: solid;
@@ -229,7 +232,7 @@ nav.navigator {
 }
 nav.navigator > button {
     margin: 0 0 0 var(--dim-margin-navigator-button);
-    min-width: 7.4em;
+    min-width: 6.1em;
 }
 nav.navigator a[data-icon=lock] {
     position: absolute;
@@ -276,7 +279,6 @@ nav.submenu.nugget {
     z-index: 40;
     left: 28em;
     top: 5em;
-    min-width: 45em;
     min-height: 2.7em;
     box-shadow: var(--dim-shadow-box-main) var(--color-shadow-box-main);
     border-style: solid;
@@ -286,10 +288,6 @@ nav.submenu.nugget {
     background-color: var(--color-background-navigator);
 }
 
-section.view {
-    padding-top: var(--dim-top-spacer);
-}
-
 /* IDs */
 
 #gui-access {
@@ -297,7 +295,7 @@ section.view {
     padding:            4em 0.5em 0 0.5em;
 }
 #gui-access > nav.navigator {
-    width:              10.25em;
+    width:              calc(100vw - 3.5em);
     padding-left:       0.6em;
 }
 
@@ -337,6 +335,7 @@ section.view {
 
 #gui-restricted > h2 {
     padding-left:       0.7em;
+    margin-top:         1em;
 }
 
 #gui-menu {
@@ -357,7 +356,10 @@ section.view {
 }
 #gui-menu [data-menu] {
     width:              100%;
-    height:             100%;
+    height:             calc(100vh - 12em);
+    overflow-x:         visible;
+    overflow-y:         auto;
+    overscroll-behavior-y: contain;
     margin:             0;
     border-radius:      var(--dim-border-radius-component);
     padding:            0.1em 0 0 0.4em;
@@ -425,6 +427,7 @@ section.view {
     height:             calc(100vh - 20em);
     overflow-x:         hidden;
     overflow-y:         scroll;
+    overscroll-behavior-y: contain;
 }
 #gui-menu [data-menu] .menu-options > [data-screen] {
     display:            block;
@@ -552,6 +555,9 @@ section.view {
     font-weight:        bold;
     color:              var(--color-text-unvisited);
 }
+#gui-tech div.tech textarea[name="notes"] {
+    height:             15em;
+}
 #gui-tech div.tech pre {
     overflow-x:         hidden;
 }
@@ -586,15 +592,27 @@ a.atom:hover {
     color: var(--color-text-backtrail);
 }
 
-.char-4 {
+.char-4,
+.filter.nugget input.char-4,
+.filter.nugget select.char-4 {
     width: var(--dim-width-input-char-4);
 }
 
-.char-16 {
+.char-8,
+.filter.nugget input.char-8,
+.filter.nugget select.char-8 {
+    width: var(--dim-width-input-char-8);
+}
+
+.char-16,
+.filter.nugget input.char-16,
+.filter.nugget select.char-16 {
     width: var(--dim-width-input-char-16);
 }
 
-.char-64 {
+.char-64,
+.filter.nugget input.char-64,
+.filter.nugget select.char-64 {
     width: var(--dim-width-input-char-64);
 }
 
@@ -618,20 +636,29 @@ a.atom:hover {
     background-color: var(--color-background-readonly);
 }
 
-.edit.nugget {
+.edit {
     position: fixed;
     z-index: 20;
-    top: 5em;
-    margin: 0 0 0 1em;
-    min-width: 25em;
-    padding: 0.1em 0.3em 0.1em 0.3em;
+    right: 2.7em;
+    top: 4.65em;
+    margin: 0;
     box-shadow: var(--dim-shadow-box-main) var(--color-shadow-box-main);
-    background-color: var(--color-background-navigator);
+    border-style: solid;
+    border-width: var(--dim-border-width-component);
+    border-radius: var(--dim-border-radius-component);
+    border-color: var(--color-border-main);
+    background-color: var(--color-background-navigator-opaque);
+    padding: 0;
 }
-.edit.nugget a {
+.edit.insert {
+    position: absolute;
+    top: 7em;
+    right: auto !important;
+    left: 3.5em;
+}
+.edit a {
     display: block;
-    float: left;
-    margin: -0.03em 0 0 0.3em;
+    margin: 0.6em;
     padding: 0;
     width: 2.4em;
     height: 2.4em;
@@ -639,34 +666,28 @@ a.atom:hover {
     background-size: contain;
     background-image: var(--url-icon-edit-on);
 }
-.edit.nugget a:hover {
+.edit:hover {
     background-color: var(--color-background-main);
 }
-.edit.nugget a.on {
+.edit a.on {
     background-image: var(--url-icon-edit-off);
-}
-.edit.nugget h2 {
-    display: inline;
-    margin: 0 0.5em 0 2.5em;
 }
 
 .filter.nugget {
     position: fixed;
     z-index: 50;
-    display: inline-block;
-    top: 0.5em;
-    width: 3.6em;
-    transition: width 0.35s ease-out;
-    height: 3.65em;
+    top: 0.55em;
+    min-width: calc(var(--dim-width-nugget) - 4.7em);
+    max-width: 52em;
+    height: 3.55em;
     right: 1.5vw;
     margin: 0;
-    box-shadow: var(--dim-shadow-box-main) var(--color-shadow-box-main);
-    background-color: var(--color-background-navigator);
-    overflow: hidden;
-}
-.filter.nugget.expanded {
-    width: 73vw;
-    transition: width 0.35s ease-out;
+    border-color: transparent;
+    box-shadow: none;
+    background-color: transparent;
+    overflow: visible;
+    text-align: right;
+    font-size: 1.15em;
 }
 .filter.nugget a img {
     height: 2em;
@@ -675,29 +696,7 @@ a.atom:hover {
     display: inline-block;
     margin: 0.3em 0 0 0.1em;
 }
-.filter.nugget form {
-    display: none;
-    position: absolute;
-    left: 3.5em;
-    top: 0.2em;
-    margin: 0.5em 0 0.5em 0;
-    width: 70vw;
-    padding: 0;
-    overflow-x: auto;
-    overflow-y: hidden;
-}
-.filter.nugget.expanded form {
-    display: block;
-}
-.filter.nugget form > div {
-    width: 70vw;
-    min-width: 50em;
-    left: 3.5em;
-    top: 0.2em;
-    margin: 0;
-    padding: 0;
-}
-.filter.nugget form > div > * {
+.filter.nugget form > * {
     margin: 0 0.6em 0 0;
     padding: 0;
 }
@@ -705,9 +704,13 @@ a.atom:hover {
     width: 8em;
 }
 .filter.nugget input {
-    width: 8em;
-    padding: 0.3em;
+    padding: 0 0.3em 0 0.3em;
+    line-height: 1em;
 }
+.filter.nugget span.status {
+    white-space: nowrap;
+}
+
 
 .filtered-out {
     display: none;
@@ -767,9 +770,10 @@ a.atom:hover {
 .new.nugget {
     position: fixed;
     z-index: 30;
-    left: 28em;
+    left: 36em;
     top: 5em;
-    width: 45em;
+    width: calc(100vw - 39.4em);
+    min-width: calc(var(--dim-width-nugget));
     box-shadow: var(--dim-shadow-box-main) var(--color-shadow-box-main);
     background-color: var(--color-background-navigator);
     padding-bottom: 0;
@@ -799,6 +803,7 @@ a.atom:hover {
 .nugget {
     position: relative;
     margin: var(--dim-margin-component);
+    min-width: var(--dim-width-nugget);
     border-style: solid;
     border-width: var(--dim-border-width-component);
     border-radius: var(--dim-border-radius-component);
@@ -1018,23 +1023,29 @@ section.tf-tree {
     overflow-y: scroll;
     resize: horizontal;
 }
-#gui-restricted.with-logger {
-    width: 85vw;
+#gui-access.with-logger > nav.navigator {
+    width: calc(86vw - 3.5em);
 }
-#gui-restricted.with-logger nav.navigator {
-    width: 82.5vw;
+#gui-access.with-logger .login.nugget {
+    width: calc(86vw - 5.5em);
+}
+#gui-restricted.with-logger .edit {
+    right: calc(14vw + 2.7em);
+}
+#gui-restricted.with-logger {
+    width: calc(86vw - 1em);
+}
+#gui-restricted.with-logger > nav.navigator {
+    width: calc(86vw - 3em);
 }
 #gui-restricted.with-logger .filter.nugget {
-    right: 16.1vw;
+    right: calc(14vw + 1.7em);
 }
-#gui-restricted.with-logger .filter.nugget.expanded {
-    width: 63vw;
-}
-#gui-restricted.with-logger > img.logo {
-    right: 16.5vw;
+#gui-restricted.with-logger .new.nugget {
+    width: calc(86vw - 39.4em);
 }
 #gui-status.with-logger {
-    right: 16vw;
+    right: calc(14vw + 2em);
 }
 
 
@@ -1198,73 +1209,93 @@ section.tf-tree {
 
 /* MEDIA QUERIES */
 
-@media screen and (max-width: 74em) {
-    #gui-access, #gui-restricted {
-        padding-top: 6em;
+@media screen and (max-width: 80em) {
+    #gui-restricted h2:first-of-type {
+        position: fixed;
+        z-index: 40;
+        left: 12em;
+        top: -0.2em;
+    }
+    #gui-restricted h2.static {
+        position: static;
+        left: auto;
+        top: auto;
+    }
+    #gui-restricted .nudge-me {
+        margin-top: 2em;
+    }
+    #gui-restricted .nudge-me-more {
+        margin-top: 5.3em;
+    }
+    #gui-restricted .nudge-me-lots {
+        margin-top: 9.4em;
+    }
+    #gui-restricted .edit.nugget {
+        position: static;
+        margin-top: 9.4em;
+    }
+    #gui-restricted .edit.nugget h2:first-of-type {
+        position: static;
+        left: auto;
+        top: auto;
     }
     .filter.nugget {
-        top: 6.35em;
+        top: 4.5em;
+        right: auto;
+        left: 1.3em;
+        text-align: left;
+        height: auto;
+        box-shadow: var(--dim-shadow-box-main) var(--color-shadow-box-main);
+        border-color: var(--color-border-main);;
+        background-color: var(--color-background-navigator);
+    }
+    .static + div .filter.nugget {
+        top: 7em;
+    }
+    #gui-restricted .new.nugget {
+        right: auto;
+        left: 1.5em;
+        top: 9.7em;
+        margin-left: 0;
+    }
+    #gui-restricted .static + div .new.nugget,
+    #gui-restricted.with-logger .static + div .new.nugget {
+        top: 12.4em;
+    }
+    #gui-restricted > img.logo {
+        top: 6.5em;
     }
     nav.submenu.nugget {
         top: 11.4em;
         min-width: 60vw;
     }
-    .new.nugget {
-        top: 10.8em;
-        width: 70vw;
-    }
-    #gui-restricted > img.logo {
-        top: 6.5em;
-    }
 }
-@media screen and (max-width: 44em) {
-    #gui-access, #gui-restricted {
-        padding-top: 8em;
+
+@media screen and (max-width: 68em) {
+    #gui-restricted > h2.static {
+        margin-top: 2.3em;
     }
-    .filter.nugget {
-        top: 8.35em;
+    #gui-restricted .edit {
+        top: 7em;
     }
-    nav.submenu.nugget {
-        top: 13.4em;
-        min-width: 80vw;
+    #gui-restricted h2.static {
+        position: static;
+        left: auto;
+        top: auto;
     }
-    .new.nugget {
-        top: 12.8em;
-        width: 80vw;
+    #gui-restricted .new.nugget {
+       top: 11.1em;
     }
-}
-@media screen and (max-width: 38em) {
-    #gui-access, #gui-restricted {
-        padding-top: 10em;
-    }
-    .filter.nugget {
-        top: 10.35em;
-        overflow-y: auto;
-    }
-    nav.submenu.nugget {
-        top: 15.4em;
-        min-width: 80vw;
-    }
-    .new.nugget {
-        top: 14.8em;
-        width: 80vw;
-    }
-}
-@media screen and (max-width: 30em) {
-    #gui-access, #gui-restricted {
-        padding-top: 17em;
-    }
-    .filter.nugget {
-        top: 17.35em;
-        overflow-y: auto;
-    }
-    nav.submenu.nugget {
-        top: 22.4em;
-        min-width: 80vw;
-    }
-    .new.nugget {
-        top: 21.8em;
-        width: 75vw;
+    #gui-restricted .nudge-me-lots {
+        margin-top: 10.8em;
     }
 }
 
+@media screen and (max-width: 48em) {
+    #gui-restricted > h2.static {
+        width: 72vw;
+    }
+    #gui-restricted.with-logger > h2.static {
+        width: 58vw;
+    }
+}
