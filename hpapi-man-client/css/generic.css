@@ -49,6 +49,8 @@ a[data-close], a.close, a[data-maximise], a.maximise, a[data-minimise], a.minimi
     border-radius: var(--dim-border-radius-button-close);
     border-style: none;
     background-color: transparent;
+    background-repeat: no-repeat;
+    background-size: contain;
     color: transparent;
     overflow: hidden;
     cursor: pointer;
@@ -61,10 +63,10 @@ a[data-icon] {
     background-size: contain;
 }
 a[data-icon=lock] {
-    background-image: var(--url-icon-lock);
+    background-image:   var(--url-icon-lock);
 }
 a[data-icon=burger] {
-    background-image: var(--url-icon-burger);
+    background-image:   var(--url-icon-burger);
 }
 a[data-icon=account] {
     background-image:   var(--url-icon-menu-account);
@@ -106,10 +108,10 @@ a[data-icon=findadd] {
     background-image:   var(--url-icon-menu-findadd);
 }
 a[data-maximise], a.maximise {
-    background-image: var(--url-button-maximise);
+    background-image:   var(--url-button-maximise);
 }
 a[data-minimise], a.minimise {
-    background-image: var(--url-button-minimise);
+    background-image:   var(--url-button-minimise);
 }
 a[download] {
     text-decoration: underline;
@@ -273,19 +275,6 @@ nav.navigator h2.nav-title {
     width: 23.5em;
     background-color: var(--color-background-navigator-title);
     padding: 0;
-}
-nav.submenu.nugget {
-    position: fixed;
-    z-index: 40;
-    left: 28em;
-    top: 5em;
-    min-height: 2.7em;
-    box-shadow: var(--dim-shadow-box-main) var(--color-shadow-box-main);
-    border-style: solid;
-    border-width: var(--dim-border-width-component);
-    border-radius: var(--dim-border-radius-component);
-    border-color: var(--color-border-main);
-    background-color: var(--color-background-navigator);
 }
 
 /* IDs */
@@ -767,7 +756,8 @@ a.atom:hover {
     display: block;
     margin-bottom: 0.6em;
 }
-.new.nugget {
+.new.nugget,
+.submenu.nugget {
     position: fixed;
     z-index: 30;
     left: 36em;
@@ -778,19 +768,29 @@ a.atom:hover {
     background-color: var(--color-background-navigator);
     padding-bottom: 0;
 }
-.new.nugget.unfixed {
+.new.nugget.unfixed,
+.submenu.nugget.unfixed  {
     position: absolute;
     top: auto;
     margin-top: -0.6em;
 }
-.new.nugget.unfixed + * {
+.new.nugget.unfixed + *,
+.submenu.nugget.unfixed + * {
     margin-top: 5em;
 }
-.new.nugget .legend {
+.new.nugget .legend,
+.submenu.nugget .legend {
     background-color: var(--color-background-navigator-opaque);
 }
-.new.nugget + section {
+.new.nugget + section,
+.submenu.nugget + section {
+    padding-top: 1em;
     margin-top: 1em;
+}
+
+.submenu.nugget {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
 }
 
 .no-sync {
@@ -1041,7 +1041,8 @@ section.tf-tree {
 #gui-restricted.with-logger .filter.nugget {
     right: calc(14vw + 1.7em);
 }
-#gui-restricted.with-logger .new.nugget {
+#gui-restricted.with-logger .new.nugget,
+#gui-restricted.with-logger .submenu.nugget {
     width: calc(86vw - 39.4em);
 }
 #gui-status.with-logger {
@@ -1110,7 +1111,7 @@ section.tf-tree {
     padding: 0;
 }
 .layer > .nugget {
-    var(--dim-shadow-box-main) var(--color-shadow-box-main);
+    box-shadow: var(--dim-shadow-box-main) var(--color-shadow-box-main);
     width: 60vw;
     background-color: var(--color-background-component);
     overflow-y: auto;
@@ -1149,7 +1150,8 @@ section.tf-tree {
     min-height: 60vh;
     max-height: 85vh;
 }
-.layer1 > .layer .new.nugget {
+.layer1 > .layer .new.nugget,
+.layer1 > .layer .submenu.nugget {
     z-index: 130;
 }
 .layer1 > .layer .filter.nugget {
@@ -1175,7 +1177,8 @@ section.tf-tree {
     min-height: 55vh;
     max-height: 80vh;
 }
-.layer2 > .layer .new.nugget {
+.layer2 > .layer .new.nugget,
+.layer2 > .layer .submenu.nugget {
     z-index: 230;
 }
 .layer2 > .layer .filter.nugget {
@@ -1196,7 +1199,8 @@ section.tf-tree {
     min-height: 60vh;
     max-height: 75vh;
 }
-.layer3 > .layer .new.nugget {
+.layer3 > .layer .new.nugget,
+.layer3 > .layer .submenu.nugget {
     z-index: 330;
 }
 .layer3 > .layer .filter.nugget {
@@ -1252,14 +1256,16 @@ section.tf-tree {
     .static + div .filter.nugget {
         top: 7em;
     }
-    #gui-restricted .new.nugget {
+    #gui-restricted .new.nugget,
+    #gui-restricted .submenu.nugget {
         right: auto;
         left: 1.5em;
         top: 9.7em;
         margin-left: 0;
     }
     #gui-restricted .static + div .new.nugget,
-    #gui-restricted.with-logger .static + div .new.nugget {
+    #gui-restricted.with-logger .static + div .new.nugget,
+    #gui-restricted.with-logger .static + div .submenu.nugget {
         top: 12.4em;
     }
     #gui-restricted > img.logo {
@@ -1283,7 +1289,8 @@ section.tf-tree {
         left: auto;
         top: auto;
     }
-    #gui-restricted .new.nugget {
+    #gui-restricted .new.nugget,
+    #gui-restricted .submenu.nugget {
        top: 11.1em;
     }
     #gui-restricted .nudge-me-lots {
