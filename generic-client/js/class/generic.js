@@ -2888,7 +2888,8 @@ This looks unused
             return Papa.unparse (obj,this.cfg.papaparse.export);
         }
         catch (e) {
-            throw new Error ('objectToCsv(): '+e.message);
+            console.log ('objectToCsv(): '+e.message);
+            throw new Error ('Object could not be unparsed to CSV');
             return false;
         }
     }
