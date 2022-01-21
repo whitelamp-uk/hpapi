@@ -2596,7 +2596,7 @@ This looks unused
 
     async navigatorsElement (templateName) {
         // Variables
-        var blk, block, button, crumbs, doctitle, i, img, nav, navs, opts, item, s, template, title;
+        var blk, block, button, crumbs, doctitle, i, nav, navs, opts, item, s, template, title;
         // Cross-screen interface controls
         nav                         = document.createElement ('nav');
         nav.classList.add ('navigator');
@@ -2607,8 +2607,6 @@ This looks unused
         opts                        = Object.keys (this.cfg.navigatorOptions);
         for (i=0;opts[i];i++) {
             item                    = document.createElement ('a');
-            img                     = document.createElement ('img');
-            item.appendChild (img);
             item.dataset.icon       = opts[i];
             if (opts[i] in this) {
                 item.addEventListener ('click',this[opts[i]].bind(this));

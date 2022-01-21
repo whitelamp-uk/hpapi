@@ -43,6 +43,8 @@ a[data-close], a.close, a[data-maximise], a.maximise, a[data-minimise], a.minimi
     display: block;
     width: var(--dim-width-button-close);
     height: var(--dim-height-button-close);
+    background-repeat: no-repeat;
+    background-size: contain;
     box-shadow: var(--dim-shadow-box-main) var(--color-shadow-box-main);
     border-radius: var(--dim-border-radius-button-close);
     border-style: none;
@@ -51,67 +53,63 @@ a[data-close], a.close, a[data-maximise], a.maximise, a[data-minimise], a.minimi
     overflow: hidden;
     cursor: pointer;
 }
-a[data-close], a.close, a[data-maximise], a.maximise, a[data-minimise], a.minimise > img {
-    width: 100%;
-    height: 100%;
+a[data-close], a.close {
+    background-image: var(--url-button-close);
 }
-a[data-close] > img, a.close > img {
-    content: var(--url-button-close);
+a[data-icon] {
+    background-repeat: no-repeat;
+    background-size: contain;
 }
-a[data-icon] > img {
-    width: 100%;
-    height: 100%;
+a[data-icon=lock] {
+    background-image: var(--url-icon-lock);
 }
-a[data-icon=lock] > img {
-    content:            var(--url-icon-lock);
+a[data-icon=burger] {
+    background-image: var(--url-icon-burger);
 }
-a[data-icon=burger] > img {
-    content:            var(--url-icon-burger);
+a[data-icon=account] {
+    background-image:   var(--url-icon-menu-account);
 }
-a[data-icon=account] > img {
-    content:            var(--url-icon-menu-account);
+a[data-icon=agent] {
+    background-image:   var(--url-icon-menu-agent);
 }
-a[data-icon=agent] > img {
-    content:            var(--url-icon-menu-agent);
+a[data-icon=flag] {
+    background-image:   var(--url-icon-menu-flag);
 }
-a[data-icon=flag] > img {
-    content:            var(--url-icon-menu-flag);
+a[data-icon=form] {
+    background-image:   var(--url-icon-menu-form);
 }
-a[data-icon=form] > img {
-    content:            var(--url-icon-menu-form);
+a[data-icon=fundraiser] {
+    background-image:   var(--url-icon-menu-fundraiser);
 }
-a[data-icon=fundraiser] > img {
-    content:            var(--url-icon-menu-fundraiser);
+a[data-icon=manager] {
+    background-image:   var(--url-icon-menu-manager);
 }
-a[data-icon=manager] > img {
-    content:            var(--url-icon-menu-manager);
+a[data-icon=processor] {
+    background-image:   var(--url-icon-menu-processor);
 }
-a[data-icon=processor] > img {
-    content:            var(--url-icon-menu-processor);
+a[data-icon=report] {
+    background-image:   var(--url-icon-menu-report);
 }
-a[data-icon=report] > img {
-    content:            var(--url-icon-menu-report);
+a[data-icon=team] {
+    background-image:   var(--url-icon-menu-team);
 }
-a[data-icon=team] > img {
-    content:            var(--url-icon-menu-team);
+a[data-icon=test] {
+    background-image:   var(--url-icon-menu-test);
 }
-a[data-icon=test]  > img {
-    content:            var(--url-icon-menu-test);
+a[data-icon=tree] {
+    background-image:   var(--url-icon-menu-tree);
 }
-a[data-icon=tree] > img {
-    content:            var(--url-icon-menu-tree);
+a[data-icon=user] {
+    background-image:   var(--url-icon-menu-user);
 }
-a[data-icon=user] > img {
-    content:            var(--url-icon-menu-user);
+a[data-icon=findadd] {
+    background-image:   var(--url-icon-menu-findadd);
 }
-a[data-icon=findadd] > img {
-    content:            var(--url-icon-menu-findadd);
+a[data-maximise], a.maximise {
+    background-image: var(--url-button-maximise);
 }
-a[data-maximise] > img, a.maximise > img {
-    content:          var(--url-button-maximise);
-}
-a[data-minimise] > img, a.minimise > img {
-    content:          var(--url-button-minimise);
+a[data-minimise], a.minimise {
+    background-image: var(--url-button-minimise);
 }
 a[download] {
     text-decoration: underline;
@@ -130,11 +128,9 @@ a.gui-tech-opener {
     padding: 0;
     width: 1.6em;
     height: 1.6em;
-}
-a.gui-tech-opener > img {
-    width: 100%;
-    height: 100%;
-    content:          var(--url-icon-tech);
+    background-image: var(--url-icon-tech);
+    background-repeat: no-repeat;
+    background-size: contain;
 }
 a.gui-tech-opener.authenticated {
     display: block;
@@ -666,17 +662,15 @@ a.atom:hover {
     padding: 0;
     width: 2.4em;
     height: 2.4em;
-}
-.edit a > img {
-    width: 100%;
-    height: 100%;
-    content: var(--url-icon-edit-on);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-image: var(--url-icon-edit-on);
 }
 .edit:hover {
     background-color: var(--color-background-main);
 }
-.edit a.on > img {
-    content: var(--url-icon-edit-off);
+.edit a.on {
+    background-image: var(--url-icon-edit-off);
 }
 
 .filter.nugget {
