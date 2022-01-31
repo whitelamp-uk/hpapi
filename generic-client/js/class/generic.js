@@ -1,5 +1,5 @@
 
-/* Copyright 2018 Whitelamp http://www.whitelamp.co.uk/ */
+/* Copyright 2022 Whitelamp http://www.whitelamp.co.uk/ */
 
 import {Hpapi} from './hpapi.js';
 
@@ -474,20 +474,22 @@ console.log ('cookieExpire(): '+k+'='+val+'; expires='+exp);
         return link;
     }
 
-    downloadLink (linkText,fileName,fileType,fileContents,immediate=false) {
+    downloadLink (linkText,fileName,fileType,fileContents,onceOnly=false,immediate=false) {
         var link;
         link                        = document.createElement ('a');
         link.innerHTML              = this.escapeForHtml (linkText);
         link.setAttribute ('download',fileName);
         link.setAttribute ('type',fileType);
         link.setAttribute ('href',URL.createObjectURL(new Blob([fileContents])));
+        if (onceOnly) {
+            link.addEventListener ('click',this.downloadLinkRemove.bind(this));
+        }
         if (immediate) {
             document.body.appendChild (link);
             link.click ();
             document.body.removeChild (link);
             return;
         }
-        link.addEventListener ('click',this.downloadLinkRemove.bind(this));
         return link;
     }
 
