@@ -102,7 +102,7 @@ export class Generic extends Hpapi {
                 console.log ('authCheck(): setting this.currentUser');
                 this.currentUser = response.returnValue;
                 this.dataRefresh ();
-                this.authOk ();
+                this.authOk (response);
                 this.screenUnlock ();
             }
             else {
