@@ -194,14 +194,14 @@ class Hpapi {
                         break 2;
                     }
                     else {
-                         $this->diagnostic (HPAPI_DG_ACCESS_GRP_REM_ADDR);
+                         $this->diagnostic (HPAPI_DG_ACCESS_GRP_REM_ADDR.' for '.$method);
                     }
                 }
             }
         }
         if (!$access) {
             if (!$match) {
-                $this->diagnostic (HPAPI_DG_ACCESS_GRP);
+                $this->diagnostic (HPAPI_DG_ACCESS_GRP.' for '.$method);
             }
             $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
             $this->end ();
