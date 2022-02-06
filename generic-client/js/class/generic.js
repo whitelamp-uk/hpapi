@@ -4124,7 +4124,8 @@ This looks unused
     }
 
     statusShow (msg,clear=false) {
-    var keep                        = false;
+        var keep,toh;
+        keep                        = false;
         if (this.statusTimeoutHide) {
             window.clearTimeout (this.statusTimeoutHide);
             delete this.statusTimeoutHide;
@@ -4141,8 +4142,14 @@ This looks unused
         this.status.textContent     = msg;
         this.status.classList.add ('transition');
         this.status.classList.add ('visible');
-        this.statusTimeoutHide      = setTimeout (this.statusHide.bind(this),2000);
-        this.statusTimeoutReset     = setTimeout (this.statusReset.bind(this),2400);
+        if (this.cfg.statusShowPersistMs) {
+            toh = this.cfg.statusShowPersistMs;
+        }
+        else {
+            toh = 3000;
+        }
+        this.statusTimeoutHide  = setTimeout (this.statusHide.bind(this),toh);
+        this.statusTimeoutReset = setTimeout (this.statusReset.bind(this),toh+400);
     }
 
     storageDelete (key) {
