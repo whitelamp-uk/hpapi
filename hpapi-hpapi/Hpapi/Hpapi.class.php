@@ -557,6 +557,18 @@ class Hpapi {
         }
     }
 
+    public function dbRoute ($model,$dbName) {
+        // Provides support for multiple databases sharing a common data model
+        $dsn = $this->models->$model->dsn;
+        $dsn = explode (';',$dsn);
+        for ($i=0;array_key_exists($i,$dsn);$i++) {
+            if (preg_match('<^dbname>',$dsn[$i])) {
+                $dsn[$i] = "dbname=$dbName";
+            }
+        }
+        $this->models->$model->dsn = implode (';',$dsn);
+    }
+
     public function decodePost ( ) {
         $post           = trim (file_get_contents('php://input'));
         if (strlen($post)==0) {
@@ -877,20 +889,20 @@ class Hpapi {
     }
 
     public function groupAllowed ($groupName) {
-        return $this->groupCheck($groupName, $this->groupsAllowed);
+        return $this->groupCheck ([$groupName],$this->groupsAllowed);
     }
 
     public function groupAvailable ($groupName) {
-        return $this->groupCheck($groupName, $this->groupsAvailable);
+        return $this->groupCheck ([$groupName],$this->groupsAvailable);
     }
 
-    private function groupCheck($needles, $haystack) {
-        if (!is_array($needles)) {
-            $needles = array($needles);
+    private function groupCheck ($names,$groups) {
+        if (!is_array($names)) {
+            $names = [$names];
         }
-        foreach ($needles as $needle) {
-            foreach ($haystack as $ug) {
-                if ($ug['usergroup']==$needle) {
+        foreach ($names as $name) {
+            foreach ($groups as $ug) {
+                if ($ug['usergroup']==$name) {
                     return true;
                 }
             }
