@@ -4163,7 +4163,6 @@ This looks unused
     }
 
     storageRead (key) {
-console.log ('storageRead(): '+key);
         return JSON.parse (this.storage.getItem(this.saveKey('persistent-'+key)));
     }
 
