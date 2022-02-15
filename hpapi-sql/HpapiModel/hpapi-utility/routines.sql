@@ -13,13 +13,13 @@ CREATE PROCEDURE `hpapiMyMethods`(
 )
 BEGIN
   SELECT
-    GROUP_CONCAT(DISTINCT `membership`.`usergroup` SEPARATOR ',') AS `usergroups`
+    GROUP_CONCAT(DISTINCT `hpapi_membership`.`usergroup` SEPARATOR ',') AS `usergroups`
    ,`vendor`,`package`,`class`,`method`
    ,`label`,`notes`
   FROM `hpapi_method`
   LEFT JOIN `hpapi_run` USING (`vendor`,`package`,`class`,`method`)
   LEFT JOIN `hpapi_membership`
-         ON authenticated>'0'
+         ON authenticated>0
         AND `hpapi_membership`.`usergroup`=`hpapi_run`.`usergroup`
         AND `hpapi_membership`.`user_id`=userId
   WHERE `hpapi_membership`.`user_id` IS NOT NULL
