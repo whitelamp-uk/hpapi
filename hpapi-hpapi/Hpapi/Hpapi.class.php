@@ -945,6 +945,10 @@ class Hpapi {
         if (!$this->db) {
             return false;
         }
+        if (!preg_match('<^[0-9]+$>',$this->object->response->authStatus)) {
+            throw new \Exception ("response->authStatus='{$this->object->response->authStatus}' is not one or more integers");
+            return false;
+        }
         $diagnostic = '';
         if (property_exists($this->object,'diagnostic')) {
             $diagnostic = $this->object->diagnostic;
@@ -1075,6 +1079,75 @@ class Hpapi {
 
     public function passwordHash ($plain) {
         return password_hash ($plain,HPAPI_HASH_ALGO,array('cost'=>HPAPI_HASH_COST));
+    }
+
+    public function passwordTest ($pwd,$minscore,&$msg='OK') {
+
+        // Loosely based on https://www.the-art-of-web.com/php/password-strength/
+        // /etc/security/pwquality.conf can be used to configure pwscore.
+        // Turns out pwscore uses cracklib by default anyway so perhaps we should simplify this.
+
+        $CRACKLIB = "/usr/sbin/cracklib-check";
+        if (!file_exists($CRACKLIB)) {
+            $this->diagnostic ('passwordTest(): cracklib-check not found');
+            throw new \Exception (HPAPI_STR_PASSWORD_TEST.' [1]');
+            return false;
+        }
+        $PWSCORE = "/usr/bin/pwscore";
+        if (!file_exists($PWSCORE)) {
+            $this->diagnostic ('passwordTest(): pwscore not found');
+            throw new \Exception (HPAPI_STR_PASSWORD_TEST.' [2]');
+            return false;
+        }
+        $this->diagnostic ('pwscore config: /etc/security/pwquality.conf');
+
+        // Prevent UTF-8 characters being stripped by escapeshellarg
+        setlocale (LC_ALL,'en_GB.utf-8'); //TODO check side-effects of this!
+
+        $out = [];
+        $ret = null;
+        $command = "echo '".escapeshellarg($pwd)."' | {$CRACKLIB}";
+        exec ($command,$out,$ret);
+        if ($ret>0) {
+            throw new \Exception (HPAPI_STR_PASSWORD_TEST.' [3]');
+            return false;
+        }
+        // Check response after the colon
+        preg_match ('<:\s+([^:]+)$>', $out[0], $match);
+        if (!is_array($match) || !array_key_exists(1,$match)) {
+            throw new \Exception (HPAPI_STR_PASSWORD_TEST.' [4]');
+            return false;
+        }
+        if ($match[1]!='OK') {
+            $this->diagnostic ('cracklib result="'.$match[1].'"');
+            if (stripos($match[1],'dictionary word')!==false) {
+                $msg = HPAPI_STR_PASSWORD_DICTIONARY;
+                return false;
+            }
+            if (stripos($match[1],'DIFFERENT characters')!==false) {
+                $msg = HPAPI_STR_PASSWORD_CHARACTERS;
+                return false;
+            }
+            $msg = HPAPI_STR_PASSWORD_OTHER;
+            return false;
+        } 
+        // cracklib is happy (or perhaps preg_match() failed?)
+        $out = [];
+        $ret = null;
+        $command = "echo '".escapeshellarg($pwd)."' | {$PWSCORE} 2>&1"; // NB to get stderr
+        exec ($command,$out,$ret);
+        if (is_numeric($out[0])) {
+            $this->diagnostic ('pwscore: '.$out[0]);
+            if (1*$out[0]<$minscore) {
+                $msg = HPAPI_STR_PASSWORD_SCORE.' score='.$out[0].' but '.$minscore.' required';
+                return false;
+            }
+        }
+        else {
+            $msg = trim ($out[1]);
+            return false;
+        }
+        return true;
     }
 
     public function pdoDriver ($dsn) {
