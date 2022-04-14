@@ -945,10 +945,6 @@ class Hpapi {
         if (!$this->db) {
             return false;
         }
-        if (!preg_match('<^[0-9]+$>',$this->object->response->authStatus)) {
-            throw new \Exception ("response->authStatus='{$this->object->response->authStatus}' is not one or more integers");
-            return false;
-        }
         $diagnostic = '';
         if (property_exists($this->object,'diagnostic')) {
             $diagnostic = $this->object->diagnostic;
