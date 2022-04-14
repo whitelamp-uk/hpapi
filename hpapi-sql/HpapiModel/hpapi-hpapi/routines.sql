@@ -460,7 +460,7 @@ CREATE PROCEDURE `hpapiLogRequest`(
  ,IN        `pkg` VARCHAR(64) CHARSET ascii
  ,IN        `cls` VARCHAR(64) CHARSET ascii
  ,IN        `mtd` VARCHAR(64) CHARSET ascii
- ,IN        `sts` CHAR(4) CHARSET ascii
+ ,IN        `sts` VARCHAR(64) CHARSET ascii
  ,IN        `err` VARCHAR(64) CHARSET utf8
  ,IN        `dgn` TEXT CHARSET utf8
 )
