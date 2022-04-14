@@ -163,6 +163,7 @@ define ( 'HPAPI_STR_DB_UPDATE_PRI_PERM',    '234 400 Primary key is not recognis
 define ( 'HPAPI_STR_DB_UPDATE_PRI_VAL',     '235 400 Invalid primary key value'                                                     );
 define ( 'HPAPI_STR_DB_UPDATE_PRI_CHECK',   '236 500 Unable to check primary key'                                                   );
 define ( 'HPAPI_STR_DB_UPDATE_PRI',         '237 400 The primary key given is incomplete'                                           );
+define ( 'HPAPI_STR_PASSWORD_TEST',         '238 500 Unable to test password'                                                       );
 
 // SSL notice
 define ( 'HPAPI_STR_PLAIN',                 'WARNING - UNENCRYPTED CONNECTION'                                                      );
@@ -171,12 +172,15 @@ define ( 'HPAPI_STR_PLAIN',                 'WARNING - UNENCRYPTED CONNECTION'  
 define ( 'HPAPI_STR_DECODE_NOTHING',        '\Hpapi\Hpapi::decodePost(): nothing was posted'                                        );
 define ( 'HPAPI_STR_DECODE_LENGTH',         '\Hpapi\Hpapi::decodePost(): posted data is too long'                                   );
 define ( 'HPAPI_STR_DB_EMPTY',              '\Hpapi\Db::call(): empty argument(s)'                                                  );
-
 define ( 'HPAPI_STR_2D_ARRAY',              '\Hpapi\Utility::parse2D(): a 2-D array was not given'                                  );
 define ( 'HPAPI_STR_EXPORT_ARRAY_FILE',     '\Hpapi\Hpapi::exportArray(): file is not writable'                                     );
 define ( 'HPAPI_STR_EXPORT_ARRAY_ARR',      '\Hpapi\Hpapi::exportArray(): variable is not an array'                                 );
 define ( 'HPAPI_STR_RESET_PRIVS_FILE',      '\Hpapi\Hpapi::resetPrivileges(): privileges file is not writable'                      );
 define ( 'HPAPI_STR_VALID_DEFN_PARAM',      '\Hpapi\Hpapi::validation(): definition is missing property'                            );
+define ( 'HPAPI_STR_PASSWORD_DICTIONARY',   'Contains common words, names or patterns'                                              );
+define ( 'HPAPI_STR_PASSWORD_CHARACTERS',   'Not enough different characters'                                                       );
+define ( 'HPAPI_STR_PASSWORD_OTHER',        'Too easy to crack'                                                                     );
+define ( 'HPAPI_STR_PASSWORD_SCORE',        'Security score is too low'                                                             );
 
 // Database notices
 define ( 'HPAPI_STR_DB_PREP',               'Query preparation failed'                                                              );
