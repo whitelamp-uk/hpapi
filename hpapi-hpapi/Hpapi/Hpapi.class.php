@@ -1245,7 +1245,7 @@ class Hpapi {
                 return false;
             }
         }
-        if ($defn['emptyAllowed'] && !strlen($value)) {
+        if ($defn['emptyAllowed'] && !(is_object($value) || is_array($value)) && !strlen($value)) {
             return true;
         }
         $e          = null;
