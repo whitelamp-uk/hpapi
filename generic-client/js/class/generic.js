@@ -1746,6 +1746,35 @@ This looks unused
             }
         );
         Handlebars.registerHelper (
+            'minimum',
+            function (a,b) {
+                if (!a) {
+                    a = 0;
+                }
+                a = parseFloat (a);
+                if (!b) {
+                    b = 0;
+                }
+                b = parseFloat (b);
+                if (a<b) {
+                    a = b;
+                }
+                return a;
+            }
+        );
+        Handlebars.registerHelper (
+            'multiply',
+            function (a,b) {
+                if (!a) {
+                    a = 0;
+                }
+                if (!b) {
+                    b = 0;
+                }
+                return parseFloat(a) * parseFloat(b);
+            }
+        );
+        Handlebars.registerHelper (
             'toLowerCase',
             function (str) {
                 if (!str) {
@@ -2130,6 +2159,7 @@ This looks unused
         }
         console.log ('insertRender(): rendering template "'+insert+'.hbs"');
         try {
+            // HANDLEBARS
             containerElmt.innerHTML = this.templates[insert] (this.data);
         }
         catch (e) {
@@ -2748,22 +2778,28 @@ This looks unused
     }
 
     navigatorsListen (targetElmt) {
-    var navs                        = this.qsa (targetElmt,this.navigatorsSelector());
-        for (var nav of navs) {
+        var nav,navs;
+        navs                        = this.qsa (targetElmt,this.navigatorsSelector());
+        for (nav of navs) {
             if (this.cfg.contextMenu) {
                 nav.setAttribute ('contextmenu',this.cfg.contextMenu);
             }
             if (!nav.dataset.event) {
                 nav.dataset.event   = 'click';
             }
-            nav.addEventListener (nav.dataset.event,this.navigatorsHandle.bind(this));
-            nav.addEventListener ('contextmenu',this.contextTargetHandle.bind(this));
+            if (nav.dataset.listening!=nav.dataset.event) {
+                // Attribute data-listening ensures that navigator is listened for just once
+                nav.dataset.listening = nav.dataset.event;
+                nav.addEventListener (nav.dataset.event,this.navigatorsHandle.bind(this));
+                nav.addEventListener ('contextmenu',this.contextTargetHandle.bind(this));
+            }
         }
     }
 
     now ( ) {
-    var d   = new Date ();
-    var n   = d.getFullYear ();
+        var d,n
+        d   = new Date ();
+        n   = d.getFullYear ();
         n  += '-' + (''+(d.getMonth()+1)).padStart(2,'0');
         n  += '-' + (''+d.getDate()).padStart(2,'0');
         n  += ' ' + (''+d.getHours()).padStart(2,'0');
