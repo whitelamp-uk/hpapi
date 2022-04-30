@@ -172,7 +172,7 @@ define ( 'HPAPI_STR_PLAIN',                 'WARNING - UNENCRYPTED CONNECTION'  
 define ( 'HPAPI_STR_DECODE_NOTHING',        '\Hpapi\Hpapi::decodePost(): nothing was posted'                                        );
 define ( 'HPAPI_STR_DECODE_LENGTH',         '\Hpapi\Hpapi::decodePost(): posted data is too long'                                   );
 define ( 'HPAPI_STR_DB_EMPTY',              '\Hpapi\Db::call(): empty argument(s)'                                                  );
-define ( 'HPAPI_STR_2D_ARRAY',              '\Hpapi\Utility::parse2D(): a 2-D array was not given'                                  );
+define ( 'HPAPI_STR_2D_ARRAY',              '\Hpapi\Hpapi::parse2D(): a 2-D array was not given'                                    );
 define ( 'HPAPI_STR_EXPORT_ARRAY_FILE',     '\Hpapi\Hpapi::exportArray(): file is not writable'                                     );
 define ( 'HPAPI_STR_EXPORT_ARRAY_ARR',      '\Hpapi\Hpapi::exportArray(): variable is not an array'                                 );
 define ( 'HPAPI_STR_RESET_PRIVS_FILE',      '\Hpapi\Hpapi::resetPrivileges(): privileges file is not writable'                      );
