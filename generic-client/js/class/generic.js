@@ -1320,6 +1320,18 @@ This looks unused
         return false;
     }
 
+    find2 (arrayOfObjects,key1,val2,key1,val2,strict=true) {
+        for (var i=0;i<arrayOfObjects.length;i++) {
+            if (strict && arrayOfObjects[i][key1]===val1 && arrayOfObjects[i][key2]===val2) {
+                return arrayOfObjects[i];
+            }
+            if (!strict && arrayOfObjects[i][key1]==val1 && arrayOfObjects[i][key2]==val2) {
+                return arrayOfObjects[i];
+            }
+        }
+        return false;
+    }
+
     findadd (evt) {
         // Variables
         var group;
