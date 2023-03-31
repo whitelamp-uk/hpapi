@@ -99,9 +99,7 @@ if ($x>0) {
     echo "Curl command failed\n";
     echo 'curl -s --header "Content-Type: application/json; charset=utf8" --data '.escapeshellarg('@'.$in).' '.$insecure.' '.escapeshellarg($url).' > '.escapeshellarg($out)."\n";
     echo "curl error $x\n";
-    foreach ($o as $line) {
-        echo "    $line\n";
-    }
+    echo "    {$o[0]}\n";
     exit (111);
 }
 
