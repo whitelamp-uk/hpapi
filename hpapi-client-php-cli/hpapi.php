@@ -97,6 +97,8 @@ if (strpos($url,'https://')===0) {
 exec ('curl -s --header "Content-Type: application/json; charset=utf8" --data '.escapeshellarg('@'.$in).' '.$insecure.' '.escapeshellarg($url).' > '.escapeshellarg($out),$o,$x);
 if ($x>0) {
     echo "Curl command failed\n";
+    echo 'curl -s --header "Content-Type: application/json; charset=utf8" --data '.escapeshellarg('@'.$in).' '.$insecure.' '.escapeshellarg($url).' > '.escapeshellarg($out)."\n";
+    echo $x.' '.$o."\n";
     exit (111);
 }
 
