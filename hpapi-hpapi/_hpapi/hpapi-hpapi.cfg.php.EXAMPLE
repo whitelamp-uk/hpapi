@@ -93,7 +93,7 @@ define ( 'HPAPI_TOKEN_LIFE_EXTEND',         true                                
 
 // JSON DEPTH AND ENCODING OPTIONS (JSON_PRETTY_PRINT is handy for development)
 define ( 'HPAPI_JSON_DEPTH',                512                                                                                     );
-define ( 'HPAPI_JSON_OPTIONS',              JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_NUMERIC_CHECK                        );
+define ( 'HPAPI_JSON_OPTIONS',              JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE                                           );
 
 
 // APPLICATION CLASSES
