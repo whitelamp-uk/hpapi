@@ -2777,12 +2777,10 @@ This looks unused
     navigatorsHandle (evt) {
         // Generic handle/render
         if (evt.currentTarget.dataset.insert) {
-            console.log ('navigatorsHandle(): navigating to insert');
             this.insertHandle (evt);
             return;
         }
         if (evt.currentTarget.dataset.screen) {
-            console.log ('navigatorsHandle(): navigating to screen');
             this.screenHandle (evt);
             return;
         }
