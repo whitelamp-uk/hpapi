@@ -76,7 +76,7 @@ if (!property_exists($object,'password')) {
 $object->datetime  = $dt->format(\DateTime::ATOM);
 
 // Create JSON string
-$request           = json_encode ($object,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_NUMERIC_CHECK);
+$request           = json_encode ($object,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
 if (($err=json_last_error())!=JSON_ERROR_NONE) {
     echo "Failed to encode request JSON\n";
     exit (110);
