@@ -129,6 +129,7 @@ export class Hpapi {
                     xhr                     = new XMLHttpRequest ();
                     xhr.timeout             = 1000 * timeoutSecs;
                     xhr.onerror             = function ( ) {
+                        console.error ('997 502 Could not connect or unknown error');
                         failed (new Error('997 502 Could not connect or unknown error'));
                     };
                     xhr.onload              = function ( ) {
@@ -144,6 +145,7 @@ export class Hpapi {
                                 fail        = true;
                             }
                             if (fail) {
+                                console.error ('995 502 Server is borked');
                                 failed (new Error('995 502 Server is borked: '+xhr.responseText));
                             }
                             else {
@@ -160,10 +162,12 @@ export class Hpapi {
                             }
                         }
                         else {
+                            console.error ('996 '+xhr.status+' '+xhr.statusText);
                             failed (new Error('996 '+xhr.status+' '+xhr.statusText));
                         }
                     };
                     xhr.ontimeout   = function ( ) {
+                        console.error ('998 404 Request timed out');
                         failed (new Error('998 404 Request timed out'));
                     };
                     xhr.open ('POST',url,true);
