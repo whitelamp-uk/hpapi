@@ -222,17 +222,41 @@ class Hpapi {
             $this->end ();
         }
         // Authentication data
-        try {
-            $results                                = $this->db->call (
-                'hpapiAuthDetails'
-                ,$this->object->email
-            );
+        if (property_exists($this->object,'email') && $this->object->email) {
+            try {
+                $results                                = $this->db->call (
+                    'hpapiAuthDetails'
+                    ,$this->object->email
+                );
+            }
+            catch (\Exception $e) {
+                $this->diagnostic ($e->getMessage());
+                $this->object->response->error          = HPAPI_STR_DB_SPR_ERROR;
+                $this->end ();
+            }
         }
-        catch (\Exception $e) {
-            $this->diagnostic ($e->getMessage());
-            $this->object->response->error          = HPAPI_STR_DB_SPR_ERROR;
-            $this->end ();
+        elseif (property_exists($this->object,'token') && $this->object->token) {
+            try {
+                $results                                = $this->db->call (
+                    'hpapiAuthDetails'
+                    ,$this->object->token
+                );
+                // Derive email address from token
+                if (array_key_exists(0,$results)) {
+                    // Get email address
+                    $this->object->email                = $results[0]['email'];
+                }
+            }
+            catch (\Exception $e) {
+                $this->diagnostic ($e->getMessage());
+                $this->object->response->error          = HPAPI_STR_DB_SPR_ERROR;
+                $this->end ();
+            }
         }
+        else {
+            $results = [];
+        }
+        // Add groups and password settings to response
         foreach ($results as $g) {
              array_push (
                 $this->groupsAvailable,

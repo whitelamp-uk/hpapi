@@ -8,11 +8,11 @@ SET time_zone = '+00:00';
 DELIMITER $$
 DROP PROCEDURE IF EXISTS `hpapiAuthDetails`$$
 CREATE PROCEDURE `hpapiAuthDetails`(
-  IN        `em` VARCHAR(254) CHARSET ascii
+  IN        `emailOrToken` VARCHAR(254) CHARSET ascii
 )
 BEGIN
   SELECT
-    `hpapi_user`.`id` AS `userId` 
+    `hpapi_user`.`id` AS `userId`
    ,`hpapi_user`.`active`
    ,`hpapi_user`.`verified`
    ,`hpapi_user`.`key`
@@ -20,6 +20,7 @@ BEGIN
    ,`hpapi_user`.`key_release` AS `respondWithKey`
    ,UNIX_TIMESTAMP(`key_release_until`) AS `keyReleaseUntil`
    ,`hpapi_user`.`remote_addr_pattern` AS `userRemoteAddrPattern`
+   ,`hpapi_user`.`email`
    ,`hpapi_user`.`password_hash` AS `passwordHash`
    ,UNIX_TIMESTAMP(`hpapi_user`.`password_expires`) AS `passwordExpires`
    ,UNIX_TIMESTAMP(`hpapi_user`.`password_self_manage_until`) AS `passwordSelfManageUntil`
@@ -37,7 +38,10 @@ BEGIN
   LEFT JOIN `hpapi_membership`
          ON `hpapi_membership`.`user_id`=`hpapi_user`.`id`
         AND `hpapi_membership`.`usergroup`=`hpapi_usergroup`.`usergroup`
-  WHERE `hpapi_user`.`email`=em
+  WHERE (
+        `hpapi_user`.`email`=emailOrToken
+     OR `hpapi_user`.`token`=emailOrToken
+  )
     AND (
          `hpapi_usergroup`.`usergroup`='anon'
       OR `hpapi_membership`.`usergroup` IS NOT NULL
