@@ -72,8 +72,8 @@ export class Hpapi {
 
     filterTimeout (timeoutSeconds) {
         timeoutSeconds = parseInt (timeoutSeconds);
-        if (isNaN(timeoutSeconds) || timeoutSeconds<1 || timeoutSeconds>60) {
-            throw new Error ('Hpapi.filterTimeout(): connection timeout seconds is not a sane integer (between 1 and 60)');
+        if (isNaN(timeoutSeconds) || timeoutSeconds<1 || timeoutSeconds>300) {
+            throw new Error ('Hpapi.filterTimeout(): connection timeout seconds is not a sane integer (between 1 and 300)');
             return false;
         }
         return timeoutSeconds;
