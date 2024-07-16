@@ -165,6 +165,10 @@ define ( 'HPAPI_STR_DB_UPDATE_PRI_CHECK',   '236 500 Unable to check primary key
 define ( 'HPAPI_STR_DB_UPDATE_PRI',         '237 400 The primary key given is incomplete'                                           );
 define ( 'HPAPI_STR_PASSWORD_TEST',         '238 500 Unable to test password'                                                       );
 
+// Returning the response payload
+define ( 'HPAPI_STR_RETURN_BYTES_MAX',      '239 550 The response payload is too large; limited to '                                );
+
+
 // SSL notice
 define ( 'HPAPI_STR_PLAIN',                 'WARNING - UNENCRYPTED CONNECTION'                                                      );
 

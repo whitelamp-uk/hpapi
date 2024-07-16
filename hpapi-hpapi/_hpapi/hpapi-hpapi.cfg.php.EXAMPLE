@@ -65,8 +65,10 @@ define ( 'HPAPI_PHP_ERROR_LEVEL',           E_ALL                               
 define ( 'HPAPI_SSL_ENFORCE',               true                                                                                    );
 
 
-// REQUEST SIZE
-define ( 'HPAPI_POST_BYTES_MAX',            65536                                                                                   );
+// REQUEST STRING LENGTH
+define ( 'HPAPI_POST_BYTES_MAX',            524288                                                                                  );
+// RETURN VALUE STRING LENGTH
+define ( 'HPAPI_RETURN_BYTES_MAX',          8388608                                                                                 );
 
 
 // PASSWORD MANAGEMENT
