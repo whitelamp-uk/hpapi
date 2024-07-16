@@ -1157,10 +1157,13 @@ This looks unused
         return new Promise (
             function (succeeded,failed) {
                 var reader;
+/*
                 if (file.type!=type) {
-                    failed (new Error ('File name '+file.name+' is inconsistent with MIME type '+type));
+                    failed (new Error ('File '+file.name+' is of type '+file.type+' is inconsistent with requested MIME type '+type));
                     return;
+// Firefox on Windows fails here
                 }
+*/
                 reader                  = new FileReader ();
                 reader.onerror          = function ( ) {
                     failed (new Error('Could not read file '+file.name));
@@ -2777,12 +2780,10 @@ This looks unused
     navigatorsHandle (evt) {
         // Generic handle/render
         if (evt.currentTarget.dataset.insert) {
-            console.log ('navigatorsHandle(): navigating to insert');
             this.insertHandle (evt);
             return;
         }
         if (evt.currentTarget.dataset.screen) {
-            console.log ('navigatorsHandle(): navigating to screen');
             this.screenHandle (evt);
             return;
         }

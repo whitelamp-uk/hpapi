@@ -72,8 +72,8 @@ export class Hpapi {
 
     filterTimeout (timeoutSeconds) {
         timeoutSeconds = parseInt (timeoutSeconds);
-        if (isNaN(timeoutSeconds) || timeoutSeconds<1 || timeoutSeconds>60) {
-            throw new Error ('Hpapi.filterTimeout(): connection timeout seconds is not a sane integer (between 1 and 60)');
+        if (isNaN(timeoutSeconds) || timeoutSeconds<1 || timeoutSeconds>300) {
+            throw new Error ('Hpapi.filterTimeout(): connection timeout seconds is not a sane integer (between 1 and 300)');
             return false;
         }
         return timeoutSeconds;
@@ -129,6 +129,7 @@ export class Hpapi {
                     xhr                     = new XMLHttpRequest ();
                     xhr.timeout             = 1000 * timeoutSecs;
                     xhr.onerror             = function ( ) {
+                        console.error ('997 502 Could not connect or unknown error');
                         failed (new Error('997 502 Could not connect or unknown error'));
                     };
                     xhr.onload              = function ( ) {
@@ -144,6 +145,7 @@ export class Hpapi {
                                 fail        = true;
                             }
                             if (fail) {
+                                console.error ('995 502 Server is borked');
                                 failed (new Error('995 502 Server is borked: '+xhr.responseText));
                             }
                             else {
@@ -160,10 +162,12 @@ export class Hpapi {
                             }
                         }
                         else {
+                            console.error ('996 '+xhr.status+' '+xhr.statusText);
                             failed (new Error('996 '+xhr.status+' '+xhr.statusText));
                         }
                     };
                     xhr.ontimeout   = function ( ) {
+                        console.error ('998 404 Request timed out');
                         failed (new Error('998 404 Request timed out'));
                     };
                     xhr.open ('POST',url,true);

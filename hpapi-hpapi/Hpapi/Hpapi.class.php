@@ -11,8 +11,8 @@ class Hpapi {
     protected   $db;                         // Database object \Hpapi\HpapiDb
     public      $datetime;                   // DateTime of response (can be faked for matching time-based test data)
     public      $email;                      // Email contained in request
-    public      $groupsAllowed   = array (); // Memberships authenticated for access control
-    public      $groupsAvailable = array (); // Memberships found for the requested user (not necessarily authenticated)
+    public      $groupsAllowed = [];         // Memberships authenticated for access control
+    public      $groupsAvailable = [];       // Memberships found for the requested user (not necessarily authenticated)
     public      $logtime;                    // DateTime of response for logging (never faked)
     public      $microtime;                  // Microtime of response (decimal fraction of a second)
     public      $object;                     // The PHP object loaded from the input which is modified and returned
@@ -59,6 +59,9 @@ class Hpapi {
         $this->contentType                          = $this->parseContentType ();
         try {
             $this->object                           = $this->decodePost ();
+            if (!array_key_exists('email',$this->object)) {
+                $this->object->email                = null;
+            }
         }
         catch (\Exception $e) {
             header ('Content-Type: '.HPAPI_CONTENT_TYPE_TEXT);
@@ -74,7 +77,7 @@ class Hpapi {
         $this->object->response->pwdSelfManage      = true;
         $this->object->response->pwdScoreMinimum    = 0;
         $this->object->response->description        = HPAPI_META_DESCRIPTION;
-        $this->object->response->splash             = array ();
+        $this->object->response->splash             = [];
         $this->object->response->error              = null;
         $this->object->response->warning            = null;
         if (!$this->isHTTPS()) {
@@ -229,17 +232,41 @@ class Hpapi {
             $this->end ();
         }
         // Authentication data
-        try {
-            $results                                = $this->db->call (
-                'hpapiAuthDetails'
-                ,$this->object->email
-            );
+        if (property_exists($this->object,'email') && $this->object->email) {
+            try {
+                $results                                = $this->db->call (
+                    'hpapiAuthDetails'
+                    ,$this->object->email
+                );
+            }
+            catch (\Exception $e) {
+                $this->diagnostic ($e->getMessage());
+                $this->object->response->error          = HPAPI_STR_DB_SPR_ERROR;
+                $this->end ();
+            }
         }
-        catch (\Exception $e) {
-            $this->diagnostic ($e->getMessage());
-            $this->object->response->error          = HPAPI_STR_DB_SPR_ERROR;
-            $this->end ();
+        elseif (property_exists($this->object,'token') && $this->object->token) {
+            try {
+                $results                                = $this->db->call (
+                    'hpapiAuthDetails'
+                    ,$this->object->token
+                );
+                // Derive email address from token
+                if (array_key_exists(0,$results)) {
+                    // Get email address
+                    $this->object->email                = $results[0]['email'];
+                }
+            }
+            catch (\Exception $e) {
+                $this->diagnostic ($e->getMessage());
+                $this->object->response->error          = HPAPI_STR_DB_SPR_ERROR;
+                $this->end ();
+            }
         }
+        else {
+            $results = [];
+        }
+        // Add groups and password settings to response
         foreach ($results as $g) {
              array_push (
                 $this->groupsAvailable,
@@ -398,7 +425,7 @@ class Hpapi {
             $this->object->response->error          = HPAPI_STR_DB_SPR_ERROR;
             $this->end ();
         }
-        $permissions                                        = array ();
+        $permissions                                        = [];
         foreach ($columns as $c) {
             $key                                            = $c['table'].'.'.$c['column'];
             $c['inserters']                                 = explode ('::',$c['inserters']);
@@ -419,15 +446,15 @@ class Hpapi {
             $this->object->response->error          = HPAPI_STR_DB_SPR_ERROR;
             $this->end ();
         }
-        $privileges                                 = array ();
+        $privileges                                 = [];
         foreach ($methods as $m) {
             $method                                 = $m['method'];
             unset ($m['method']);
             if (!array_key_exists($method,$privileges)) {
-                $privileges[$method]                        = array ();
-                $privileges[$method]['usergroups']          = array ();
-                $privileges[$method]['arguments']           = array ();
-                $privileges[$method]['sprs']                = array ();
+                $privileges[$method]                        = [];
+                $privileges[$method]['usergroups']          = [];
+                $privileges[$method]['arguments']           = [];
+                $privileges[$method]['sprs']                = [];
                 $privileges[$method]['package']             = $m['packageNotes'];
                 $privileges[$method]['requiresKey']         = $m['requiresKey'];
                 $privileges[$method]['remoteAddrPattern']   = $m['remoteAddrPattern'];
@@ -474,8 +501,8 @@ class Hpapi {
             unset ($s['method']);
             unset ($s['spr']);
             if (!array_key_exists($spr,$privileges[$method]['sprs'])) {
-                $privileges[$method]['sprs'][$spr]                  = array ();
-                $privileges[$method]['sprs'][$spr]['arguments']     = array ();
+                $privileges[$method]['sprs'][$spr]                  = [];
+                $privileges[$method]['sprs'][$spr]['arguments']     = [];
                 $privileges[$method]['sprs'][$spr]['model']         = $s['model'];
                 $privileges[$method]['sprs'][$spr]['modelNotes']    = $s['modelNotes'];
                 $privileges[$method]['sprs'][$spr]['notes']         = $s['sprNotes'];
@@ -603,7 +630,7 @@ class Hpapi {
     }
 
     public function definitionPath ($path) {
-        $paths = array ();
+        $paths = [];
         foreach (scandir($path) as $f) {
             if (!preg_match('<^.*\.dfn\.php$>',$f)) {
                 continue;
@@ -808,7 +835,7 @@ class Hpapi {
             $this->end ();
         }
         try {
-            $args                                   = array ();
+            $args                                   = [];
             foreach ($m->arguments as $arg) {
                 // In PHP objects are passed by reference but arrays are not
                 if (is_object($arg)) {
@@ -1021,7 +1048,7 @@ class Hpapi {
             $ol = new \stdClass ();
         }
         else {
-            $ol = array ();
+            $ol = [];
         }
         foreach ($data as $row) {
             if (!is_array($row)) {
@@ -1238,7 +1265,7 @@ class Hpapi {
 
     public function validation ($name,$ref,$value,$defn) {
         if (is_object($defn)) {
-            $arr = array ();
+            $arr = [];
             foreach ($defn as $k=>$v) {
                 $arr[$k] = $v;
             }
