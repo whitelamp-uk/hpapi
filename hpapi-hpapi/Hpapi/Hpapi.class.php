@@ -146,7 +146,14 @@ class Hpapi {
         }
         $key                                        = $this->authenticate ();
         $this->privilege                            = $this->access ($this->fetchPrivileges(),$key);
-        $this->object->response->returnValue        = $this->executeMethod ($this->object->method);
+        $returnValue                                = $this->executeMethod ($this->object->method);
+        if (defined('HPAPI_RETURN_BYTES_MAX')) {
+            if(($length=strlen($this->jsonEncode($returnValue,HPAPI_JSON_OPTIONS,HPAPI_JSON_DEPTH-1)))>HPAPI_RETURN_BYTES_MAX) {
+                $this->object->response->error      = HPAPI_STR_RETURN_BYTES_MAX.HPAPI_RETURN_BYTES_MAX.' bytes; payload was $length bytes';
+                $this->end ();
+            }
+        }
+        $this->object->response->returnValue        = $returnValue;
         $this->end ();
     }
 
