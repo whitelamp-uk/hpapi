@@ -98,9 +98,21 @@ class Hpapi {
             $this->object->response->error          = HPAPI_STR_EMAIL;
             $this->end ();
         }
+        /*
         if (!property_exists($this->object,'password') && !property_exists($this->object,'token')) {
             $this->object->response->error          = HPAPI_STR_PWD_OR_TKN;
             $this->end ();
+        }
+        // New sane arrangement; any one of a valid key, password or token should be sufficient
+        */
+        if (!property_exists($this->object,'key')) {
+            if (!property_exists($this->object,'password')) {
+                if (!property_exists($this->object,'token')) {
+                    // At the very least you need a token
+                    $this->object->response->error      = HPAPI_STR_PWD_OR_TKN;
+                    $this->end ();
+                }
+            }
         }
         if (!property_exists($this->object,'method')) {
             $this->object->response->error          = HPAPI_STR_METHOD;
@@ -147,8 +159,9 @@ class Hpapi {
             $this->object->response->error          = HPAPI_STR_DB_OBJ;
             $this->end ();
         }
-        $key                                        = $this->authenticate ();
-        $this->privilege                            = $this->access ($this->fetchPrivileges(),$key);
+        $this->authenticate ();
+        $privileges                                 = $this->fetchPrivileges ();
+        $this->privilege                            = $this->access ($privileges);
         $returnValue                                = $this->executeMethod ($this->object->method);
         if (defined('HPAPI_RETURN_BYTES_MAX')) {
             if(($length=strlen($this->jsonEncode($returnValue,HPAPI_JSON_OPTIONS,HPAPI_JSON_DEPTH-1)))>HPAPI_RETURN_BYTES_MAX) {
@@ -163,7 +176,7 @@ class Hpapi {
     public function __destruct ( ) {
     }
 
-    protected function access ($privilege,$key) {
+    protected function access ($privilege) {
         if (HPAPI_DANGER_MODE) {
             return $privilege;
         }
@@ -186,7 +199,7 @@ class Hpapi {
             $this->end ();
         }
         if ($privilege['requiresKey']) {
-            if (!property_exists($this->object,'key') || $this->object->key!=$key) {
+            if (!property_exists($this->object,'key') || !$this->object->hasValidKey) {
                 $this->diagnostic (HPAPI_DG_PRIV_KEY);
                 $this->object->response->authStatus = HPAPI_STR_AUTH_KEY;
                 $this->object->response->error      = HPAPI_STR_AUTH_DENIED;
@@ -224,6 +237,7 @@ class Hpapi {
     }
 
     protected function authenticate ( ) {
+        $this->object->hasValidKey                  = false;
         // Blacklist
         if ($type=$this->blacklistMatch($this->object)) {
             $this->diagnostic (HPAPI_DG_BLACKLIST.' (type='.$type.')');
@@ -308,7 +322,7 @@ class Hpapi {
         // Key for returning on success
         $key                                        = null;
         if ($auth['key'] && !$auth['keyExpired']) {
-            $key                                    = $auth['key'];
+            $key_hash                               = $auth['key'];
         }
         // Authentication checks
         if (!preg_match('<'.$auth['userRemoteAddrPattern'].'>',$_SERVER['REMOTE_ADDR'])) {
@@ -330,7 +344,29 @@ class Hpapi {
             $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
             $this->end ();
         }
-        if (property_exists($this->object,'password')) {
+        if (property_exists($this->object,'key')) {
+            if (password_verify($this->object->key,$auth['key'])) {
+                $this->object->hasValidKey          = true;
+                $this->object->response->authStatus = HPAPI_STR_AUTH_OK;
+                // Valid key so store and return fresh token
+                // [ most client software will like RESTfulness ie not use the token ]
+                $this->setToken ();
+                // Load user groups
+                $this->groupsAllowed                = $this->groupsAvailable;
+            }
+            else {
+                $this->diagnostic (HPAPI_DG_PASSWORD);
+                $this->object->response->authStatus = HPAPI_STR_AUTH_PASSWORD;
+                // Load anon user group
+                foreach ($this->groupsAvailable as $g) {
+                    if ($g['usergroup']==HPAPI_USERGROUP_ANON) {
+                        array_push ($this->groupsAllowed,array('usergroup'=>HPAPI_USERGROUP_ANON,'remoteAddrPattern'=>$g['remoteAddrPattern']));
+                        break;
+                    }
+                }
+            }
+        }
+        elseif (property_exists($this->object,'password')) {
             if (password_verify($this->object->password,$auth['passwordHash'])) {
                 $this->passwordHashCurrent          = $auth['passwordHash'];
                 $this->object->response->authStatus = HPAPI_STR_AUTH_OK;
@@ -383,7 +419,7 @@ class Hpapi {
             // Return released key to client
             $this->object->response->newKey         = $auth['key'];
         }
-        return $key;
+        return $key_hash;
     }
 
     public function blacklistMatch ($request) {
@@ -941,7 +977,7 @@ class Hpapi {
                 }
             }
         }
-        return false;        
+        return false;
     }
 
     public function isHTTPS ( ) {
