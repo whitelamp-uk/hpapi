@@ -18,6 +18,7 @@ INSERT IGNORE INTO `hpapi_method` (`vendor`, `package`, `class`, `method`, `labe
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'keyRelease',	'Release new key',	'Create new key, release it until an expiry time for a given user ID'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'passwordClear',	'Clear user password',	'Set password hash to empty string for a given user.'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'ping',	'Ping the API',	'Ping the API for a return value of true'),
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'pong',	'Pong the API',	'Pong the API with auth status/denied for the return value you want'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'usergroups',	'User groups',	'Details of all user groups.'),
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'uuid',	'Get UUID',	'Hpapi default UUID generating method.');
 

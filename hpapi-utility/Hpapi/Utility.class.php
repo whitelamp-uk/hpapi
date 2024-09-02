@@ -186,6 +186,40 @@ class Utility {
         return true;
     }
 
+    public function pong ($authCode,$denied) {
+        // Provide authStatus and error to build a dummy "access denied" response
+        $auth = [
+            '061' => HPAPI_STR_AUTH_DEFAULT,
+            '062' => HPAPI_STR_AUTH_REM_ADDR_PKG,
+            '063' => HPAPI_STR_AUTH_KEY,
+            '064' => HPAPI_STR_AUTH_EMAIL,
+            '065' => HPAPI_STR_AUTH_REM_ADDR,
+            '066' => HPAPI_STR_AUTH_ACTIVE,
+            '067' => HPAPI_STR_AUTH_PWD_EXPIRED,
+            '068' => HPAPI_STR_AUTH_OK,
+            '069' => HPAPI_STR_AUTH_TOKEN,
+            '070' => HPAPI_STR_AUTH_VERIFY,
+            '071' => HPAPI_STR_AUTH_ANONYMOUS
+        ];
+        $exception = false;
+        if (array_key_exists($authCode,$auth)) {
+            $this->hpapi->object->response->authStatus = $auth[$authCode];
+        }
+        else {
+            throw new \Exception ("999 400 You cannot pong() with authCode=$authCode");
+            return false;
+        }
+        if (!$denied && !in_array($authCode,['068','070','071'])) {
+            throw new \Exception ("998 400 Impossible combination of not denied with authCode=$authCode");
+            return false;
+        }
+        if ($denied) {
+            throw new \Exception (HPAPI_STR_AUTH_DENIED);
+            return false;
+        }
+        return true;
+    }
+
     public function update ($table,$column,$value,$primaryKeys) {
         // Get column permission and details
         if (!($c=$this->hpapi->permissionToUpdate($table,$column))) {
