@@ -97,13 +97,14 @@ define ( 'HPAPI_STR_AUTH_REM_ADDR_PKG',     '062 Package not allowed from remote
 define ( 'HPAPI_STR_AUTH_KEY',              '063 Package requires valid key'                                                        );
 define ( 'HPAPI_STR_AUTH_BLACKLIST',        '064 Not authorised'                                                                    );
 define ( 'HPAPI_STR_AUTH_EMAIL',            '064 Not authorised'                                                                    );
-define ( 'HPAPI_STR_AUTH_REM_ADDR',         '065 Not authorised from remote address'                                                );
+define ( 'HPAPI_STR_AUTH_PASSWORD',         '064 Not authorised'                                                                    );
+define ( 'HPAPI_STR_AUTH_REM_ADDR',         '065 Not allowed from remote address'                                                   );
 define ( 'HPAPI_STR_AUTH_ACTIVE',           '066 Not activated by administrator'                                                    );
 define ( 'HPAPI_STR_AUTH_PWD_EXPIRED',      '067 Password expired'                                                                  );
 define ( 'HPAPI_STR_AUTH_OK',               '068 Fully authenticated'                                                               );
-define ( 'HPAPI_STR_AUTH_PASSWORD',         '064 Not authorised'                                                                    );
 define ( 'HPAPI_STR_AUTH_TOKEN',            '069 Invalid token'                                                                     );
-define ( 'HPAPI_STR_AUTH_VERIFY',           '070 Account unverified'                                                                );
+define ( 'HPAPI_STR_AUTH_VERIFY',           '070 Authenticated but unverified'                                                      );
+define ( 'HPAPI_STR_AUTH_ANONYMOUS',        '071 Anonymous'                                                                         );
 
 // Validating posted object->method
 define ( 'HPAPI_STR_METHOD_VDR',            '081 400 Method property "vendor" does not exist'                                       );
