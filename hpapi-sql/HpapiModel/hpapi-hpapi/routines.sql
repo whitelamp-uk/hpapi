@@ -11,16 +11,18 @@ CREATE PROCEDURE `hpapiAuthDetails`(
   IN        `emailOrToken` VARCHAR(254) CHARSET ascii
 )
 BEGIN
+  -- A null user is the anonymous user which is:
+  -- always active, allowed from any remote address, in the "anon" user group
   SELECT
-    `hpapi_user`.`id` AS `userId`
-   ,`hpapi_user`.`active`
-   ,`hpapi_user`.`verified`
+    IFNULL(`hpapi_user`.`id`,0) AS `userId`
+   ,IFNULL(`hpapi_user`.`active`,1) AS `active`
+   ,IFNULL(`hpapi_user`.`verified`,0) AS `verified`
    ,`hpapi_user`.`key`
    ,`hpapi_user`.`key_expired` AS `keyExpired`
    ,`hpapi_user`.`key_release` AS `respondWithKey`
    ,UNIX_TIMESTAMP(`key_release_until`) AS `keyReleaseUntil`
-   ,`hpapi_user`.`remote_addr_pattern` AS `userRemoteAddrPattern`
-   ,`hpapi_user`.`email`
+   ,IFNULL(`hpapi_user`.`remote_addr_pattern`,'^.*$') AS `userRemoteAddrPattern`
+   ,IFNULL(`hpapi_user`.`email`,'') AS `email`
    ,`hpapi_user`.`password_hash` AS `passwordHash`
    ,UNIX_TIMESTAMP(`hpapi_user`.`password_expires`) AS `passwordExpires`
    ,UNIX_TIMESTAMP(`hpapi_user`.`password_self_manage_until`) AS `passwordSelfManageUntil`
@@ -32,20 +34,16 @@ BEGIN
    ,`hpapi_usergroup`.`password_score_minimum` AS `passwordScoreMinimum`
    ,`hpapi_usergroup`.`token_duration_minutes` AS `tokenDurationMinutes`
    ,`hpapi_usergroup`.`remote_addr_pattern` AS `groupRemoteAddrPattern`
-  FROM `hpapi_user`
-  LEFT JOIN `hpapi_usergroup`
-         ON 1
+  FROM `hpapi_usergroup`
   LEFT JOIN `hpapi_membership`
-         ON `hpapi_membership`.`user_id`=`hpapi_user`.`id`
-        AND `hpapi_membership`.`usergroup`=`hpapi_usergroup`.`usergroup`
-  WHERE (
-        `hpapi_user`.`email`=emailOrToken
+         ON `hpapi_membership`.`usergroup`=`hpapi_usergroup`.`usergroup`
+  LEFT JOIN `hpapi_user`
+         ON `hpapi_user`.`id`=`hpapi_membership`.`user_id`
+  WHERE
+        `hpapi_usergroup`.`usergroup`='anon'
+     OR `hpapi_user`.`email`=emailOrToken
      OR `hpapi_user`.`token`=emailOrToken
-  )
-    AND (
-         `hpapi_usergroup`.`usergroup`='anon'
-      OR `hpapi_membership`.`usergroup` IS NOT NULL
-    )
+  ORDER BY `hpapi_user`.`id` IS NULL,`hpapi_usergroup`.`level`,`hpapi_usergroup`.`usergroup`
   ;
 END$$
 
