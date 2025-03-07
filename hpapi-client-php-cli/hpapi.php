@@ -83,7 +83,7 @@ if (($err=json_last_error())!=JSON_ERROR_NONE) {
 }
 
 // Define response file and write input file
-$out               = realpath (dirname($prog)).'/'.getmypid().'.json';
+$out               = '/tmp/hpapi-client-php-cli.'.getmypid().'.json';
 $in                = $out.'.request';
 $fp                = fopen ($in,'w');
 fwrite ($fp,$request);
