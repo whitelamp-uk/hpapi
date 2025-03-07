@@ -97,6 +97,7 @@ define ( 'HPAPI_STR_AUTH_REM_ADDR_PKG',     '062 Package not allowed from remote
 define ( 'HPAPI_STR_AUTH_KEY',              '063 Package requires valid key'                                                        );
 define ( 'HPAPI_STR_AUTH_BLACKLIST',        '064 Not authorised'                                                                    );
 define ( 'HPAPI_STR_AUTH_EMAIL',            '064 Not authorised'                                                                    );
+define ( 'HPAPI_STR_AUTH_KEY_STATUS',       '064 Not authorised'                                                                    );
 define ( 'HPAPI_STR_AUTH_PASSWORD',         '064 Not authorised'                                                                    );
 define ( 'HPAPI_STR_AUTH_REM_ADDR',         '065 Not allowed from remote address'                                                   );
 define ( 'HPAPI_STR_AUTH_ACTIVE',           '066 Not activated by administrator'                                                    );
@@ -166,6 +167,10 @@ define ( 'HPAPI_STR_DB_UPDATE_PRI_CHECK',   '236 500 Unable to check primary key
 define ( 'HPAPI_STR_DB_UPDATE_PRI',         '237 400 The primary key given is incomplete'                                           );
 define ( 'HPAPI_STR_PASSWORD_TEST',         '238 500 Unable to test password'                                                       );
 
+// Returning the response payload
+define ( 'HPAPI_STR_RETURN_BYTES_MAX',      '239 550 The response payload is too large; limited to '                                );
+
+
 // SSL notice
 define ( 'HPAPI_STR_PLAIN',                 'WARNING - UNENCRYPTED CONNECTION'                                                      );
 
@@ -211,6 +216,7 @@ define ( 'HPAPI_DG_AUTH_RESULTS',           'No auth result [see hpapi.hpapiAuth
 define ( 'HPAPI_DG_BLACKLIST',              'Request blacklisted'                                                                   );
 define ( 'HPAPI_DG_USER_REM_ADDR',          'User remote address mismatch'                                                          );
 define ( 'HPAPI_DG_USER_ACTIVE',            'User inactive'                                                                         );
+define ( 'HPAPI_DG_KEY',                    'Key mismatch'                                                                          );
 define ( 'HPAPI_DG_PASSWORD',               'Password mismatch'                                                                     );
 define ( 'HPAPI_DG_TOKEN_MATCH',            'Token mismatch'                                                                        );
 define ( 'HPAPI_DG_TOKEN_EXPIRY',           'Token expired'                                                                         );
