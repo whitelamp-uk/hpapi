@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS `hpapi_log` (
   `key` varchar(64) CHARACTER SET ascii NOT NULL,
   `email` varchar(254) CHARACTER SET ascii NOT NULL,
   `remote_addr` varbinary(16) NOT NULL,
-  `user_agent` varchar(255) CHARACTER SET ascii NOT NULL,
+  `user_agent` varchar(255) CHARACTER SET ascii DEFAULT NULL,
   `vendor` varchar(64) CHARACTER SET ascii NOT NULL,
   `package` varchar(64) CHARACTER SET ascii NOT NULL,
   `class` varchar(64) CHARACTER SET ascii NOT NULL,
